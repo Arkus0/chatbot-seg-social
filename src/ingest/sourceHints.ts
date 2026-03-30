@@ -33,6 +33,24 @@ const TAG_HINTS: Record<string, string[]> = {
     "jubilarme",
     "solicitud de jubilacion",
   ],
+  "familia-cuidados": [
+    "nacimiento y cuidado de menor",
+    "adopcion y acogimiento",
+    "cuidado de menor con enfermedad grave",
+    "tramites familiares inss",
+  ],
+  supervivencia: [
+    "viudedad",
+    "orfandad",
+    "favor de familiares",
+    "prestaciones por fallecimiento",
+  ],
+  "asistencia-sanitaria": [
+    "tarjeta sanitaria europea",
+    "certificado provisional sustitutorio",
+    "alta de beneficiarios",
+    "tramites de asistencia sanitaria",
+  ],
   "incapacidad-temporal": [
     "baja medica",
     "prestacion por incapacidad temporal",
@@ -153,11 +171,23 @@ const TAG_HINTS: Record<string, string[]> = {
     "seguimiento del expediente",
     "ver en que fase esta",
   ],
+  "estado-expediente": [
+    "consultar estado del expediente",
+    "seguimiento de solicitud inss",
+    "mis expedientes administrativos",
+    "como va mi prestacion",
+  ],
   subsanacion: [
     "subsanar expediente",
     "aportar documentacion adicional",
     "responder a requerimiento del inss",
     "adjuntar documentos pendientes",
+  ],
+  "subsanacion-requerimiento": [
+    "subsanacion de expediente",
+    "requerimiento de documentacion inss",
+    "aportar papeles pendientes",
+    "completar solicitud tras requerimiento",
   ],
   requerimiento: [
     "requerimiento de documentacion",
@@ -174,6 +204,29 @@ const TAG_HINTS: Record<string, string[]> = {
     "oficina inss",
     "atencion presencial inss",
     "cita en caiss",
+  ],
+  "cita-caiss": [
+    "cita previa inss",
+    "caiss",
+    "atencion presencial",
+    "oficinas de la seguridad social",
+  ],
+  "sin-certificado-sms": [
+    "tramites sin certificado",
+    "via sms",
+    "sin cl@ve",
+    "sin identificacion electronica",
+  ],
+  "portal-prestaciones": [
+    "portal de prestaciones de la seguridad social",
+    "prestaciones seg social",
+    "solicitudes y comunicaciones inss",
+  ],
+  "operativa-inss": [
+    "tramites inss",
+    "portal de prestaciones",
+    "mis expedientes",
+    "requerimientos y notificaciones",
   ],
   "certificado-prestaciones": [
     "certificado integral de prestaciones",
@@ -253,6 +306,32 @@ const TAG_HINTS: Record<string, string[]> = {
     "que compatibilidades tiene",
     "incompatibilidades",
   ],
+  sovi: [
+    "seguro obligatorio de vejez e invalidez",
+    "pension sovi",
+    "compatibilidades sovi",
+  ],
+  "seguro escolar": [
+    "prestaciones del seguro escolar",
+    "riesgos cubiertos del seguro escolar",
+    "gestion del seguro escolar",
+  ],
+  violencia: [
+    "prestaciones por violencia contra la mujer",
+    "tramites especiales inss",
+  ],
+  terrorismo: [
+    "prestaciones por actos terroristas",
+    "pensiones extraordinarias por terrorismo",
+  ],
+  "sindrome toxico": [
+    "prestaciones por sindrome toxico",
+    "cobertura especial inss",
+  ],
+  amianto: [
+    "prestaciones por amianto",
+    "cobertura especial inss",
+  ],
 };
 
 const TITLE_HINT_RULES = [
@@ -289,6 +368,30 @@ const TITLE_HINT_RULES = [
       "que hacer ante un requerimiento",
       "donde adjuntar documentacion adicional",
       "plazo para responder requerimientos",
+    ],
+  },
+  {
+    pattern: /\bnotificacion\b|\bresolucion\b|\bdenegacion\b/i,
+    hints: [
+      "como revisar una notificacion",
+      "como consultar una resolucion",
+      "que hacer tras una denegacion",
+    ],
+  },
+  {
+    pattern: /\bexpediente\b|\bestado\b|\bseguimiento\b/i,
+    hints: [
+      "mis expedientes administrativos",
+      "seguimiento del expediente",
+      "como va mi prestacion",
+    ],
+  },
+  {
+    pattern: /\bcita\b|\bcaiss\b|\boficina\b/i,
+    hints: [
+      "cita previa inss",
+      "caiss",
+      "atencion presencial seguridad social",
     ],
   },
   {
@@ -343,7 +446,16 @@ function dedupeHints(items: string[]): string[] {
   );
 }
 
-export function buildSourceSearchText(input: { title: string; url: string; tags: string[] }): string {
+export function buildSourceSearchText(input: {
+  title: string;
+  url: string;
+  tags: string[];
+  benefitId?: string;
+  family?: string;
+  lifecycle?: string;
+  sourceKind?: string;
+  formCodes?: string[];
+}): string {
   const hints = new Set<string>();
 
   for (const tag of input.tags) {
@@ -362,5 +474,16 @@ export function buildSourceSearchText(input: { title: string; url: string; tags:
     }
   }
 
-  return dedupeHints([input.title, ...input.tags, ...hints]).join(" ");
+  return dedupeHints([
+    input.title,
+    ...input.tags,
+    ...hints,
+    input.benefitId ?? "",
+    input.family ?? "",
+    input.lifecycle ?? "",
+    input.sourceKind ?? "",
+    ...(input.formCodes ?? []),
+    "inss",
+    "seguridad social",
+  ]).join(" ");
 }

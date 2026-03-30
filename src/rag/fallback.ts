@@ -1,8 +1,8 @@
-import type { AnswerPayload } from "../types/answers.js";
+import type { AnswerPayload, ChatIntent, ChatState } from "../types/answers.js";
 import type { RetrievedChunk } from "../types/documents.js";
 
 import { dedupeBy, normalizeSearchText, normalizeWhitespace, tokenizeSearchText } from "../utils/text.js";
-import { buildLegalNotice, buildSourcesSection, getAnswerSources } from "./formatter.js";
+import { composeStandaloneAnswerPayload, getAnswerSources } from "./formatter.js";
 
 function tokenizeQuestion(question: string): string[] {
   return tokenizeSearchText(question);
@@ -51,28 +51,41 @@ function extractCandidateLines(chunks: RetrievedChunk[], question: string): stri
   ).slice(0, 4);
 }
 
-export function buildRetrievalOnlyAnswer(question: string, chunks: RetrievedChunk[]): AnswerPayload {
+export function buildRetrievalOnlyAnswer(
+  question: string,
+  chunks: RetrievedChunk[],
+  intent: ChatIntent,
+  state: ChatState,
+  suggestedReplies: string[],
+): AnswerPayload {
   const lines = extractCandidateLines(chunks, question);
   const sources = getAnswerSources(chunks);
-  const legalNotice = buildLegalNotice();
   const body = [
+    "Resumen del caso:",
+    state.caseSummary || "Caso abierto con contexto oficial parcial.",
+    "",
     "Respuesta breve:",
     "He encontrado informacion oficial relacionada, aunque ahora mismo la generacion avanzada no esta disponible.",
     "",
-    "Si lo vas a tramitar ahora:",
+    "Siguiente paso ahora:",
     ...lines.map((line) => `- ${line.replace(/^[-#\s]+/, "")}`),
     "",
-    "Siguiente paso claro:",
-    "Abre una de las fuentes oficiales para confirmar el detalle exacto del tramite o del formulario antes de presentarlo.",
+    "Si el INSS te responde o te pide algo:",
+    "- Usa Mis expedientes administrativos o la via oficial del tramite para confirmar el detalle exacto antes de presentar nada.",
+    "",
+    "Alternativas si esta via no encaja:",
+    "- Si el detalle practico no queda claro, revisa la fuente oficial enlazada o vuelve con una duda mas concreta del expediente.",
   ].join("\n");
 
-  return {
-    text: [body, buildSourcesSection(sources, false), legalNotice].filter(Boolean).join("\n\n"),
+  return composeStandaloneAnswerPayload(
+    body,
     sources,
-    summary: "He encontrado informacion oficial relacionada, aunque ahora mismo la generacion avanzada no esta disponible.",
-    keyPoints: lines.map((line) => line.replace(/^[-#\s]+/, "")).slice(0, 5),
-    legalNotice,
-  };
+    {
+      intent,
+      state,
+      suggestedReplies,
+    },
+  );
 }
 
 export function isRetriableGenerationError(error: unknown): boolean {

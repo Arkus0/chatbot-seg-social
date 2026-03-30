@@ -26,6 +26,8 @@ describe("formatter", () => {
     expect(response.text).toContain("Fuentes oficiales");
     expect(response.text).toContain("Aviso legal");
     expect(response.sources[0]?.url).toBe("https://example.com");
+    expect(response.mode).toBe("answer");
+    expect(response.sections.immediateSteps).toEqual([]);
   });
 
   it("ignores section headings when extracting the summary", () => {
@@ -43,5 +45,29 @@ describe("formatter", () => {
     expect(response.summary).toBe(
       "Puedes solicitarlo por internet o de forma presencial si el contexto recuperado lo permite.",
     );
+  });
+
+  it("extracts structured sections from the preferred answer format", () => {
+    const response = composeAnswerPayload(
+      [
+        "Respuesta breve:",
+        "Puedes revisarlo por la sede o presentar la solicitud por el canal que corresponda.",
+        "",
+        "Si lo vas a tramitar ahora:",
+        "- Revisa tu identificacion",
+        "- Comprueba el tipo de tramite",
+        "",
+        "Documentos o datos que suelen pedir:",
+        "- DNI o NIE",
+        "",
+        "Ojo con esto:",
+        "- No inventes casillas del formulario",
+      ].join("\n"),
+      [],
+    );
+
+    expect(response.sections.immediateSteps).toEqual(["Revisa tu identificacion", "Comprueba el tipo de tramite"]);
+    expect(response.sections.documents).toEqual(["DNI o NIE"]);
+    expect(response.sections.warnings).toEqual(["No inventes casillas del formulario"]);
   });
 });

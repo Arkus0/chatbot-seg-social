@@ -1,6 +1,4 @@
-import { getEnv, getRequiredBotMode } from "../src/config/env.js";
-import { answerQuestion } from "../src/rag/answerQuestion.js";
-import { answerWithLlm } from "../src/rag/answerWithLlm.js";
+import { getAnswer } from "../src/rag/getAnswer.js";
 
 async function main(): Promise<void> {
   const question = process.argv.slice(2).join(" ").trim();
@@ -9,17 +7,9 @@ async function main(): Promise<void> {
     throw new Error('Usage: npm run ask -- "tu pregunta"');
   }
 
-  const env = getEnv();
-  const botMode = getRequiredBotMode(env);
-  const answer =
-    botMode === "rag"
-      ? await answerQuestion(question)
-      : botMode === "llm"
-        ? await answerWithLlm(question)
-        : {
-            text: `Eco: ${question}`,
-            sources: [],
-          };
+  const answer = await getAnswer(question, {
+    channel: "web",
+  });
 
   console.log(answer.text);
 

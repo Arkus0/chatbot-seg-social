@@ -5,12 +5,13 @@ import { stripChunkSearchContext } from "../ingest/chunk.js";
 import { logger } from "../utils/logger.js";
 import { areEmbeddingsTemporarilyUnavailable, getEmbeddingCooldownRemainingMs } from "./embeddingAvailability.js";
 import { retrieveLexicalFallbackChunks } from "./lexicalRetriever.js";
+import type { RetrievalIntentContext } from "./query.js";
 import { expandQuestion, rerankRetrievedChunks } from "./query.js";
 import { getVectorStore } from "./vectorstore.js";
 
 const MIN_LEXICAL_FAST_PATH_RESULTS = 3;
 
-async function retrieveVectorChunks(question: string): Promise<RetrievedChunk[]> {
+async function retrieveVectorChunks(question: string, context?: RetrievalIntentContext): Promise<RetrievedChunk[]> {
   const env = getEnv();
   const store = await getVectorStore();
   const expandedQuestion = expandQuestion(question);
@@ -30,11 +31,20 @@ async function retrieveVectorChunks(question: string): Promise<RetrievedChunk[]>
           : [],
         priority: Number(document.metadata.priority ?? 1),
         searchText: String(document.metadata.searchText ?? ""),
+        benefitId: document.metadata.benefitId ? String(document.metadata.benefitId) : undefined,
+        family: document.metadata.family ? String(document.metadata.family) : undefined,
+        lifecycle: document.metadata.lifecycle ? String(document.metadata.lifecycle) : undefined,
+        sourceKind: document.metadata.sourceKind ? String(document.metadata.sourceKind) : undefined,
+        requiresAuth: typeof document.metadata.requiresAuth === "boolean" ? document.metadata.requiresAuth : undefined,
+        supportsSms: typeof document.metadata.supportsSms === "boolean" ? document.metadata.supportsSms : undefined,
+        formCodes: Array.isArray(document.metadata.formCodes)
+          ? document.metadata.formCodes.map((code) => String(code))
+          : undefined,
       },
     }))
     .filter((chunk) => chunk.score >= env.RAG_MIN_SCORE);
 
-  return rerankRetrievedChunks(question, chunks, env.RAG_TOP_K);
+  return rerankRetrievedChunks(question, chunks, env.RAG_TOP_K, context);
 }
 
 function mergeRetrievedChunks(...chunkGroups: RetrievedChunk[][]): RetrievedChunk[] {
@@ -58,9 +68,9 @@ function shouldUseLexicalFastPath(chunks: RetrievedChunk[], topK: number): boole
   return chunks.length >= Math.min(topK, MIN_LEXICAL_FAST_PATH_RESULTS);
 }
 
-export async function retrieveRelevantChunks(question: string): Promise<RetrievedChunk[]> {
+export async function retrieveRelevantChunks(question: string, context?: RetrievalIntentContext): Promise<RetrievedChunk[]> {
   const env = getEnv();
-  const lexicalChunks = await retrieveLexicalFallbackChunks(question);
+  const lexicalChunks = await retrieveLexicalFallbackChunks(question, context);
 
   if (shouldUseLexicalFastPath(lexicalChunks, env.RAG_TOP_K)) {
     return lexicalChunks;
@@ -74,7 +84,7 @@ export async function retrieveRelevantChunks(question: string): Promise<Retrieve
     });
   } else {
     try {
-      vectorChunks = await retrieveVectorChunks(question);
+      vectorChunks = await retrieveVectorChunks(question, context);
     } catch (error) {
       logger.warn("Vector retrieval failed, using lexical fallback corpus", { error });
     }
@@ -86,5 +96,5 @@ export async function retrieveRelevantChunks(question: string): Promise<Retrieve
     return [];
   }
 
-  return rerankRetrievedChunks(question, combinedChunks, env.RAG_TOP_K);
+  return rerankRetrievedChunks(question, combinedChunks, env.RAG_TOP_K, context);
 }

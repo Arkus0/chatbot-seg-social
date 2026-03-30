@@ -56,6 +56,13 @@ export async function chunkSourceDocument(source: SourceDocument): Promise<Docum
           tags: source.tags,
           priority: source.priority,
           searchText: source.searchText,
+          benefitId: source.benefitId,
+          family: source.family,
+          lifecycle: source.lifecycle,
+          sourceKind: source.sourceKind,
+          requiresAuth: source.requiresAuth,
+          supportsSms: source.supportsSms,
+          formCodes: source.formCodes,
         },
       }),
   );

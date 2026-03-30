@@ -246,6 +246,59 @@ describe("query helpers", () => {
     expect(ranked[0]?.metadata.url).toContain("sede.seg-social.gob.es");
   });
 
+  it("prioritizes chunks whose benefit and lifecycle metadata match the detected case", () => {
+    const ranked = rerankRetrievedChunks(
+      "Como sigo un expediente de IMV con requerimiento",
+      [
+        {
+          pageContent: "Pagina general de prestaciones del INSS.",
+          score: 0.9,
+          metadata: {
+            url: "https://example.com/general",
+            title: "Servicios de prestaciones",
+            sourceType: "html",
+            chunkIndex: 0,
+            tags: ["operativa-inss", "tramite"],
+            priority: 4,
+            benefitId: "operativa-inss",
+            family: "operativa-inss",
+            lifecycle: "presentacion",
+            sourceKind: "service",
+            requiresAuth: false,
+            supportsSms: true,
+          },
+        },
+        {
+          pageContent: "Mis expedientes para IMV y requerimientos.",
+          score: 0.88,
+          metadata: {
+            url: "https://example.com/imv-expediente",
+            title: "Mis expedientes administrativos",
+            sourceType: "html",
+            chunkIndex: 0,
+            tags: ["imv", "estado-expediente", "subsanacion-requerimiento"],
+            priority: 5,
+            benefitId: "imv",
+            family: "imv",
+            lifecycle: "seguimiento",
+            sourceKind: "tracking",
+            requiresAuth: true,
+            supportsSms: true,
+          },
+        },
+      ],
+      1,
+      {
+        benefitId: "imv",
+        family: "imv",
+        operation: "subsanacion-requerimiento",
+        lifecycle: "seguimiento",
+      },
+    );
+
+    expect(ranked[0]?.metadata.url).toBe("https://example.com/imv-expediente");
+  });
+
   it("avoids elevating NUSS chunks when the question is specifically about paternity", () => {
     const ranked = rerankRetrievedChunks(
       "Quiero pedir la paternidad",
@@ -279,5 +332,42 @@ describe("query helpers", () => {
     );
 
     expect(ranked[0]?.metadata.tags).toContain("nacimiento");
+  });
+
+  it("prioritizes operational INSS pages for expediente and requerimiento questions", () => {
+    const ranked = rerankRetrievedChunks(
+      "Tengo un requerimiento del INSS y quiero ver mis expedientes",
+      [
+        {
+          pageContent: "Guia general sobre prestaciones.",
+          score: 0.9,
+          metadata: {
+            url: "https://example.com/general",
+            title: "Guia general de prestaciones",
+            sourceType: "html",
+            chunkIndex: 0,
+            tags: ["prestaciones"],
+            priority: 3,
+            searchText: "guia general de prestaciones seguridad social",
+          },
+        },
+        {
+          pageContent: "Mis expedientes administrativos permite seguir solicitudes y aportar documentacion.",
+          score: 0.86,
+          metadata: {
+            url: "https://example.com/mis-expedientes",
+            title: "Mis expedientes administrativos",
+            sourceType: "html",
+            chunkIndex: 0,
+            tags: ["operativa-inss", "estado-expediente", "subsanacion-requerimiento", "requerimiento"],
+            priority: 5,
+            searchText: "mis expedientes administrativos requerimiento subsanacion seguimiento expediente inss",
+          },
+        },
+      ],
+      1,
+    );
+
+    expect(ranked[0]?.metadata.url).toBe("https://example.com/mis-expedientes");
   });
 });

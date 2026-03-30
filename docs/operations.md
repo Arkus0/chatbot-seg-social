@@ -9,13 +9,61 @@
 ## Variables criticas
 
 - `BOT_MODE=rag`
+- `APP_BASE_URL`
 - `TELEGRAM_BOT_TOKEN`
 - `TELEGRAM_WEBHOOK_SECRET`
-- `APP_BASE_URL`
 - `GEMINI_API_KEY`
 - `GROQ_API_KEY`
 - `PINECONE_API_KEY`
 - `PINECONE_INDEX_NAME`
+
+## Rutas operativas
+
+- `GET /api/health`: salud y config critica.
+- `GET /api/catalog`: catalogo guiado compartido entre web y Telegram.
+- `POST /api/chat`: contrato compartido del chat.
+- `POST /api/webhook`: webhook de Telegram.
+
+## Contrato actual de chat
+
+### Entrada
+
+`POST /api/chat` acepta:
+
+```json
+{
+  "question": "Tengo un expediente del INSS y quiero saber el siguiente paso",
+  "channel": "web",
+  "state": {
+    "family": "operativa-inss",
+    "operation": "estado-expediente",
+    "benefitId": "operativa-inss",
+    "lifecycleStage": "seguimiento"
+  }
+}
+```
+
+### Salida
+
+El payload de `answer` mantiene campos heredados y anade estado reutilizable:
+
+- `mode`
+- `intent`
+- `benefitId`
+- `lifecycleStage`
+- `text`
+- `summary`
+- `keyPoints`
+- `caseSummary`
+- `checklist`
+- `alternatives`
+- `nextBestAction`
+- `sections`
+- `clarifyingQuestions`
+- `suggestedReplies`
+- `sources`
+- `legalNotice`
+- `state`
 
 ## Comandos utiles
 
@@ -24,8 +72,11 @@ node ./node_modules/vercel/dist/vc.js env ls production
 node ./node_modules/vercel/dist/vc.js env ls preview
 node ./node_modules/vercel/dist/vc.js env ls development
 node ./node_modules/vercel/dist/vc.js deploy --prod --yes
+npm run ask -- "Como sigo un expediente del INSS"
+npm run smoke
 npm run set:webhook
 npm run webhook:info
+npm run telegram:commands
 ```
 
 ## Verificacion rapida
@@ -42,12 +93,27 @@ Esperado:
 - `botMode: "rag"`
 - `missingConfig: []`
 
+### Catalogo guiado
+
+```bash
+curl https://chatbot-seg-social.vercel.app/api/catalog
+```
+
+Esperado:
+
+- `ok: true`
+- `procedureLibrary` con prestaciones guiadas
+- `demoQuestion` no vacia
+
 ### Chat
 
 Prueba preguntas reales de alto valor:
 
-- `Como solicito la tarjeta sanitaria europea y el certificado provisional sustitutorio?`
-- `Como dar de alta a un beneficiario de asistencia sanitaria?`
+- `Tengo un requerimiento del INSS sobre IMV y quiero saber el siguiente paso`
+- `Como solicito la tarjeta sanitaria europea y el certificado provisional sustitutorio`
+- `Que documentos suelen pedir para una incapacidad permanente`
+
+Revisa que la respuesta no vuelva a `Eco` y que mantenga fuentes oficiales.
 
 ### Telegram
 
@@ -66,8 +132,8 @@ Comandos del bot recomendados:
 
 - `/start`
 - `/help`
-- `/menu` (navegacion guiada por botones)
-- `/reset` (salir de modo guiado)
+- `/menu`
+- `/reset`
 
 ## Incidencias tipicas
 
@@ -76,10 +142,18 @@ Comandos del bot recomendados:
 - Faltan env vars en Vercel.
 - No aceptes modo degradado en produccion; corrige la configuracion.
 
-### `/api/chat` se vuelve lento o hace timeout
+### `/api/catalog` o el menu guiado quedan vacios
 
-- Revisa si se reintrodujo dependencia dura de embeddings.
-- Manten el fast path lexico en `src/rag/retriever.ts`.
+- Revisa `api/catalog.ts`.
+- Revisa `src/rag/inssCatalog.ts`.
+- Revisa `web-content.js`, `main.js` y `src/bot/handlers.ts`.
+- No vuelvas a duplicar listas manuales de prestaciones entre web y Telegram.
+
+### `/api/chat` se vuelve lento o pierde precision
+
+- Revisa que el fast path lexico siga activo en `src/rag/retriever.ts`.
+- Revisa `src/rag/query.ts` para boosts y penalizaciones por `benefitId`, `family`, `lifecycle` y `sourceKind`.
+- Revisa `src/rag/conversation.ts` para clasificacion, carryover de estado y preguntas aclaratorias.
 - No hagas retries largos en `embedQuery()` para consultas en vivo.
 
 ### Telegram devuelve 500 o deja de consumir updates
@@ -89,23 +163,29 @@ Comandos del bot recomendados:
 - Confirma que `api/webhook.ts` sigue devolviendo `200` rapido y usa `waitUntil()`.
 - Si falla navegacion por botones, confirma que el webhook mantiene `callback_query` en `allowed_updates`.
 
-## Ingestion RAG: estrategia de resume
+### `npm run smoke` o `npm run ingest` fallan con `429`
 
-La ingesta hacia Pinecone es incremental y resistente a fallos aislados por cuota/rate-limit:
+- Gemini embeddings sigue siendo el cuello de botella conocido.
+- Mantén `npm run build:corpus` al dia para no perder el fallback local.
+- Reintenta `npm run ingest` solo cuando haya cuota.
+
+## Ingesta RAG: estrategia de resume
+
+La ingesta hacia Pinecone es incremental y resistente a fallos aislados por cuota o rate limit:
 
 - `ingestConfiguredSources()` solo hace reset de namespace si `RESET_VECTOR_NAMESPACE=true`.
 - Cuando `RESET_VECTOR_NAMESPACE=false`, cada fuente se procesa en lotes de chunks (`INGEST_UPSERT_BATCH_SIZE`).
 - Antes de cada lote se consulta Pinecone por IDs (`fetch`) para saltar lotes ya subidos.
 - Si aparece un `429` en un lote concreto, se reintenta ese lote con backoff; los lotes ya confirmados no se repiten.
-- Si el proceso se corta y se relanza, reanuda desde los lotes faltantes (no reinicia la fuente completa).
+- Si el proceso se corta y se relanza, reanuda desde los lotes faltantes.
 
 Variables recomendadas para operar con cuota limitada:
 
 - `INGEST_UPSERT_BATCH_SIZE=16` o `32`
 - `INGEST_UPSERT_THROTTLE_MS=300` a `1000`
-- `EMBED_BATCH_SIZE=16` o `32` (batch de embeddings)
+- `EMBED_BATCH_SIZE=16` o `32`
 
-Ejemplo de ejecucion segura (sin reset):
+Ejemplo de ejecucion segura:
 
 ```bash
 RESET_VECTOR_NAMESPACE=false INGEST_UPSERT_BATCH_SIZE=32 INGEST_UPSERT_THROTTLE_MS=500 npm run ingest

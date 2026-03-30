@@ -5,6 +5,7 @@ import type { RetrievedChunk } from "../types/documents.js";
 import { getEnv } from "../config/env.js";
 import { stripChunkSearchContext } from "../ingest/chunk.js";
 import { countTokenMatches, tokenizeSearchText } from "../utils/text.js";
+import type { RetrievalIntentContext } from "./query.js";
 import { expandQuestion, rerankRetrievedChunks } from "./query.js";
 
 interface CachedChunk {
@@ -24,7 +25,10 @@ async function loadFallbackCorpus(): Promise<CachedChunk[]> {
   return fallbackCorpusPromise;
 }
 
-export async function retrieveLexicalFallbackChunks(question: string): Promise<RetrievedChunk[]> {
+export async function retrieveLexicalFallbackChunks(
+  question: string,
+  context?: RetrievalIntentContext,
+): Promise<RetrievedChunk[]> {
   const env = getEnv();
   const expandedQuestion = expandQuestion(question);
   const questionTokens = tokenizeSearchText(expandedQuestion);
@@ -61,5 +65,5 @@ export async function retrieveLexicalFallbackChunks(question: string): Promise<R
     return [];
   }
 
-  return rerankRetrievedChunks(question, ranked, env.RAG_TOP_K);
+  return rerankRetrievedChunks(question, ranked, env.RAG_TOP_K, context);
 }

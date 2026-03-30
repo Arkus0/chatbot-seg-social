@@ -1,4 +1,4 @@
-import { DEMO_QUESTION, PROCEDURE_LIBRARY } from "./web-content.js";
+import { loadCatalogData } from "./web-content.js";
 
 const STORAGE_KEYS = {
   sessions: "ss-web-sessions-v2",
@@ -12,9 +12,27 @@ const state = {
   activeSessionId: localStorage.getItem(STORAGE_KEYS.activeSessionId),
   dossiers: loadJson(STORAGE_KEYS.dossiers, []),
   activeDossierId: localStorage.getItem(STORAGE_KEYS.activeDossierId),
+  procedureLibrary: [],
+  demoQuestion: "Tengo un expediente del INSS y quiero saber como seguirlo, responder a un requerimiento o revisar una notificacion.",
   pending: false,
   syncDossierOnNextAnswer: false,
   selectedMessageId: null,
+};
+
+const FALLBACK_PROCEDURE = {
+  id: "operativa-inss",
+  label: "Operativa comun del INSS",
+  shortLabel: "Operativa",
+  goal: "gestor guiado",
+  summary: "Portal de Prestaciones, Mis Expedientes, CAISS, notificaciones, requerimientos y vias con SMS.",
+  exampleQuestion:
+    "Tengo un expediente del INSS y quiero saber como seguirlo, responder a un requerimiento o revisar una notificacion.",
+  promptSeeds: [
+    "Como seguir un expediente del INSS",
+    "Como responder a un requerimiento o revisar una notificacion",
+    "Que vias hay con certificado, Cl@ve, SMS o cita previa",
+  ],
+  defaultSituation: "Quiero ordenar identificacion, expediente y siguiente paso comun del INSS sin perder el contexto.",
 };
 
 const elements = {
@@ -64,9 +82,12 @@ const elements = {
   dossierItemTemplate: document.querySelector("#dossier-item-template"),
 };
 
-bootstrap();
+void bootstrap();
 
-function bootstrap() {
+async function bootstrap() {
+  const catalog = await loadCatalogData();
+  state.procedureLibrary = Array.isArray(catalog.procedureLibrary) ? catalog.procedureLibrary : [];
+  state.demoQuestion = typeof catalog.demoQuestion === "string" ? catalog.demoQuestion : state.demoQuestion;
   seedProcedureOptions();
 
   if (!state.sessions.length) {
@@ -80,7 +101,7 @@ function bootstrap() {
   }
 
   if (!state.dossiers.length) {
-    const dossier = createDossier(PROCEDURE_LIBRARY[0].id);
+    const dossier = createDossier(state.procedureLibrary[0]?.id ?? FALLBACK_PROCEDURE.id);
     state.dossiers.unshift(dossier);
     state.activeDossierId = dossier.id;
   }
@@ -121,7 +142,7 @@ function wireEvents() {
   });
 
   elements.demoQuestionButton.addEventListener("click", async () => {
-    await submitQuestion(DEMO_QUESTION);
+    await submitQuestion(state.demoQuestion);
   });
 
   elements.procedureList.addEventListener("click", async (event) => {
@@ -212,11 +233,12 @@ function createSession() {
     title: "Nueva conversacion",
     updatedAt: new Date().toISOString(),
     messages: [],
+    chatState: null,
   };
 }
 
 function createDossier(procedureId) {
-  const procedure = getProcedure(procedureId) ?? PROCEDURE_LIBRARY[0];
+  const procedure = getProcedure(procedureId) ?? state.procedureLibrary[0] ?? FALLBACK_PROCEDURE;
 
   return {
     id: crypto.randomUUID(),
@@ -233,7 +255,7 @@ function createDossier(procedureId) {
 }
 
 function getProcedure(procedureId) {
-  return PROCEDURE_LIBRARY.find((procedure) => procedure.id === procedureId);
+  return state.procedureLibrary.find((procedure) => procedure.id === procedureId);
 }
 
 function getActiveSession() {
@@ -282,7 +304,7 @@ function persistDossiers() {
 function seedProcedureOptions() {
   elements.dossierProcedure.innerHTML = "";
 
-  for (const procedure of PROCEDURE_LIBRARY) {
+  for (const procedure of state.procedureLibrary) {
     const option = document.createElement("option");
     option.value = procedure.id;
     option.textContent = procedure.label;
@@ -328,7 +350,8 @@ function startFreshSession() {
 }
 
 function startFreshDossier() {
-  const procedureId = elements.dossierProcedure.value || getActiveDossier()?.procedureId || PROCEDURE_LIBRARY[0].id;
+  const procedureId =
+    elements.dossierProcedure.value || getActiveDossier()?.procedureId || state.procedureLibrary[0]?.id || FALLBACK_PROCEDURE.id;
   const dossier = createDossier(procedureId);
 
   state.dossiers.unshift(dossier);
@@ -359,7 +382,7 @@ function buildDossierPrompt() {
 
 function saveActiveDossier() {
   const dossier = getActiveDossier();
-  const procedure = getProcedure(elements.dossierProcedure.value) ?? PROCEDURE_LIBRARY[0];
+  const procedure = getProcedure(elements.dossierProcedure.value) ?? state.procedureLibrary[0] ?? FALLBACK_PROCEDURE;
   if (!dossier) {
     return;
   }
@@ -378,7 +401,7 @@ function saveActiveDossier() {
 
 function syncDossierForm() {
   const dossier = getActiveDossier();
-  const procedure = getProcedure(dossier?.procedureId) ?? PROCEDURE_LIBRARY[0];
+  const procedure = getProcedure(dossier?.procedureId) ?? state.procedureLibrary[0] ?? FALLBACK_PROCEDURE;
 
   elements.dossierProcedure.value = procedure.id;
   elements.dossierGoal.value = dossier?.goal ?? procedure.goal;
@@ -420,7 +443,11 @@ async function submitQuestion(question) {
       headers: {
         "content-type": "application/json",
       },
-      body: JSON.stringify({ question }),
+      body: JSON.stringify({
+        question,
+        channel: "web",
+        state: session.chatState ?? undefined,
+      }),
     });
     const payload = await response.json();
 
@@ -432,15 +459,43 @@ async function submitQuestion(question) {
     const assistantMessage = {
       id: crypto.randomUUID(),
       role: "assistant",
+      mode: answer.mode,
+      intent: answer.intent,
+      benefitId: answer.benefitId ?? answer.intent?.benefitId ?? null,
+      lifecycleStage: answer.lifecycleStage ?? answer.intent?.lifecycleStage ?? null,
       text: answer.text,
-      summary: answer.summary,
-      keyPoints: Array.isArray(answer.keyPoints) ? answer.keyPoints : [],
+      summary: answer.caseSummary || answer.summary,
+      keyPoints:
+        Array.isArray(answer.checklist) && answer.checklist.length > 0
+          ? answer.checklist
+          : Array.isArray(answer.keyPoints)
+            ? answer.keyPoints
+            : [],
+      caseSummary: answer.caseSummary ?? answer.summary ?? "",
+      nextBestAction: answer.nextBestAction ?? "",
+      alternatives: Array.isArray(answer.alternatives) ? answer.alternatives : [],
       sources: Array.isArray(answer.sources) ? answer.sources : [],
       legalNotice: answer.legalNotice ?? "",
+      sections: answer.sections ?? {
+        immediateSteps: [],
+        documents: [],
+        warnings: [],
+        missingInfo: [],
+        caseSummary: [],
+        whatChangesTheOutcome: [],
+        nextStepNow: [],
+        deadlinesAndWarnings: [],
+        ifINSSRespondsX: [],
+        alternatives: [],
+      },
+      clarifyingQuestions: Array.isArray(answer.clarifyingQuestions) ? answer.clarifyingQuestions : [],
+      suggestedReplies: Array.isArray(answer.suggestedReplies) ? answer.suggestedReplies : [],
+      state: answer.state ?? null,
       createdAt: new Date().toISOString(),
     };
 
     session.messages.push(assistantMessage);
+    session.chatState = answer.state ?? null;
     session.updatedAt = new Date().toISOString();
     state.selectedMessageId = assistantMessage.id;
 
@@ -458,7 +513,10 @@ async function submitQuestion(question) {
       role: "assistant",
       text: "No se pudo completar la consulta en este momento. Intentalo de nuevo en unos segundos.",
       summary: "No se pudo completar la consulta en este momento.",
+      caseSummary: "Caso sin respuesta completada.",
+      nextBestAction: "",
       keyPoints: [],
+      alternatives: [],
       sources: [],
       legalNotice: "",
       createdAt: new Date().toISOString(),
@@ -546,7 +604,7 @@ function renderAll() {
 function renderProcedures() {
   elements.procedureList.innerHTML = "";
 
-  for (const procedure of PROCEDURE_LIBRARY) {
+  for (const procedure of state.procedureLibrary) {
     const card = elements.procedureTemplate.content.firstElementChild.cloneNode(true);
     card.dataset.procedureId = procedure.id;
     card.querySelector(".procedure-tag").textContent = procedure.shortLabel;
@@ -562,10 +620,15 @@ function renderProcedures() {
 }
 
 function renderPromptRow() {
-  const procedure = getProcedure(getActiveDossier()?.procedureId) ?? PROCEDURE_LIBRARY[0];
+  const procedure = getProcedure(getActiveDossier()?.procedureId) ?? state.procedureLibrary[0] ?? FALLBACK_PROCEDURE;
+  const latestAssistantMessage = getLatestAssistantMessage();
+  const prompts =
+    Array.isArray(latestAssistantMessage?.suggestedReplies) && latestAssistantMessage.suggestedReplies.length > 0
+      ? latestAssistantMessage.suggestedReplies
+      : procedure.promptSeeds;
   elements.promptRow.innerHTML = "";
 
-  for (const prompt of procedure.promptSeeds) {
+  for (const prompt of prompts) {
     const chip = elements.promptChipTemplate.content.firstElementChild.cloneNode(true);
     chip.textContent = prompt;
     chip.dataset.prompt = prompt;
@@ -617,7 +680,7 @@ function renderMessages() {
     card.classList.add(message.role === "assistant" ? "assistant-card" : "user-card");
     card.querySelector(".message-role").textContent = message.role === "assistant" ? "Asistente" : "Tu";
     card.querySelector(".message-summary").textContent = message.summary || shorten(message.text, 120);
-    card.querySelector(".message-body").textContent = message.role === "assistant" ? compactBody(message.text) : message.text;
+    card.querySelector(".message-body").textContent = message.role === "assistant" ? extractAssistantBody(message.text) : message.text;
     card.querySelector(".message-legal").textContent = message.role === "assistant" ? message.legalNotice : "";
 
     if (message.role === "assistant") {
@@ -821,17 +884,6 @@ function extractAssistantBody(text) {
   const [withoutLegal] = withoutSources.split(/\n\s*\nAviso legal:/i);
 
   return withoutLegal.trim();
-}
-
-function compactBody(text) {
-  return shorten(
-    extractAssistantBody(text)
-      .split("\n")
-      .map((line) => line.trim())
-      .filter(Boolean)
-      .join(" "),
-    280,
-  );
 }
 
 function shorten(input, length) {

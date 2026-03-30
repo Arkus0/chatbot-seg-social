@@ -1,6 +1,7 @@
 import { PDFParse } from "pdf-parse";
 
 import type { SeedSource, SourceDocument } from "../types/documents.js";
+import { inferBenefitMetadata } from "../rag/inssCatalog.js";
 import { normalizeWhitespace } from "../utils/text.js";
 import { normalizeHtmlToText } from "./normalize.js";
 import { buildSourceSearchText } from "./sourceHints.js";
@@ -22,6 +23,11 @@ export async function loadSource(source: SeedSource): Promise<SourceDocument> {
     await parser.destroy();
     const title = source.title ?? source.url;
     const tags = source.tags ?? [];
+    const inferred = inferBenefitMetadata({
+      title,
+      url: source.url,
+      tags,
+    });
 
     return {
       url: source.url,
@@ -34,7 +40,19 @@ export async function loadSource(source: SeedSource): Promise<SourceDocument> {
         title,
         url: source.url,
         tags,
+        benefitId: source.benefitId ?? inferred.benefitId,
+        family: source.family ?? inferred.family,
+        lifecycle: source.lifecycle ?? inferred.lifecycle,
+        sourceKind: source.sourceKind ?? inferred.sourceKind,
+        formCodes: source.formCodes,
       }),
+      benefitId: source.benefitId ?? inferred.benefitId,
+      family: source.family ?? inferred.family,
+      lifecycle: source.lifecycle ?? inferred.lifecycle,
+      sourceKind: source.sourceKind ?? inferred.sourceKind,
+      requiresAuth: source.requiresAuth ?? inferred.requiresAuth,
+      supportsSms: source.supportsSms ?? inferred.supportsSms,
+      formCodes: source.formCodes,
     };
   }
 
@@ -42,6 +60,11 @@ export async function loadSource(source: SeedSource): Promise<SourceDocument> {
   const normalized = normalizeHtmlToText(html);
   const title = source.title ?? normalized.title;
   const tags = source.tags ?? [];
+  const inferred = inferBenefitMetadata({
+    title,
+    url: source.url,
+    tags,
+  });
 
   return {
     url: source.url,
@@ -54,6 +77,18 @@ export async function loadSource(source: SeedSource): Promise<SourceDocument> {
       title,
       url: source.url,
       tags,
+      benefitId: source.benefitId ?? inferred.benefitId,
+      family: source.family ?? inferred.family,
+      lifecycle: source.lifecycle ?? inferred.lifecycle,
+      sourceKind: source.sourceKind ?? inferred.sourceKind,
+      formCodes: source.formCodes,
     }),
+    benefitId: source.benefitId ?? inferred.benefitId,
+    family: source.family ?? inferred.family,
+    lifecycle: source.lifecycle ?? inferred.lifecycle,
+    sourceKind: source.sourceKind ?? inferred.sourceKind,
+    requiresAuth: source.requiresAuth ?? inferred.requiresAuth,
+    supportsSms: source.supportsSms ?? inferred.supportsSms,
+    formCodes: source.formCodes,
   };
 }

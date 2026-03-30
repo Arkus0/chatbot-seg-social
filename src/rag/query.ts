@@ -1,6 +1,13 @@
 import type { RetrievedChunk } from "../types/documents.js";
 import { countTokenMatches, tokenizeSearchText } from "../utils/text.js";
 
+export interface RetrievalIntentContext {
+  benefitId?: string;
+  family?: string;
+  operation?: string;
+  lifecycle?: string;
+}
+
 const SPANISH_STOPWORDS = new Set([
   "como",
   "para",
@@ -83,6 +90,14 @@ const EXPANSION_RULES = [
   {
     pattern: /\bincapacidad permanente\b|invalidez/i,
     expansion: "incapacidad permanente concepto grados invalidez pension trabajador",
+  },
+  {
+    pattern: /\bportal de prestaciones\b|\bprestaciones\.seg-social\b/i,
+    expansion: "portal de prestaciones de la seguridad social solicitudes comunicaciones servicios inss",
+  },
+  {
+    pattern: /\bmis expedientes\b|\bexpediente\b|\bseguimiento\b|\bestado de mi solicitud\b/i,
+    expansion: "mis expedientes administrativos seguimiento expediente inss estado de solicitud seguridad social",
   },
   {
     pattern: /\bincapacidad permanente parcial\b|incapacidad parcial|lesiones permanentes no incapacitantes|lesiones permanentes no invalidantes/i,
@@ -185,7 +200,15 @@ const EXPANSION_RULES = [
   },
   {
     pattern: /\bcaiss\b|centro de atencion e informacion|atencion presencial inss/i,
-    expansion: "caiss centro de atencion e informacion de la seguridad social cita previa inss",
+    expansion: "caiss centro de atencion e informacion de la seguridad social cita previa inss atencion presencial",
+  },
+  {
+    pattern: /\bportal prestaciones\b|\bsolicitudes y comunicaciones\b/i,
+    expansion: "solicitudes y comunicaciones de prestaciones de la seguridad social inss portal de prestaciones",
+  },
+  {
+    pattern: /\bcertificado\b|\bcl@ve\b|\bclave\b|\bsin identificacion\b/i,
+    expansion: "identificacion certificado digital clave sms sin certificado seguridad social inss",
   },
   {
     pattern: /\bconvenio especial\b/i,
@@ -215,6 +238,30 @@ const EXPANSION_RULES = [
     pattern: /\bcuantia\b|importe|cuanto cobro/i,
     expansion: "cuantia importe porcentaje base reguladora abono pension prestacion",
   },
+  {
+    pattern: /\bsovi\b|seguro obligatorio de vejez e invalidez/i,
+    expansion: "sovi pension seguro obligatorio de vejez e invalidez requisitos compatibilidades solicitud",
+  },
+  {
+    pattern: /\bseguro escolar\b/i,
+    expansion: "seguro escolar beneficiarios riesgos cubiertos incompatibilidades gestion solicitud",
+  },
+  {
+    pattern: /\bterrorismo\b|actos terroristas/i,
+    expansion: "prestaciones por actos terroristas pensiones extraordinarias asistencia sanitaria servicios sociales",
+  },
+  {
+    pattern: /\bviolencia contra la mujer\b|violencia de genero/i,
+    expansion: "prestaciones por violencia contra la mujer seguridad social inss",
+  },
+  {
+    pattern: /\bsindrome toxico\b/i,
+    expansion: "prestaciones por sindrome toxico seguridad social inss",
+  },
+  {
+    pattern: /\bamianto\b|asbestos/i,
+    expansion: "prestaciones por amianto seguridad social inss",
+  },
 ];
 
 function tokenize(input: string): string[] {
@@ -242,6 +289,38 @@ const INTENT_SCORING_RULES: IntentScoringRule[] = [
     penalizeTags: ["nuss"],
     boostAmount: 0.2,
     penaltyAmount: 0.16,
+  },
+  {
+    name: "inss-operations",
+    anyTokens: ["expediente", "requerimiento", "subsanacion", "notificacion"],
+    boostTags: [
+      "operativa-inss",
+      "estado-expediente",
+      "estado-solicitud",
+      "subsanacion",
+      "subsanacion-requerimiento",
+      "requerimiento",
+      "notificacion",
+    ],
+    boostAmount: 0.24,
+  },
+  {
+    name: "health-assistance",
+    anyTokens: ["tse", "cps", "beneficiario", "sanitaria", "sanitario"],
+    boostTags: ["asistencia-sanitaria", "tse", "cps", "beneficiario"],
+    boostAmount: 0.2,
+  },
+  {
+    name: "survival-benefits",
+    anyTokens: ["viudedad", "orfandad", "fallecimiento"],
+    boostTags: ["supervivencia", "viudedad", "orfandad", "favor-de-familiares"],
+    boostAmount: 0.18,
+  },
+  {
+    name: "form-guidance",
+    anyTokens: ["rellenar", "cumplimentar", "casilla", "formulario", "modelo"],
+    boostTags: ["formulario", "rellenar", "solicitud"],
+    boostAmount: 0.18,
   },
 ];
 
@@ -303,7 +382,67 @@ function applySourceDiversity(
   return selected;
 }
 
-function computeBoost(questionTokens: string[], chunk: RetrievedChunk): number {
+function getExpectedSourceKinds(operation?: string): string[] {
+  switch (operation) {
+    case "rellenado-formulario":
+      return ["form", "benefit-page"];
+    case "subsanacion-requerimiento":
+    case "notificacion":
+      return ["notification", "tracking", "service"];
+    case "estado-expediente":
+      return ["tracking", "service"];
+    case "cita-caiss":
+      return ["service"];
+    case "sin-certificado-sms":
+      return ["service", "tracking"];
+    case "revision":
+    case "reclamacion-previa":
+    case "silencio-administrativo":
+      return ["review", "notification", "tracking"];
+    case "documentacion":
+      return ["form", "benefit-page"];
+    default:
+      return ["benefit-page", "service"];
+  }
+}
+
+function computeContextBoost(context: RetrievalIntentContext | undefined, chunk: RetrievedChunk): number {
+  if (!context) {
+    return 0;
+  }
+
+  let boost = 0;
+
+  if (context.benefitId && chunk.metadata.benefitId === context.benefitId) {
+    boost += 0.22;
+  } else if (context.benefitId && chunk.metadata.benefitId && chunk.metadata.benefitId !== context.benefitId) {
+    boost -= 0.08;
+  } else if (context.family && chunk.metadata.family === context.family) {
+    boost += 0.08;
+  } else if (context.family && chunk.metadata.family && chunk.metadata.family !== context.family) {
+    boost -= 0.03;
+  }
+
+  if (context.lifecycle && chunk.metadata.lifecycle === context.lifecycle) {
+    boost += 0.12;
+  }
+
+  if (context.operation) {
+    const expectedKinds = getExpectedSourceKinds(context.operation);
+    if (chunk.metadata.sourceKind && expectedKinds.includes(chunk.metadata.sourceKind)) {
+      boost += 0.11;
+    }
+
+    if (context.operation === "sin-certificado-sms") {
+      boost += chunk.metadata.supportsSms ? 0.16 : -0.04;
+      boost += chunk.metadata.requiresAuth ? -0.04 : 0.02;
+    }
+  }
+
+  return boost;
+}
+
+function computeBoost(questionTokens: string[], chunk: RetrievedChunk, context?: RetrievalIntentContext): number {
   const titleMatches = countTokenMatches(questionTokens, chunk.metadata.title);
   const tagMatches = countTokenMatches(questionTokens, chunk.metadata.tags.join(" "));
   const searchMatches = countTokenMatches(
@@ -337,6 +476,7 @@ function computeBoost(questionTokens: string[], chunk: RetrievedChunk): number {
   }
 
   boost += getIntentScoreAdjustments(questionTokens, chunk);
+  boost += computeContextBoost(context, chunk);
 
   return boost;
 }
@@ -353,13 +493,18 @@ export function expandQuestion(question: string): string {
   return expanded;
 }
 
-export function rerankRetrievedChunks(question: string, chunks: RetrievedChunk[], topK: number): RetrievedChunk[] {
+export function rerankRetrievedChunks(
+  question: string,
+  chunks: RetrievedChunk[],
+  topK: number,
+  context?: RetrievalIntentContext,
+): RetrievedChunk[] {
   const questionTokens = tokenize(question);
 
   const ranked = [...chunks]
     .map((chunk) => ({
       ...chunk,
-      rerankScore: chunk.score + computeBoost(questionTokens, chunk),
+      rerankScore: chunk.score + computeBoost(questionTokens, chunk, context),
     }))
     .sort((left, right) => (right.rerankScore ?? right.score) - (left.rerankScore ?? left.score));
 
