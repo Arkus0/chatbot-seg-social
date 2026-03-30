@@ -26,6 +26,7 @@ export async function loadSource(source: SeedSource): Promise<SourceDocument> {
       text: normalizeWhitespace(parsed.text),
       sourceType,
       tags: source.tags ?? [],
+      priority: source.priority ?? 1,
     };
   }
 
@@ -38,5 +39,6 @@ export async function loadSource(source: SeedSource): Promise<SourceDocument> {
     text: normalized.text,
     sourceType,
     tags: source.tags ?? [],
+    priority: source.priority ?? 1,
   };
 }

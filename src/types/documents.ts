@@ -3,6 +3,7 @@ export interface SeedSource {
   title?: string;
   type?: "html" | "pdf";
   tags?: string[];
+  priority?: number;
   enabled?: boolean;
 }
 
@@ -12,6 +13,7 @@ export interface SourceDocument {
   text: string;
   sourceType: "html" | "pdf";
   tags: string[];
+  priority: number;
 }
 
 export interface ChunkMetadata {
@@ -20,10 +22,12 @@ export interface ChunkMetadata {
   sourceType: string;
   chunkIndex: number;
   tags: string[];
+  priority: number;
 }
 
 export interface RetrievedChunk {
   pageContent: string;
   score: number;
+  rerankScore?: number;
   metadata: ChunkMetadata;
 }

@@ -36,6 +36,18 @@ async function callTelegramApi<T>(method: string, payload: Record<string, unknow
   return (await response.json()) as TelegramApiResponse<T>;
 }
 
+async function getTelegramApi<T>(method: string): Promise<TelegramApiResponse<T>> {
+  const response = await fetch(buildTelegramApiUrl(method), {
+    method: "GET",
+  });
+
+  if (!response.ok) {
+    throw new Error(`Telegram API request failed with status ${response.status}`);
+  }
+
+  return (await response.json()) as TelegramApiResponse<T>;
+}
+
 export async function setTelegramWebhook(): Promise<TelegramApiResponse<boolean>> {
   const env = getEnv();
   assertWebhookUrlEnv(env);
@@ -51,5 +63,24 @@ export async function setTelegramWebhook(): Promise<TelegramApiResponse<boolean>
 export async function deleteTelegramWebhook(): Promise<TelegramApiResponse<boolean>> {
   return callTelegramApi<boolean>("deleteWebhook", {
     drop_pending_updates: true,
+  });
+}
+
+export async function getTelegramWebhookInfo(): Promise<TelegramApiResponse<Record<string, unknown>>> {
+  return getTelegramApi<Record<string, unknown>>("getWebhookInfo");
+}
+
+export async function setTelegramCommands(): Promise<TelegramApiResponse<boolean>> {
+  return callTelegramApi<boolean>("setMyCommands", {
+    commands: [
+      {
+        command: "start",
+        description: "Iniciar el asistente",
+      },
+      {
+        command: "help",
+        description: "Ver ayuda y ejemplos",
+      },
+    ],
   });
 }

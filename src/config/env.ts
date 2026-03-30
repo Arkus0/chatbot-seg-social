@@ -1,27 +1,44 @@
 import dotenv from "dotenv";
 import { z } from "zod";
 
-dotenv.config();
+dotenv.config({ quiet: true });
+
+const optionalNonEmptyString = z.preprocess((value) => {
+  if (typeof value === "string" && value.trim() === "") {
+    return undefined;
+  }
+
+  return value;
+}, z.string().min(1).optional());
+
+const booleanFromString = z.preprocess((value) => {
+  if (typeof value === "string") {
+    return value.trim().toLowerCase() === "true";
+  }
+
+  return value;
+}, z.boolean().default(false));
 
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   BOT_MODE: z.enum(["echo", "llm", "rag"]).default("echo"),
-  TELEGRAM_BOT_TOKEN: z.string().min(1).optional(),
-  TELEGRAM_WEBHOOK_SECRET: z.string().min(1).optional(),
+  TELEGRAM_BOT_TOKEN: optionalNonEmptyString,
+  TELEGRAM_WEBHOOK_SECRET: optionalNonEmptyString,
   APP_BASE_URL: z.string().url().optional(),
   LLM_PROVIDER: z.enum(["gemini", "groq"]).default("gemini"),
-  GEMINI_API_KEY: z.string().min(1).optional(),
+  GEMINI_API_KEY: optionalNonEmptyString,
   GEMINI_MODEL: z.string().default("gemini-2.5-flash-lite"),
-  GROQ_API_KEY: z.string().min(1).optional(),
+  GROQ_API_KEY: optionalNonEmptyString,
   GROQ_MODEL: z.string().default("llama-3.1-8b-instant"),
   EMBEDDING_PROVIDER: z.enum(["gemini"]).default("gemini"),
   EMBEDDING_MODEL: z.string().default("gemini-embedding-001"),
-  EMBEDDING_DIMENSION: z.coerce.number().int().positive().default(768),
-  PINECONE_API_KEY: z.string().min(1).optional(),
-  PINECONE_INDEX_NAME: z.string().min(1).optional(),
+  EMBEDDING_DIMENSION: z.coerce.number().int().positive().default(3072),
+  PINECONE_API_KEY: optionalNonEmptyString,
+  PINECONE_INDEX_NAME: optionalNonEmptyString,
   PINECONE_NAMESPACE: z.string().default("prod"),
   PINECONE_CLOUD: z.enum(["aws", "gcp", "azure"]).default("aws"),
   PINECONE_REGION: z.string().default("us-east-1"),
+  RESET_VECTOR_NAMESPACE: booleanFromString,
   RAG_TOP_K: z.coerce.number().int().min(1).max(20).default(5),
   RAG_MIN_SCORE: z.coerce.number().min(0).max(1).default(0.75),
   MAX_CONTEXT_CHARS: z.coerce.number().int().min(1000).default(12000),

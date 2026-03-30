@@ -2,14 +2,13 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
     "api/*.ts": {
-      "runtime": "nodejs22.x",
       "maxDuration": 30
     }
   },
   "rewrites": [
     {
       "source": "/",
-      "destination": "/api/health"
+      "destination": "/index.html"
     }
   ]
 }

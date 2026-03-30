@@ -1,20 +1,33 @@
 import type { Context, Telegraf } from "telegraf";
+import { Markup } from "telegraf";
 
-import { getEnv } from "../config/env.js";
-import { answerWithLlm } from "../rag/answerWithLlm.js";
-import { answerQuestion } from "../rag/answerQuestion.js";
+import { getAnswer } from "../rag/getAnswer.js";
+import type { AnswerPayload, AnswerSource } from "../types/answers.js";
 import { logger } from "../utils/logger.js";
 import { splitTelegramMessage } from "../utils/text.js";
 
-async function replyInChunks(ctx: Context, message: string): Promise<void> {
-  for (const chunk of splitTelegramMessage(message)) {
+function buildSourceButtonLabel(source: AnswerSource, index: number): string {
+  const compactTitle = source.title.replace(/\s+/g, " ").trim();
+  const clippedTitle = compactTitle.length > 42 ? `${compactTitle.slice(0, 39).trimEnd()}...` : compactTitle;
+  return `${index + 1}. ${clippedTitle}`;
+}
+
+function buildSourceKeyboard(sources: AnswerSource[]) {
+  const rows = sources.map((source, index) => [Markup.button.url(buildSourceButtonLabel(source, index), source.url)]);
+  return Markup.inlineKeyboard(rows);
+}
+
+async function replyWithAnswer(ctx: Context, answer: AnswerPayload): Promise<void> {
+  for (const chunk of splitTelegramMessage(answer.text)) {
     await ctx.reply(chunk);
+  }
+
+  if (answer.sources.length > 0) {
+    await ctx.reply("Abrir fuentes oficiales:", buildSourceKeyboard(answer.sources));
   }
 }
 
 export function registerHandlers(bot: Telegraf): void {
-  const env = getEnv();
-
   bot.start(async (ctx) => {
     await ctx.reply(
       [
@@ -50,14 +63,8 @@ export function registerHandlers(bot: Telegraf): void {
 
     try {
       await ctx.sendChatAction("typing");
-      const answer =
-        env.BOT_MODE === "echo"
-          ? `Eco: ${question}`
-          : env.BOT_MODE === "llm"
-            ? await answerWithLlm(question)
-            : await answerQuestion(question);
-
-      await replyInChunks(ctx, answer);
+      const answer = await getAnswer(question);
+      await replyWithAnswer(ctx, answer);
     } catch (error) {
       logger.error("Failed to answer user question", {
         error,

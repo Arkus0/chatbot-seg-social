@@ -1,8 +1,9 @@
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 
-import { getChatModel } from "../providers/llm.js";
+import type { AnswerPayload } from "../types/answers.js";
 import { extractMessageText } from "../utils/text.js";
-import { buildLegalNotice } from "./formatter.js";
+import { composeStandaloneAnswerPayload } from "./formatter.js";
+import { invokePromptWithLlmFallback } from "./invokeWithFallback.js";
 
 function buildLlmOnlySystemPrompt(): string {
   return [
@@ -14,14 +15,13 @@ function buildLlmOnlySystemPrompt(): string {
   ].join("\n");
 }
 
-export async function answerWithLlm(question: string): Promise<string> {
+export async function answerWithLlm(question: string): Promise<AnswerPayload> {
   const prompt = ChatPromptTemplate.fromMessages([
     ["system", buildLlmOnlySystemPrompt()],
     ["human", "{question}"],
   ]);
 
-  const chain = prompt.pipe(getChatModel());
-  const response = await chain.invoke({ question });
+  const response = await invokePromptWithLlmFallback(prompt, { question });
 
-  return [extractMessageText(response.content), buildLegalNotice()].filter(Boolean).join("\n\n");
+  return composeStandaloneAnswerPayload(extractMessageText((response as { content?: unknown }).content));
 }

@@ -10,6 +10,7 @@ Bot de Telegram en Node.js + TypeScript desplegable en Vercel, con arquitectura 
 - Embeddings: Gemini
 - Vector DB: Pinecone Starter
 - Modelo de respuesta: Gemini o Groq
+- Dimensión de embeddings por defecto: `3072` con la integración actual de Gemini en LangChain
 
 ## Flujo
 

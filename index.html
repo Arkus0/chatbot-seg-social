@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestor Seguridad Social no oficial</title>
+    <meta
+      name="description"
+      content="Consulta fuentes oficiales, organiza expedientes y prepara tramites de la Seguridad Social con una interfaz mas clara."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Manrope:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="site-header">
+        <div class="brand-block">
+          <p class="eyebrow">Gestor no oficial</p>
+          <h1>Seguridad Social, con mejor contexto.</h1>
+          <p class="brand-copy">
+            Un espacio para consultar, guardar y convertir informacion dispersa en un expediente utilizable.
+          </p>
+        </div>
+
+        <div class="header-status">
+          <span class="status-pill">Fuentes oficiales</span>
+          <span class="status-pill">Telegram + Web</span>
+          <span class="status-pill" id="health-pill">Backend activo</span>
+        </div>
+      </header>
+
+      <section class="hero-strip">
+        <article class="hero-card hero-primary">
+          <p class="hero-label">Como usarlo</p>
+          <h2>Pregunta, estructura y prepara.</h2>
+          <p>
+            Empieza con una duda concreta, guarda la respuesta util y transforma el resultado en un expediente con
+            checklist, notas y enlaces oficiales.
+          </p>
+          <div class="hero-actions">
+            <button class="primary-btn" id="new-session-btn" type="button">Nueva consulta</button>
+            <button class="ghost-btn" id="demo-question-btn" type="button">Probar un caso real</button>
+          </div>
+        </article>
+
+        <article class="hero-card hero-secondary">
+          <p class="hero-label">En esta version</p>
+          <ul class="hero-list">
+            <li>Resumen visual de respuestas y fuentes clicables.</li>
+            <li>Expedientes locales para seguir un tramite sin perder el hilo.</li>
+            <li>Checklist reutilizable cuando la respuesta trae pasos o documentos.</li>
+          </ul>
+        </article>
+      </section>
+
+      <main class="workspace">
+        <aside class="rail rail-left">
+          <section class="panel rail-section">
+            <div class="section-head">
+              <div>
+                <p class="panel-kicker">Biblioteca</p>
+                <h2>Tramites frecuentes</h2>
+              </div>
+            </div>
+            <div class="procedure-list" id="procedure-list"></div>
+          </section>
+
+          <section class="panel rail-section">
+            <div class="section-head">
+              <div>
+                <p class="panel-kicker">Conversaciones</p>
+                <h2>Historial</h2>
+              </div>
+              <button class="ghost-btn small" id="new-session-side-btn" type="button">Nueva</button>
+            </div>
+            <div class="session-list" id="session-list"></div>
+          </section>
+        </aside>
+
+        <section class="panel panel-chat">
+          <div class="chat-header">
+            <div>
+              <p class="panel-kicker">Consulta asistida</p>
+              <h2 id="conversation-title">Nueva conversacion</h2>
+            </div>
+            <div class="conversation-meta">
+              <span class="conversation-chip" id="active-procedure-chip">Sin expediente activo</span>
+            </div>
+          </div>
+
+          <div class="prompt-row" id="prompt-row"></div>
+
+          <div class="message-stream" id="message-stream">
+            <article class="message-card assistant-card">
+              <p class="message-role">Asistente</p>
+              <h3 class="message-summary">Empieza con una duda concreta.</h3>
+              <p class="message-body">
+                Ejemplo: que documentacion necesito para solicitar la jubilacion anticipada o como pedir una prestacion
+                por viudedad.
+              </p>
+            </article>
+          </div>
+
+          <form class="composer" id="chat-form">
+            <label class="sr-only" for="chat-input">Escribe tu consulta</label>
+            <textarea
+              id="chat-input"
+              name="question"
+              rows="4"
+              placeholder="Escribe una duda concreta para obtener una respuesta resumida y un siguiente paso util."
+            ></textarea>
+            <div class="composer-actions">
+              <p class="subtle-note">
+                No es asesoramiento juridico ni sustituye la sede electronica o la atencion oficial.
+              </p>
+              <button class="primary-btn" id="send-btn" type="submit">Consultar</button>
+            </div>
+          </form>
+        </section>
+
+        <aside class="rail rail-right">
+          <section class="panel rail-section dossier-panel">
+            <div class="section-head">
+              <div>
+                <p class="panel-kicker">Expediente</p>
+                <h2>Tramite activo</h2>
+              </div>
+            </div>
+
+            <form class="dossier-form" id="dossier-form">
+              <label>
+                Tramite
+                <select id="dossier-procedure" name="procedure"></select>
+              </label>
+
+              <label>
+                Objetivo
+                <select id="dossier-goal" name="goal">
+                  <option value="documentacion y pasos">Documentacion y pasos</option>
+                  <option value="requisitos y plazos">Requisitos y plazos</option>
+                  <option value="cuantia y compatibilidades">Cuantia y compatibilidades</option>
+                  <option value="solicitud y presentacion">Solicitud y presentacion</option>
+                </select>
+              </label>
+
+              <label>
+                Situacion actual
+                <textarea
+                  id="dossier-situation"
+                  name="situation"
+                  rows="4"
+                  placeholder="Resume edad, cotizacion, situacion laboral o cualquier dato relevante."
+                ></textarea>
+              </label>
+
+              <label>
+                Documentos o datos disponibles
+                <textarea
+                  id="dossier-documents"
+                  name="documents"
+                  rows="3"
+                  placeholder="DNI, informes, certificado de empresa, libro de familia, vida laboral..."
+                ></textarea>
+              </label>
+
+              <label>
+                Notas privadas
+                <textarea
+                  id="dossier-notes"
+                  name="notes"
+                  rows="3"
+                  placeholder="Preguntas pendientes, huecos de documentacion o proximos pasos."
+                ></textarea>
+              </label>
+
+              <div class="dossier-actions">
+                <button class="ghost-btn" id="save-dossier-btn" type="button">Guardar expediente</button>
+                <button class="primary-btn" type="submit">Generar checklist</button>
+              </div>
+            </form>
+          </section>
+
+          <section class="panel rail-section">
+            <div class="section-head">
+              <div>
+                <p class="panel-kicker">Checklist</p>
+                <h2>Proximo trabajo</h2>
+              </div>
+            </div>
+            <div class="checklist-list" id="checklist-list"></div>
+            <p class="subtle-note" id="checklist-empty">Todavia no hay checklist generado para este expediente.</p>
+          </section>
+
+          <section class="panel rail-section">
+            <div class="section-head">
+              <div>
+                <p class="panel-kicker">Guardado local</p>
+                <h2>Expedientes</h2>
+              </div>
+              <span class="status-pill" id="dossier-count">0</span>
+            </div>
+            <div class="dossier-list" id="dossier-list"></div>
+          </section>
+        </aside>
+      </main>
+    </div>
+
+    <template id="procedure-template">
+      <button class="procedure-card" type="button">
+        <span class="procedure-tag"></span>
+        <strong class="procedure-title"></strong>
+        <span class="procedure-copy"></span>
+      </button>
+    </template>
+
+    <template id="session-item-template">
+      <button class="session-item" type="button">
+        <span class="session-title"></span>
+        <span class="session-time"></span>
+      </button>
+    </template>
+
+    <template id="prompt-chip-template">
+      <button class="prompt-chip" type="button"></button>
+    </template>
+
+    <template id="message-template">
+      <article class="message-card">
+        <p class="message-role"></p>
+        <h3 class="message-summary"></h3>
+        <p class="message-body"></p>
+        <ul class="message-points"></ul>
+        <div class="message-sources"></div>
+        <p class="message-legal"></p>
+      </article>
+    </template>
+
+    <template id="checklist-item-template">
+      <label class="checklist-item">
+        <input class="checklist-checkbox" type="checkbox" />
+        <span class="checklist-text"></span>
+      </label>
+    </template>
+
+    <template id="dossier-item-template">
+      <article class="dossier-item">
+        <div>
+          <p class="dossier-title"></p>
+          <p class="dossier-summary"></p>
+        </div>
+        <button class="ghost-btn small dossier-load-btn" type="button">Cargar</button>
+      </article>
+    </template>
+
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>

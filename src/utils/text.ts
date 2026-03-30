@@ -7,7 +7,34 @@ export function truncateText(input: string, maxLength: number): string {
     return input;
   }
 
-  return `${input.slice(0, maxLength - 1).trimEnd()}…`;
+  return `${input.slice(0, maxLength - 3).trimEnd()}...`;
+}
+
+export function normalizeSearchText(input: string): string {
+  return input
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .toLowerCase();
+}
+
+export function tokenizeSearchText(
+  input: string,
+  options?: {
+    minLength?: number;
+    stopwords?: Iterable<string>;
+  },
+): string[] {
+  const minLength = options?.minLength ?? 3;
+  const stopwords = new Set(options?.stopwords ?? []);
+
+  return normalizeSearchText(input)
+    .split(/[^a-z0-9]+/g)
+    .filter((token) => token.length >= minLength && !stopwords.has(token));
+}
+
+export function countTokenMatches(tokens: string[], haystack: string): number {
+  const normalizedHaystack = normalizeSearchText(haystack);
+  return tokens.filter((token) => normalizedHaystack.includes(token)).length;
 }
 
 export function dedupeBy<T>(items: T[], getKey: (item: T) => string): T[] {

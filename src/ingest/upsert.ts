@@ -11,6 +11,38 @@ function buildChunkId(url: string, chunkIndex: number): string {
   return createHash("sha256").update(`${url}:${chunkIndex}`).digest("hex");
 }
 
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+async function addDocumentsWithRetry(
+  store: Awaited<ReturnType<typeof getVectorStore>>,
+  documents: Awaited<ReturnType<typeof chunkSourceDocument>>,
+  ids: string[],
+  namespace: string,
+): Promise<void> {
+  let lastError: unknown;
+
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    try {
+      await store.addDocuments(documents, { ids, namespace });
+      return;
+    } catch (error) {
+      lastError = error;
+      logger.warn("Upsert attempt failed", {
+        attempt,
+        namespace,
+        error,
+      });
+      await sleep(attempt * 1500);
+    }
+  }
+
+  throw lastError;
+}
+
 export async function ensurePineconeIndex(): Promise<void> {
   const env = getEnv();
   assertRagEnv(env);
@@ -45,7 +77,25 @@ export async function ingestConfiguredSources(): Promise<void> {
   await ensurePineconeIndex();
 
   const store = await getVectorStore();
+  const env = getEnv();
   const sources = await loadSeedSources();
+
+  if (env.RESET_VECTOR_NAMESPACE) {
+    logger.info("Resetting Pinecone namespace before ingestion", {
+      index: env.PINECONE_INDEX_NAME,
+      namespace: env.PINECONE_NAMESPACE,
+    });
+
+    await store.delete({
+      deleteAll: true,
+      namespace: env.PINECONE_NAMESPACE,
+    });
+  } else {
+    logger.info("Skipping namespace reset; ingestion will upsert incrementally", {
+      index: env.PINECONE_INDEX_NAME,
+      namespace: env.PINECONE_NAMESPACE,
+    });
+  }
 
   for (const source of sources) {
     logger.info("Loading source", { url: source.url });
@@ -54,11 +104,13 @@ export async function ingestConfiguredSources(): Promise<void> {
     const documents = await chunkSourceDocument(loaded);
     const ids = documents.map((document) => buildChunkId(document.metadata.url, document.metadata.chunkIndex));
 
-    await store.addDocuments(documents, { ids });
+    await addDocumentsWithRetry(store, documents, ids, env.PINECONE_NAMESPACE);
 
     logger.info("Upsert completed", {
       url: source.url,
       chunks: documents.length,
     });
+
+    await sleep(300);
   }
 }

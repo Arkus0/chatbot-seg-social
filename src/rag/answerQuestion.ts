@@ -1,18 +1,20 @@
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 
 import { getEnv } from "../config/env.js";
-import { getChatModel } from "../providers/llm.js";
+import type { AnswerPayload } from "../types/answers.js";
 import { extractMessageText } from "../utils/text.js";
-import { buildNoContextAnswer, composeTelegramAnswer, formatRetrievedChunks } from "./formatter.js";
+import { buildRetrievalOnlyAnswer, isRetriableGenerationError } from "./fallback.js";
+import { buildNoContextAnswerPayload, composeAnswerPayload, formatRetrievedChunks } from "./formatter.js";
+import { invokePromptWithLlmFallback } from "./invokeWithFallback.js";
 import { buildSystemPrompt, buildUserPrompt } from "./prompt.js";
 import { retrieveRelevantChunks } from "./retriever.js";
 
-export async function answerQuestion(question: string): Promise<string> {
+export async function answerQuestion(question: string): Promise<AnswerPayload> {
   const env = getEnv();
   const retrievedChunks = await retrieveRelevantChunks(question);
 
   if (retrievedChunks.length === 0) {
-    return buildNoContextAnswer();
+    return buildNoContextAnswerPayload();
   }
 
   const context = formatRetrievedChunks(retrievedChunks, env.MAX_CONTEXT_CHARS);
@@ -21,10 +23,17 @@ export async function answerQuestion(question: string): Promise<string> {
     ["human", "{input}"],
   ]);
 
-  const chain = prompt.pipe(getChatModel());
-  const response = await chain.invoke({
-    input: buildUserPrompt(question, context),
-  });
+  try {
+    const response = await invokePromptWithLlmFallback(prompt, {
+      input: buildUserPrompt(question, context),
+    });
 
-  return composeTelegramAnswer(extractMessageText(response.content), retrievedChunks);
+    return composeAnswerPayload(extractMessageText((response as { content?: unknown }).content), retrievedChunks);
+  } catch (error) {
+    if (isRetriableGenerationError(error)) {
+      return buildRetrievalOnlyAnswer(question, retrievedChunks);
+    }
+
+    throw error;
+  }
 }

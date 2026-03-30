@@ -21,6 +21,7 @@ export async function chunkSourceDocument(source: SourceDocument): Promise<Docum
           sourceType: source.sourceType,
           chunkIndex,
           tags: source.tags,
+          priority: source.priority,
         },
       }),
   );

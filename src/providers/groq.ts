@@ -1,6 +1,6 @@
 import { ChatGroq } from "@langchain/groq";
 
-import { assertGenerationEnv, getEnv } from "../config/env.js";
+import { getEnv } from "../config/env.js";
 
 let groqChatModel: ChatGroq | undefined;
 
@@ -10,7 +10,10 @@ export function getGroqChatModel(): ChatGroq {
   }
 
   const env = getEnv();
-  assertGenerationEnv(env);
+
+  if (!env.GROQ_API_KEY) {
+    throw new Error("Missing GROQ_API_KEY");
+  }
 
   groqChatModel = new ChatGroq({
     apiKey: env.GROQ_API_KEY,

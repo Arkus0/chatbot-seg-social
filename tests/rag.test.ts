@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { buildNoContextAnswer, composeTelegramAnswer } from "../src/rag/formatter.js";
+import { buildNoContextAnswer, composeAnswerPayload } from "../src/rag/formatter.js";
 
 describe("formatter", () => {
   it("returns a legal notice when there is no context", () => {
@@ -8,7 +8,7 @@ describe("formatter", () => {
   });
 
   it("appends sources and legal notice to the answer", () => {
-    const response = composeTelegramAnswer("Texto base", [
+    const response = composeAnswerPayload("Texto base", [
       {
         pageContent: "contenido",
         score: 0.9,
@@ -18,11 +18,13 @@ describe("formatter", () => {
           sourceType: "html",
           chunkIndex: 0,
           tags: [],
+          priority: 1,
         },
       },
     ]);
 
-    expect(response).toContain("Fuentes oficiales");
-    expect(response).toContain("Aviso legal");
+    expect(response.text).toContain("Fuentes oficiales");
+    expect(response.text).toContain("Aviso legal");
+    expect(response.sources[0]?.url).toBe("https://example.com");
   });
 });

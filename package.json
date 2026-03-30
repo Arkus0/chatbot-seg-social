@@ -5,7 +5,7 @@
   "type": "module",
   "description": "Chatbot de Telegram para asistencia informativa sobre la Seguridad Social española con arquitectura RAG y coste cero.",
   "engines": {
-    "node": ">=20.0.0"
+    "node": "22.x"
   },
   "scripts": {
     "dev": "vercel dev",
@@ -14,8 +14,13 @@
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "ingest": "tsx scripts/ingest.ts",
+    "build:corpus": "tsx scripts/build-fallback-corpus.ts",
+    "ask": "tsx scripts/ask.ts",
+    "smoke": "tsx scripts/smoke.ts",
     "set:webhook": "tsx scripts/set-webhook.ts",
-    "delete:webhook": "tsx scripts/delete-webhook.ts"
+    "delete:webhook": "tsx scripts/delete-webhook.ts",
+    "webhook:info": "tsx scripts/get-webhook-info.ts",
+    "telegram:commands": "tsx scripts/set-commands.ts"
   },
   "dependencies": {
     "@langchain/core": "^1.1.36",

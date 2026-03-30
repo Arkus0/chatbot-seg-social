@@ -1,10 +1,11 @@
 import { TaskType } from "@google/generative-ai";
 import { ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 
-import { assertGenerationEnv, getEnv } from "../config/env.js";
+import { getEnv } from "../config/env.js";
 
 let geminiChatModel: ChatGoogleGenerativeAI | undefined;
-let geminiEmbeddings: GoogleGenerativeAIEmbeddings | undefined;
+let geminiDocumentEmbeddings: GoogleGenerativeAIEmbeddings | undefined;
+let geminiQueryEmbeddings: GoogleGenerativeAIEmbeddings | undefined;
 
 export function getGeminiChatModel(): ChatGoogleGenerativeAI {
   if (geminiChatModel) {
@@ -12,7 +13,10 @@ export function getGeminiChatModel(): ChatGoogleGenerativeAI {
   }
 
   const env = getEnv();
-  assertGenerationEnv(env);
+
+  if (!env.GEMINI_API_KEY) {
+    throw new Error("Missing GEMINI_API_KEY");
+  }
 
   geminiChatModel = new ChatGoogleGenerativeAI({
     apiKey: env.GEMINI_API_KEY,
@@ -24,9 +28,9 @@ export function getGeminiChatModel(): ChatGoogleGenerativeAI {
   return geminiChatModel;
 }
 
-export function getGeminiEmbeddings(): GoogleGenerativeAIEmbeddings {
-  if (geminiEmbeddings) {
-    return geminiEmbeddings;
+export function getGeminiDocumentEmbeddings(): GoogleGenerativeAIEmbeddings {
+  if (geminiDocumentEmbeddings) {
+    return geminiDocumentEmbeddings;
   }
 
   const env = getEnv();
@@ -35,12 +39,32 @@ export function getGeminiEmbeddings(): GoogleGenerativeAIEmbeddings {
     throw new Error("Missing GEMINI_API_KEY");
   }
 
-  geminiEmbeddings = new GoogleGenerativeAIEmbeddings({
+  geminiDocumentEmbeddings = new GoogleGenerativeAIEmbeddings({
     apiKey: env.GEMINI_API_KEY,
     model: env.EMBEDDING_MODEL,
     taskType: TaskType.RETRIEVAL_DOCUMENT,
     title: "Seguridad Social España",
   });
 
-  return geminiEmbeddings;
+  return geminiDocumentEmbeddings;
+}
+
+export function getGeminiQueryEmbeddings(): GoogleGenerativeAIEmbeddings {
+  if (geminiQueryEmbeddings) {
+    return geminiQueryEmbeddings;
+  }
+
+  const env = getEnv();
+
+  if (!env.GEMINI_API_KEY) {
+    throw new Error("Missing GEMINI_API_KEY");
+  }
+
+  geminiQueryEmbeddings = new GoogleGenerativeAIEmbeddings({
+    apiKey: env.GEMINI_API_KEY,
+    model: env.EMBEDDING_MODEL,
+    taskType: TaskType.RETRIEVAL_QUERY,
+  });
+
+  return geminiQueryEmbeddings;
 }
