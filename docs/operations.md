@@ -6,16 +6,36 @@
 - Team: `team_l8PhmvuV6TYXf87kaVVxX8zV`
 - URL canonica: `https://chatbot-seg-social.vercel.app`
 
-## Variables criticas
+## Variables criticas (matriz por modo/proveedor)
+
+### Base runtime (produccion)
 
 - `BOT_MODE=rag`
 - `TELEGRAM_BOT_TOKEN`
 - `TELEGRAM_WEBHOOK_SECRET`
 - `APP_BASE_URL`
-- `GEMINI_API_KEY`
-- `GROQ_API_KEY`
-- `PINECONE_API_KEY`
-- `PINECONE_INDEX_NAME`
+
+### Query-time (`/api/chat` y `/api/webhook`)
+
+- Siempre: claves de generacion segun `LLM_PROVIDER`
+  - `LLM_PROVIDER=gemini` -> `GEMINI_API_KEY`
+  - `LLM_PROVIDER=groq` -> `GROQ_API_KEY`
+- Opcional para retrieval vectorial (si faltan, runtime usa fallback lexico):
+  - `PINECONE_API_KEY`
+  - `PINECONE_INDEX_NAME`
+  - claves segun `EMBEDDING_PROVIDER`:
+    - `gemini` -> `GEMINI_API_KEY`
+    - `local` -> sin clave
+    - `openai` -> `OPENAI_API_KEY`
+    - `voyage` -> `VOYAGE_API_KEY`
+
+### Ingest-time (`npm run ingest`)
+
+- Validacion estricta:
+  - claves de generacion segun `LLM_PROVIDER`
+  - `PINECONE_API_KEY`
+  - `PINECONE_INDEX_NAME`
+  - clave del proveedor de embedding (`EMBEDDING_PROVIDER`) segun matriz anterior
 
 ## Comandos utiles
 
@@ -73,6 +93,7 @@ Esperado:
 - Revisa si se reintrodujo dependencia dura de embeddings.
 - Manten el fast path lexico en `src/rag/retriever.ts`.
 - No hagas retries largos en `embedQuery()` para consultas en vivo.
+- Si faltan claves vectoriales en query-time, debe seguir respondiendo via retrieval lexico.
 
 ### Telegram devuelve 500 o deja de consumir updates
 

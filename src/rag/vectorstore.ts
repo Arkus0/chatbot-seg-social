@@ -1,7 +1,7 @@
 import { PineconeStore } from "@langchain/pinecone";
 import { Pinecone } from "@pinecone-database/pinecone";
 
-import { assertRagEnv, getEnv } from "../config/env.js";
+import { assertRagQueryEnv, getEnv } from "../config/env.js";
 import { getEmbeddings } from "./embeddings.js";
 
 let pineconeClient: Pinecone | undefined;
@@ -13,7 +13,7 @@ export function getPineconeClient(): Pinecone {
   }
 
   const env = getEnv();
-  assertRagEnv(env);
+  assertRagQueryEnv(env);
 
   pineconeClient = new Pinecone({
     apiKey: env.PINECONE_API_KEY!,
@@ -28,7 +28,7 @@ export async function getVectorStore(): Promise<PineconeStore> {
   }
 
   const env = getEnv();
-  assertRagEnv(env);
+  assertRagQueryEnv(env);
 
   vectorStorePromise = PineconeStore.fromExistingIndex(getEmbeddings(), {
     pineconeIndex: getPineconeClient().index(env.PINECONE_INDEX_NAME!),

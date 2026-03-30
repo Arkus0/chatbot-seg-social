@@ -4,18 +4,22 @@ import { z } from "zod";
 dotenv.config({ quiet: true });
 
 const BOT_MODES = ["echo", "llm", "rag"] as const;
+const EMBEDDING_PROVIDERS = ["gemini", "local", "openai", "voyage"] as const;
 const CONFIG_KEY_ORDER = [
   "BOT_MODE",
   "TELEGRAM_BOT_TOKEN",
   "TELEGRAM_WEBHOOK_SECRET",
   "APP_BASE_URL",
   "GEMINI_API_KEY",
+  "OPENAI_API_KEY",
+  "VOYAGE_API_KEY",
   "GROQ_API_KEY",
   "PINECONE_API_KEY",
   "PINECONE_INDEX_NAME",
 ] as const;
 
 export type BotMode = (typeof BOT_MODES)[number];
+export type EmbeddingProvider = (typeof EMBEDDING_PROVIDERS)[number];
 export type RuntimeConfigScope = "chat" | "health" | "webhook";
 
 const optionalNonEmptyString = z.preprocess((value) => {
@@ -45,9 +49,11 @@ const envSchema = z.object({
   GEMINI_MODEL: z.string().default("gemini-2.5-flash-lite"),
   GROQ_API_KEY: optionalNonEmptyString,
   GROQ_MODEL: z.string().default("llama-3.1-8b-instant"),
-  EMBEDDING_PROVIDER: z.enum(["gemini"]).default("gemini"),
+  EMBEDDING_PROVIDER: z.enum(EMBEDDING_PROVIDERS).default("gemini"),
   EMBEDDING_MODEL: z.string().default("gemini-embedding-001"),
   EMBEDDING_DIMENSION: z.coerce.number().int().positive().default(3072),
+  OPENAI_API_KEY: optionalNonEmptyString,
+  VOYAGE_API_KEY: optionalNonEmptyString,
   PINECONE_API_KEY: optionalNonEmptyString,
   PINECONE_INDEX_NAME: optionalNonEmptyString,
   PINECONE_NAMESPACE: z.string().default("prod"),
@@ -115,9 +121,33 @@ function addGenerationMissingKeys(missingKeys: Set<string>, env: AppEnv): void {
 
 function addRagMissingKeys(missingKeys: Set<string>, env: AppEnv): void {
   addGenerationMissingKeys(missingKeys, env);
-  addMissingKey(missingKeys, "GEMINI_API_KEY", env.GEMINI_API_KEY);
+}
+
+function addEmbeddingProviderMissingKeys(missingKeys: Set<string>, env: AppEnv): void {
+  if (env.EMBEDDING_PROVIDER === "gemini") {
+    addMissingKey(missingKeys, "GEMINI_API_KEY", env.GEMINI_API_KEY);
+    return;
+  }
+
+  if (env.EMBEDDING_PROVIDER === "openai") {
+    addMissingKey(missingKeys, "OPENAI_API_KEY", env.OPENAI_API_KEY);
+    return;
+  }
+
+  if (env.EMBEDDING_PROVIDER === "voyage") {
+    addMissingKey(missingKeys, "VOYAGE_API_KEY", env.VOYAGE_API_KEY);
+  }
+}
+
+function addVectorStoreMissingKeys(missingKeys: Set<string>, env: AppEnv): void {
   addMissingKey(missingKeys, "PINECONE_API_KEY", env.PINECONE_API_KEY);
   addMissingKey(missingKeys, "PINECONE_INDEX_NAME", env.PINECONE_INDEX_NAME);
+}
+
+function addRagIngestMissingKeys(missingKeys: Set<string>, env: AppEnv): void {
+  addRagMissingKeys(missingKeys, env);
+  addEmbeddingProviderMissingKeys(missingKeys, env);
+  addVectorStoreMissingKeys(missingKeys, env);
 }
 
 function sortMissingKeys(keys: Iterable<string>): string[] {
@@ -171,6 +201,11 @@ export function getMissingConfig(env: AppEnv, scope: RuntimeConfigScope = "healt
 
   if (botMode === "rag") {
     addRagMissingKeys(missingKeys, env);
+
+    if (scope === "health") {
+      addVectorStoreMissingKeys(missingKeys, env);
+      addEmbeddingProviderMissingKeys(missingKeys, env);
+    }
   }
 
   return sortMissingKeys(missingKeys);
@@ -208,8 +243,40 @@ export function assertGenerationEnv(env: AppEnv): void {
 }
 
 export function assertRagEnv(env: AppEnv): void {
-  assertGenerationEnv(env);
-  assertDefined(env.GEMINI_API_KEY, "GEMINI_API_KEY");
+  assertRagIngestEnv(env);
+}
+
+export function assertRagQueryEnv(env: AppEnv): void {
   assertDefined(env.PINECONE_API_KEY, "PINECONE_API_KEY");
   assertDefined(env.PINECONE_INDEX_NAME, "PINECONE_INDEX_NAME");
+  assertEmbeddingProviderEnv(env);
+}
+
+export function assertEmbeddingProviderEnv(env: AppEnv): void {
+  if (env.EMBEDDING_PROVIDER === "gemini") {
+    assertDefined(env.GEMINI_API_KEY, "GEMINI_API_KEY");
+    return;
+  }
+
+  if (env.EMBEDDING_PROVIDER === "openai") {
+    assertDefined(env.OPENAI_API_KEY, "OPENAI_API_KEY");
+    return;
+  }
+
+  if (env.EMBEDDING_PROVIDER === "voyage") {
+    assertDefined(env.VOYAGE_API_KEY, "VOYAGE_API_KEY");
+  }
+}
+
+export function assertRagIngestEnv(env: AppEnv): void {
+  assertGenerationEnv(env);
+  assertEmbeddingProviderEnv(env);
+  assertDefined(env.PINECONE_API_KEY, "PINECONE_API_KEY");
+  assertDefined(env.PINECONE_INDEX_NAME, "PINECONE_INDEX_NAME");
+}
+
+export function getRagIngestMissingConfig(env: AppEnv): string[] {
+  const missingKeys = new Set<string>();
+  addRagIngestMissingKeys(missingKeys, env);
+  return sortMissingKeys(missingKeys);
 }

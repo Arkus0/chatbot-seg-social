@@ -1,4 +1,5 @@
 import type { EmbeddingsInterface } from "@langchain/core/embeddings";
+import { createHash } from "node:crypto";
 
 import { getEnv } from "../config/env.js";
 import { getGeminiDocumentEmbeddings, getGeminiQueryEmbeddings } from "../providers/gemini.js";
@@ -115,14 +116,163 @@ class GeminiEmbeddingsAdapter implements EmbeddingsInterface {
   }
 }
 
-let cachedEmbeddings: EmbeddingsInterface | undefined;
+function buildLocalEmbedding(text: string, dimension: number): number[] {
+  const vector = new Array<number>(dimension).fill(0);
+  const normalized = text.trim().toLowerCase();
+
+  if (!normalized) {
+    return vector;
+  }
+
+  const digest = createHash("sha256").update(normalized).digest();
+  const norm = Math.sqrt(dimension);
+
+  for (let index = 0; index < dimension; index += 1) {
+    const byte = digest[index % digest.length] ?? 0;
+    vector[index] = ((byte / 255) * 2 - 1) / norm;
+  }
+
+  return vector;
+}
+
+class LocalEmbeddingsAdapter implements EmbeddingsInterface {
+  constructor(private readonly dimension: number) {}
+
+  async embedDocuments(texts: string[]): Promise<number[][]> {
+    return texts.map((text) => buildLocalEmbedding(text, this.dimension));
+  }
+
+  async embedQuery(text: string): Promise<number[]> {
+    return buildLocalEmbedding(text, this.dimension);
+  }
+}
+
+class OpenAIEmbeddingsAdapter implements EmbeddingsInterface {
+  constructor(
+    private readonly apiKey: string,
+    private readonly model: string,
+  ) {}
+
+  private async embed(input: string | string[]): Promise<number[][]> {
+    const response = await fetch("https://api.openai.com/v1/embeddings", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${this.apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: this.model,
+        input,
+      }),
+    });
+
+    if (!response.ok) {
+      const body = await response.text();
+      throw new Error(`OpenAI embeddings request failed (${response.status}): ${body}`);
+    }
+
+    const payload = (await response.json()) as {
+      data: Array<{ embedding: number[] }>;
+    };
+
+    return payload.data.map((item) => item.embedding);
+  }
+
+  async embedDocuments(texts: string[]): Promise<number[][]> {
+    return this.embed(texts);
+  }
+
+  async embedQuery(text: string): Promise<number[]> {
+    const vectors = await this.embed(text);
+    return vectors[0] ?? [];
+  }
+}
+
+class VoyageEmbeddingsAdapter implements EmbeddingsInterface {
+  constructor(
+    private readonly apiKey: string,
+    private readonly model: string,
+  ) {}
+
+  private async embed(input: string[]): Promise<number[][]> {
+    const response = await fetch("https://api.voyageai.com/v1/embeddings", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${this.apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: this.model,
+        input,
+      }),
+    });
+
+    if (!response.ok) {
+      const body = await response.text();
+      throw new Error(`Voyage embeddings request failed (${response.status}): ${body}`);
+    }
+
+    const payload = (await response.json()) as {
+      data: Array<{ embedding: number[] }>;
+    };
+
+    return payload.data.map((item) => item.embedding);
+  }
+
+  async embedDocuments(texts: string[]): Promise<number[][]> {
+    return this.embed(texts);
+  }
+
+  async embedQuery(text: string): Promise<number[]> {
+    const vectors = await this.embed([text]);
+    return vectors[0] ?? [];
+  }
+}
+
+const cachedEmbeddings = new Map<string, EmbeddingsInterface>();
 
 export function getEmbeddings(): EmbeddingsInterface {
   const env = getEnv();
+  const cacheKey = [env.EMBEDDING_PROVIDER, env.EMBEDDING_MODEL, env.EMBEDDING_DIMENSION].join(":");
+
+  const cached = cachedEmbeddings.get(cacheKey);
+
+  if (cached) {
+    return cached;
+  }
 
   if (env.EMBEDDING_PROVIDER === "gemini") {
-    cachedEmbeddings ??= new GeminiEmbeddingsAdapter();
-    return cachedEmbeddings;
+    const adapter = new GeminiEmbeddingsAdapter();
+    cachedEmbeddings.set(cacheKey, adapter);
+    return adapter;
+  }
+
+  if (env.EMBEDDING_PROVIDER === "local") {
+    const adapter = new LocalEmbeddingsAdapter(env.EMBEDDING_DIMENSION);
+    cachedEmbeddings.set(cacheKey, adapter);
+    return adapter;
+  }
+
+  if (env.EMBEDDING_PROVIDER === "openai") {
+    if (!env.OPENAI_API_KEY) {
+      throw new Error("Missing OPENAI_API_KEY");
+    }
+
+    const model = env.EMBEDDING_MODEL === "gemini-embedding-001" ? "text-embedding-3-large" : env.EMBEDDING_MODEL;
+    const adapter = new OpenAIEmbeddingsAdapter(env.OPENAI_API_KEY, model);
+    cachedEmbeddings.set(cacheKey, adapter);
+    return adapter;
+  }
+
+  if (env.EMBEDDING_PROVIDER === "voyage") {
+    if (!env.VOYAGE_API_KEY) {
+      throw new Error("Missing VOYAGE_API_KEY");
+    }
+
+    const model = env.EMBEDDING_MODEL === "gemini-embedding-001" ? "voyage-3-large" : env.EMBEDDING_MODEL;
+    const adapter = new VoyageEmbeddingsAdapter(env.VOYAGE_API_KEY, model);
+    cachedEmbeddings.set(cacheKey, adapter);
+    return adapter;
   }
 
   throw new Error(`Unsupported embedding provider: ${env.EMBEDDING_PROVIDER}`);

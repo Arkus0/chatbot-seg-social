@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 
-import { assertRagEnv, getEnv } from "../config/env.js";
+import { assertRagIngestEnv, getEnv } from "../config/env.js";
 import { getPineconeClient, getVectorStore } from "../rag/vectorstore.js";
 import { logger } from "../utils/logger.js";
 import { chunkSourceDocument } from "./chunk.js";
@@ -57,7 +57,7 @@ async function areAllChunkIdsPresent(ids: string[], namespace: string): Promise<
 
 export async function ensurePineconeIndex(): Promise<void> {
   const env = getEnv();
-  assertRagEnv(env);
+  assertRagIngestEnv(env);
 
   const client = getPineconeClient();
   const indexList = await client.listIndexes();
