@@ -11,6 +11,13 @@ import { getVectorStore } from "./vectorstore.js";
 
 const MIN_LEXICAL_FAST_PATH_RESULTS = 3;
 
+export type RetrievalStrategy = "lexical-fast-path" | "lexical-only" | "lexical-plus-vector" | "none";
+
+export interface RetrievalResult {
+  chunks: RetrievedChunk[];
+  strategy: RetrievalStrategy;
+}
+
 async function retrieveVectorChunks(question: string, context?: RetrievalIntentContext): Promise<RetrievedChunk[]> {
   const env = getEnv();
   const store = await getVectorStore();
@@ -68,12 +75,15 @@ function shouldUseLexicalFastPath(chunks: RetrievedChunk[], topK: number): boole
   return chunks.length >= Math.min(topK, MIN_LEXICAL_FAST_PATH_RESULTS);
 }
 
-export async function retrieveRelevantChunks(question: string, context?: RetrievalIntentContext): Promise<RetrievedChunk[]> {
+export async function retrieveRelevantChunks(question: string, context?: RetrievalIntentContext): Promise<RetrievalResult> {
   const env = getEnv();
   const lexicalChunks = await retrieveLexicalFallbackChunks(question, context);
 
   if (shouldUseLexicalFastPath(lexicalChunks, env.RAG_TOP_K)) {
-    return lexicalChunks;
+    return {
+      chunks: lexicalChunks,
+      strategy: "lexical-fast-path",
+    };
   }
 
   let vectorChunks: RetrievedChunk[] = [];
@@ -93,8 +103,14 @@ export async function retrieveRelevantChunks(question: string, context?: Retriev
   const combinedChunks = mergeRetrievedChunks(vectorChunks, lexicalChunks);
 
   if (combinedChunks.length === 0) {
-    return [];
+    return {
+      chunks: [],
+      strategy: "none",
+    };
   }
 
-  return rerankRetrievedChunks(question, combinedChunks, env.RAG_TOP_K, context);
+  return {
+    chunks: rerankRetrievedChunks(question, combinedChunks, env.RAG_TOP_K, context),
+    strategy: vectorChunks.length > 0 ? "lexical-plus-vector" : "lexical-only",
+  };
 }

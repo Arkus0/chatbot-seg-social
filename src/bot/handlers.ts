@@ -4,7 +4,7 @@ import { Markup } from "telegraf";
 import { getAnswer } from "../rag/getAnswer.js";
 import { isTelegramStateExpired } from "../rag/conversation.js";
 import { buildGuidedPrompt, getGuidedProcedureLibrary } from "../rag/inssCatalog.js";
-import type { AnswerPayload, AnswerSource, ChatState } from "../types/answers.js";
+import type { AnswerPayload, AnswerSource, ChatState, RecommendedAction } from "../types/answers.js";
 import { logger } from "../utils/logger.js";
 import { splitTelegramMessage } from "../utils/text.js";
 
@@ -20,7 +20,7 @@ type ChatSession = {
   mode: ChatMode;
   topicId?: string;
   state?: ChatState;
-  suggestedReplies: string[];
+  recommendedActions: RecommendedAction[];
   updatedAt: number;
 };
 
@@ -64,14 +64,14 @@ function buildTopicKeyboard(topicId: string) {
   ]);
 }
 
-function buildSuggestedReplyKeyboard(suggestions: string[]) {
-  const limitedSuggestions = suggestions.slice(0, 4);
+function buildRecommendedActionKeyboard(actions: RecommendedAction[]) {
+  const limitedActions = actions.slice(0, 4);
   const rows = [];
 
-  for (let index = 0; index < limitedSuggestions.length; index += 2) {
-    const row = limitedSuggestions
+  for (let index = 0; index < limitedActions.length; index += 2) {
+    const row = limitedActions
       .slice(index, index + 2)
-      .map((_, offset) => Markup.button.callback(limitedSuggestions[index + offset]!, `reply:${index + offset}`));
+      .map((_, offset) => Markup.button.callback(limitedActions[index + offset]!.label, `reply:${index + offset}`));
     rows.push(row);
   }
 
@@ -83,7 +83,7 @@ function createEmptySession(mode: ChatMode = "free", topicId?: string): ChatSess
     mode,
     topicId,
     state: undefined,
-    suggestedReplies: [],
+    recommendedActions: [],
     updatedAt: Date.now(),
   };
 }
@@ -126,7 +126,7 @@ function setGuidedState(chatId: number, topicId?: string): void {
     mode: "guided",
     topicId,
     state: undefined,
-    suggestedReplies: [],
+    recommendedActions: [],
   });
 }
 
@@ -146,7 +146,7 @@ function resolveChatId(ctx: Context): number | null {
 async function replyWithAnswer(ctx: Context, answer: AnswerPayload, chatId: number): Promise<void> {
   updateChatSession(chatId, {
     state: answer.state,
-    suggestedReplies: answer.suggestedReplies,
+    recommendedActions: answer.recommendedActions,
   });
 
   for (const chunk of splitTelegramMessage(answer.text)) {
@@ -157,12 +157,12 @@ async function replyWithAnswer(ctx: Context, answer: AnswerPayload, chatId: numb
     await ctx.reply("Abrir fuentes oficiales:", buildSourceKeyboard(answer.sources));
   }
 
-  if (answer.suggestedReplies.length > 0) {
+  if (answer.recommendedActions.length > 0) {
     const helperText =
       answer.mode === "clarify"
         ? "Para afinar el caso, responde con una opcion o escribelo con tus palabras:"
         : "Si quieres seguir, puedes tocar una de estas opciones:";
-    await ctx.reply(helperText, buildSuggestedReplyKeyboard(answer.suggestedReplies));
+    await ctx.reply(helperText, buildRecommendedActionKeyboard(answer.recommendedActions));
   }
 }
 
@@ -319,9 +319,9 @@ export function registerHandlers(bot: Telegraf): void {
 
     const suggestionIndex = Number(ctx.match[1]);
     const session = getChatSession(chatId);
-    const suggestion = session.suggestedReplies[suggestionIndex];
+    const action = session.recommendedActions[suggestionIndex];
 
-    if (!suggestion) {
+    if (!action) {
       await ctx.answerCbQuery("Esa opcion ya no esta disponible");
       return;
     }
@@ -329,12 +329,12 @@ export function registerHandlers(bot: Telegraf): void {
     await ctx.answerCbQuery();
 
     try {
-      await processUserQuestion(ctx, chatId, suggestion);
+      await processUserQuestion(ctx, chatId, action.prompt);
     } catch (error) {
       logger.error("Failed to answer suggested reply", {
         error,
         chatId,
-        suggestion,
+        prompt: action.prompt,
       });
       await ctx.reply("No pude continuar por esa opcion ahora mismo. Escríbeme la duda libremente si quieres.");
     }

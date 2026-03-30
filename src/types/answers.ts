@@ -4,6 +4,8 @@ export interface AnswerSource {
 }
 
 export type ChatChannel = "web" | "telegram";
+export type AnswerDecisionStatus = "need_info" | "ready_to_prepare" | "ready_to_submit" | "follow_up";
+export type AnswerConfidence = "low" | "medium" | "high";
 
 export type IntentFamily =
   | "general"
@@ -59,6 +61,12 @@ export interface AnswerSections {
   alternatives: string[];
 }
 
+export interface RecommendedAction {
+  id: string;
+  label: string;
+  prompt: string;
+}
+
 export interface ChatIntent {
   family: IntentFamily;
   operation: IntentOperation;
@@ -82,6 +90,8 @@ export interface ChatState {
 
 export interface AnswerPayload {
   mode: "clarify" | "answer";
+  decisionStatus: AnswerDecisionStatus;
+  confidence: AnswerConfidence;
   intent: ChatIntent;
   benefitId?: string;
   lifecycleStage?: LifecycleStage;
@@ -96,6 +106,7 @@ export interface AnswerPayload {
   legalNotice: string;
   sections: AnswerSections;
   clarifyingQuestions: string[];
+  recommendedActions: RecommendedAction[];
   suggestedReplies: string[];
   state: ChatState;
 }

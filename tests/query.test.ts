@@ -370,4 +370,49 @@ describe("query helpers", () => {
 
     expect(ranked[0]?.metadata.url).toBe("https://example.com/mis-expedientes");
   });
+
+  it("does not elevate TSE study-specific chunks when the question is about urgent travel", () => {
+    const ranked = rerankRetrievedChunks(
+      "Necesito la TSE para viajar manana, que me conviene",
+      [
+        {
+          pageContent: "Si el motivo del desplazamiento es cursar estudios en programas oficiales, deberas aportar documentacion academica.",
+          score: 0.92,
+          metadata: {
+            url: "https://example.com/tse-estudios",
+            title: "Solicitud Tarjeta Sanitaria Europea (estudios)",
+            sourceType: "html",
+            chunkIndex: 0,
+            tags: ["tse", "tarjeta-sanitaria-europea", "solicitud"],
+            priority: 5,
+            benefitId: "tse-cps",
+            sourceKind: "benefit-page",
+          },
+        },
+        {
+          pageContent: "La TSE y el CPS sirven para asistencia sanitaria durante desplazamientos temporales.",
+          score: 0.88,
+          metadata: {
+            url: "https://example.com/tse-general",
+            title: "Tarjeta Sanitaria Europea y Certificado Provisional Sustitutorio",
+            sourceType: "html",
+            chunkIndex: 0,
+            tags: ["tse", "cps", "asistencia-sanitaria"],
+            priority: 5,
+            benefitId: "tse-cps",
+            sourceKind: "benefit-page",
+          },
+        },
+      ],
+      1,
+      {
+        benefitId: "tse-cps",
+        family: "asistencia-sanitaria",
+        operation: "solicitud",
+        lifecycle: "orientacion",
+      },
+    );
+
+    expect(ranked[0]?.metadata.url).toBe("https://example.com/tse-general");
+  });
 });

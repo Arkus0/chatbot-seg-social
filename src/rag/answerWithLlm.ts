@@ -15,7 +15,7 @@ function buildLlmOnlySystemPrompt(): string {
     "No des asesoramiento juridico personalizado.",
     "Explica las cosas con palabras sencillas, como a alguien con poca familiaridad con tramites administrativos.",
     "Responde como un gestor del INSS: ordena el caso, da siguiente paso claro y no improvises detalles de formularios.",
-    "Usa este esquema: Resumen del caso, Respuesta breve, Siguiente paso ahora, Documentos o datos, Plazos y avisos, Si faltan datos.",
+    "Usa este esquema: Respuesta breve, Que preparar ahora, Como presentarlo, Que puede cambiar, Si luego hay requerimiento o notificacion.",
   ].join("\n");
 }
 
@@ -27,6 +27,7 @@ export async function answerWithLlm(question: string, state?: ChatState): Promis
       intent: analysis.intent,
       state: analysis.state,
       clarifyingQuestions: analysis.clarifyingQuestions,
+      recommendedActions: analysis.recommendedActions,
       suggestedReplies: analysis.suggestedReplies,
     });
   }
@@ -41,6 +42,7 @@ export async function answerWithLlm(question: string, state?: ChatState): Promis
   return composeStandaloneAnswerPayload(extractMessageText((response as { content?: unknown }).content), [], {
     intent: analysis.intent,
     state: analysis.state,
+    recommendedActions: analysis.recommendedActions,
     suggestedReplies: analysis.suggestedReplies,
   });
 }

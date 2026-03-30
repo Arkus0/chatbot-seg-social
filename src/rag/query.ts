@@ -400,10 +400,64 @@ function getExpectedSourceKinds(operation?: string): string[] {
     case "silencio-administrativo":
       return ["review", "notification", "tracking"];
     case "documentacion":
-      return ["form", "benefit-page"];
+      return ["benefit-page", "service", "form"];
+    case "solicitud":
+      return ["service", "benefit-page", "form"];
     default:
       return ["benefit-page", "service"];
   }
+}
+
+function isFormFocusedQuestion(questionTokens: string[], context?: RetrievalIntentContext): boolean {
+  return (
+    questionTokens.some((token) => ["rellenar", "cumplimentar", "casilla", "formulario", "modelo", "impreso"].includes(token)) ||
+    context?.operation === "rellenado-formulario"
+  );
+}
+
+function isTseComparisonQuestion(questionTokens: string[]): boolean {
+  return questionTokens.some((token) => ["tse", "cps", "urgente", "viajar", "viaje"].includes(token));
+}
+
+function isStudyFocusedQuestion(questionTokens: string[]): boolean {
+  return questionTokens.some((token) => ["estudios", "erasmus", "universidad", "universitario", "programa", "oficial"].includes(token));
+}
+
+function isTseStudyEdgeCaseChunk(chunk: RetrievedChunk): boolean {
+  const haystack = `${chunk.metadata.title} ${chunk.metadata.searchText ?? ""} ${chunk.pageContent.slice(0, 700)}`.toLowerCase();
+  return chunk.metadata.benefitId === "tse-cps" && /estudios|erasmus|titulo publico oficial|programas oficiales/.test(haystack);
+}
+
+function filterPeripheralChunks(
+  ranked: RetrievedChunk[],
+  questionTokens: string[],
+  context?: RetrievalIntentContext,
+): RetrievedChunk[] {
+  const allowStudySpecific = isStudyFocusedQuestion(questionTokens);
+  const formFocused = isFormFocusedQuestion(questionTokens, context);
+
+  return ranked.filter((chunk) => {
+    if (!allowStudySpecific && isTseStudyEdgeCaseChunk(chunk)) {
+      return false;
+    }
+
+    if (
+      !formFocused &&
+      chunk.metadata.sourceKind === "form" &&
+      !(chunk.metadata.benefitId === "tse-cps" && isTseComparisonQuestion(questionTokens)) &&
+      ranked.some(
+        (alternative) =>
+          alternative !== chunk &&
+          alternative.metadata.benefitId === chunk.metadata.benefitId &&
+          alternative.metadata.sourceKind !== "form" &&
+          (alternative.rerankScore ?? alternative.score) >= (chunk.rerankScore ?? chunk.score) - 0.16,
+      )
+    ) {
+      return false;
+    }
+
+    return true;
+  });
 }
 
 function computeContextBoost(context: RetrievalIntentContext | undefined, chunk: RetrievedChunk): number {
@@ -475,6 +529,14 @@ function computeBoost(questionTokens: string[], chunk: RetrievedChunk, context?:
     boost -= 0.18;
   }
 
+  if (!isFormFocusedQuestion(questionTokens, context) && chunk.metadata.sourceKind === "form") {
+    boost += chunk.metadata.benefitId === "tse-cps" && isTseComparisonQuestion(questionTokens) ? 0.04 : -0.12;
+  }
+
+  if (!isStudyFocusedQuestion(questionTokens) && isTseStudyEdgeCaseChunk(chunk)) {
+    boost -= 0.35;
+  }
+
   boost += getIntentScoreAdjustments(questionTokens, chunk);
   boost += computeContextBoost(context, chunk);
 
@@ -508,8 +570,10 @@ export function rerankRetrievedChunks(
     }))
     .sort((left, right) => (right.rerankScore ?? right.score) - (left.rerankScore ?? left.score));
 
-  const topScore = ranked[0]?.rerankScore ?? ranked[0]?.score ?? 0;
-  const filtered = ranked.filter((chunk) => (chunk.rerankScore ?? chunk.score) >= topScore - 0.07);
+  const sanitized = filterPeripheralChunks(ranked, questionTokens, context);
+  const pool = sanitized.length > 0 ? sanitized : ranked;
+  const topScore = pool[0]?.rerankScore ?? pool[0]?.score ?? 0;
+  const filtered = pool.filter((chunk) => (chunk.rerankScore ?? chunk.score) >= topScore - 0.07);
 
-  return applySourceDiversity(filtered, topK, 2, ranked);
+  return applySourceDiversity(filtered, topK, 2, pool);
 }

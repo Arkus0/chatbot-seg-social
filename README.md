@@ -71,6 +71,8 @@ Cuerpo minimo:
 
 Campos clave de respuesta:
 
+- `decisionStatus`
+- `confidence`
 - `mode`
 - `intent`
 - `benefitId`
@@ -82,6 +84,7 @@ Campos clave de respuesta:
 - `nextBestAction`
 - `sections`
 - `clarifyingQuestions`
+- `recommendedActions`
 - `suggestedReplies`
 - `state`
 
@@ -105,6 +108,7 @@ npm run test
 npm run typecheck
 npm run lint
 npm run build:corpus
+npm run benchmark:chat
 npm run ingest
 npm run ask -- "Como sigo un expediente del INSS"
 npm run smoke

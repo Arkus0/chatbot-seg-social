@@ -37,11 +37,13 @@ describe("fallback", () => {
       [],
     );
 
-    expect(answer.text).toContain("Resumen del caso");
     expect(answer.text).toContain("Respuesta breve");
+    expect(answer.text).toContain("Que preparar ahora");
+    expect(answer.text).toContain("Como presentarlo");
     expect(answer.text).toContain("Fuentes oficiales");
     expect(answer.text).toContain("Aviso legal");
     expect(answer.sources[0]?.url).toBe("https://example.com/vida-laboral");
+    expect(answer.recommendedActions).toEqual([]);
   });
 
   it("detects quota and rate-limit errors", () => {

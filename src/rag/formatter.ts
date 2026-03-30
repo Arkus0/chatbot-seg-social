@@ -1,4 +1,13 @@
-import type { AnswerPayload, AnswerSections, AnswerSource, ChatIntent, ChatState } from "../types/answers.js";
+import type {
+  AnswerConfidence,
+  AnswerDecisionStatus,
+  AnswerPayload,
+  AnswerSections,
+  AnswerSource,
+  ChatIntent,
+  ChatState,
+  RecommendedAction,
+} from "../types/answers.js";
 import type { RetrievedChunk } from "../types/documents.js";
 
 import { dedupeBy, normalizeWhitespace, truncateText } from "../utils/text.js";
@@ -16,27 +25,31 @@ interface PayloadMeta {
   intent?: ChatIntent;
   state?: ChatState;
   clarifyingQuestions?: string[];
+  recommendedActions?: RecommendedAction[];
   suggestedReplies?: string[];
 }
 
 const MAX_KEY_POINTS = 6;
 const SECTION_KEY_BY_HEADING: Record<string, keyof AnswerSections | "summary"> = {
-  "respuesta directa": "summary",
   "respuesta breve": "summary",
-  "resumen del caso": "caseSummary",
+  "respuesta directa": "summary",
+  "que preparar ahora": "documents",
+  "como presentarlo": "nextStepNow",
   "que cambia la respuesta": "whatChangesTheOutcome",
   "que cambia el resultado": "whatChangesTheOutcome",
-  "siguiente paso ahora": "nextStepNow",
-  "si lo vas a tramitar ahora": "nextStepNow",
+  "que puede cambiar": "whatChangesTheOutcome",
   "documentos o datos que suelen pedir": "documents",
   "documentos o datos": "documents",
-  "si quieres rellenar la solicitud": "documents",
+  "como presentarlo o pedirlo": "nextStepNow",
+  "siguiente paso ahora": "nextStepNow",
+  "si lo vas a tramitar ahora": "nextStepNow",
+  "siguiente paso claro": "nextStepNow",
+  "si luego hay requerimiento o notificacion": "ifINSSRespondsX",
+  "si el inss te responde o te pide algo": "ifINSSRespondsX",
   "plazos y avisos": "deadlinesAndWarnings",
   "ojo con esto": "deadlinesAndWarnings",
-  "si el inss te responde o te pide algo": "ifINSSRespondsX",
   "alternativas si esta via no encaja": "alternatives",
   "si faltan datos": "missingInfo",
-  "siguiente paso claro": "nextStepNow",
   "fuentes oficiales": "summary",
   "aviso legal": "summary",
 };
@@ -217,14 +230,55 @@ export function buildSourcesSection(sources: AnswerSource[], includeUrls = true)
 
 function resolvePayloadMeta(meta?: PayloadMeta): Required<PayloadMeta> {
   const intent = meta?.intent ?? createDefaultIntent();
+  const recommendedActions = meta?.recommendedActions ?? [];
+  const suggestedReplies =
+    meta?.suggestedReplies ?? (recommendedActions.length > 0 ? recommendedActions.map((action) => action.prompt) : []);
 
   return {
     mode: meta?.mode ?? "answer",
     intent,
     state: meta?.state ?? createDefaultState(intent),
     clarifyingQuestions: meta?.clarifyingQuestions ?? [],
-    suggestedReplies: meta?.suggestedReplies ?? [],
+    recommendedActions,
+    suggestedReplies,
   };
+}
+
+function inferDecisionStatus(mode: "clarify" | "answer", intent: ChatIntent): AnswerDecisionStatus {
+  if (mode === "clarify") {
+    return "need_info";
+  }
+
+  if (["seguimiento", "resolucion", "revision"].includes(intent.lifecycleStage ?? "")) {
+    return "follow_up";
+  }
+
+  if (intent.lifecycleStage === "presentacion" || intent.operation === "solicitud") {
+    return "ready_to_submit";
+  }
+
+  return "ready_to_prepare";
+}
+
+function inferConfidence(
+  mode: "clarify" | "answer",
+  sources: AnswerSource[],
+  sections: AnswerSections,
+  summary: string,
+): AnswerConfidence {
+  if (mode === "clarify") {
+    return "medium";
+  }
+
+  if (summary.toLowerCase().includes("no tengo contexto oficial suficiente")) {
+    return "low";
+  }
+
+  if (sources.length >= 2 && (sections.nextStepNow.length > 0 || sections.documents.length > 0)) {
+    return "high";
+  }
+
+  return sources.length > 0 ? "medium" : "low";
 }
 
 function buildChecklist(sections: AnswerSections, fallback: string[] = []): string[] {
@@ -260,23 +314,30 @@ export function buildClarificationPayload(meta: PayloadMeta & { state: ChatState
   const summary = buildClarificationSummary(state);
   const checklist = buildChecklist(sections, resolvedMeta.clarifyingQuestions);
   const text = [
-    "Resumen del caso:",
-    state.caseSummary,
-    "",
     "Respuesta breve:",
     summary,
     "",
-    "Si faltan datos:",
+    "Que preparar ahora:",
+    "- Reunir el dato que falta antes de presentar o decidir el siguiente paso.",
+    "",
+    "Como presentarlo:",
+    `- ${nextBestAction}`,
+    "",
+    "Que puede cambiar:",
     ...resolvedMeta.clarifyingQuestions.map((question) => `- ${question}`),
     "",
-    "Siguiente paso ahora:",
-    `- ${nextBestAction}`,
+    "Si luego hay requerimiento o notificacion:",
+    "- Cuando ese dato quede claro, ya podre ordenar la via oficial y la documentacion de forma segura.",
     "",
     legalNotice,
   ].join("\n");
+  const decisionStatus = inferDecisionStatus("clarify", resolvedMeta.intent);
+  const confidence = inferConfidence("clarify", [], sections, summary);
 
   return {
     mode: "clarify",
+    decisionStatus,
+    confidence,
     intent: resolvedMeta.intent,
     benefitId: resolvedMeta.intent.benefitId,
     lifecycleStage: resolvedMeta.intent.lifecycleStage,
@@ -291,6 +352,7 @@ export function buildClarificationPayload(meta: PayloadMeta & { state: ChatState
     legalNotice,
     sections,
     clarifyingQuestions: resolvedMeta.clarifyingQuestions,
+    recommendedActions: resolvedMeta.recommendedActions,
     suggestedReplies: resolvedMeta.suggestedReplies,
     state,
   };
@@ -313,9 +375,13 @@ export function composeAnswerPayload(answer: string, chunks: RetrievedChunk[], m
     "Revisa una fuente oficial antes de presentar el tramite.";
   const checklist = buildChecklist(structured.sections, structured.keyPoints);
   const state = resolveStateWithNextAction(resolvedMeta.state, nextBestAction, caseSummary);
+  const decisionStatus = inferDecisionStatus(resolvedMeta.mode, resolvedMeta.intent);
+  const confidence = inferConfidence(resolvedMeta.mode, sources, structured.sections, structured.summary);
 
   return {
     mode: resolvedMeta.mode,
+    decisionStatus,
+    confidence,
     intent: resolvedMeta.intent,
     benefitId: resolvedMeta.intent.benefitId,
     lifecycleStage: resolvedMeta.intent.lifecycleStage,
@@ -330,6 +396,7 @@ export function composeAnswerPayload(answer: string, chunks: RetrievedChunk[], m
     legalNotice,
     sections: structured.sections,
     clarifyingQuestions: resolvedMeta.clarifyingQuestions,
+    recommendedActions: resolvedMeta.recommendedActions,
     suggestedReplies: resolvedMeta.suggestedReplies,
     state,
   };
@@ -351,9 +418,13 @@ export function composeStandaloneAnswerPayload(answer: string, sources: AnswerSo
     "Revisa una fuente oficial antes de presentar el tramite.";
   const checklist = buildChecklist(structured.sections, structured.keyPoints);
   const state = resolveStateWithNextAction(resolvedMeta.state, nextBestAction, caseSummary);
+  const decisionStatus = inferDecisionStatus(resolvedMeta.mode, resolvedMeta.intent);
+  const confidence = inferConfidence(resolvedMeta.mode, sources, structured.sections, structured.summary);
 
   return {
     mode: resolvedMeta.mode,
+    decisionStatus,
+    confidence,
     intent: resolvedMeta.intent,
     benefitId: resolvedMeta.intent.benefitId,
     lifecycleStage: resolvedMeta.intent.lifecycleStage,
@@ -368,6 +439,7 @@ export function composeStandaloneAnswerPayload(answer: string, sources: AnswerSo
     legalNotice,
     sections: structured.sections,
     clarifyingQuestions: resolvedMeta.clarifyingQuestions,
+    recommendedActions: resolvedMeta.recommendedActions,
     suggestedReplies: resolvedMeta.suggestedReplies,
     state,
   };
@@ -384,7 +456,7 @@ export function buildNoContextAnswer(): string {
   return [
     "No tengo contexto oficial suficiente para responder con seguridad a esa pregunta.",
     "",
-    "Consulta la web oficial o la sede electronica de la Seguridad Social para confirmarlo.",
+    "Consulta la web oficial o la sede electronica de la Seguridad Social para confirmarlo antes de presentar nada.",
     "",
     buildLegalNotice(),
   ].join("\n");
@@ -398,9 +470,13 @@ export function buildNoContextAnswerPayload(meta?: PayloadMeta): AnswerPayload {
   const caseSummary = resolvedMeta.state.caseSummary;
   const nextBestAction = "Abre una fuente oficial del INSS antes de decidir el siguiente paso.";
   const state = resolveStateWithNextAction(resolvedMeta.state, nextBestAction, caseSummary);
+  const decisionStatus: AnswerDecisionStatus = "need_info";
+  const confidence = inferConfidence(resolvedMeta.mode, [], sections, "No tengo contexto oficial suficiente para responder con seguridad a esa pregunta.");
 
   return {
     mode: resolvedMeta.mode,
+    decisionStatus,
+    confidence,
     intent: resolvedMeta.intent,
     benefitId: resolvedMeta.intent.benefitId,
     lifecycleStage: resolvedMeta.intent.lifecycleStage,
@@ -415,6 +491,7 @@ export function buildNoContextAnswerPayload(meta?: PayloadMeta): AnswerPayload {
     legalNotice: buildLegalNotice(),
     sections,
     clarifyingQuestions: resolvedMeta.clarifyingQuestions,
+    recommendedActions: resolvedMeta.recommendedActions,
     suggestedReplies: resolvedMeta.suggestedReplies,
     state,
   };

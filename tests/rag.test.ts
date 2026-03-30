@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { buildNoContextAnswer, composeAnswerPayload } from "../src/rag/formatter.js";
+import { buildClarificationPayload, buildNoContextAnswer, composeAnswerPayload } from "../src/rag/formatter.js";
 
 describe("formatter", () => {
   it("returns a legal notice when there is no context", () => {
@@ -28,6 +28,8 @@ describe("formatter", () => {
     expect(response.sources[0]?.url).toBe("https://example.com");
     expect(response.mode).toBe("answer");
     expect(response.sections.immediateSteps).toEqual([]);
+    expect(response.decisionStatus).toBe("ready_to_prepare");
+    expect(response.recommendedActions).toEqual([]);
   });
 
   it("ignores section headings when extracting the summary", () => {
@@ -53,21 +55,57 @@ describe("formatter", () => {
         "Respuesta breve:",
         "Puedes revisarlo por la sede o presentar la solicitud por el canal que corresponda.",
         "",
-        "Si lo vas a tramitar ahora:",
+        "Como presentarlo:",
         "- Revisa tu identificacion",
         "- Comprueba el tipo de tramite",
         "",
-        "Documentos o datos que suelen pedir:",
+        "Que preparar ahora:",
         "- DNI o NIE",
         "",
-        "Ojo con esto:",
+        "Que puede cambiar:",
         "- No inventes casillas del formulario",
+        "",
+        "Si luego hay requerimiento o notificacion:",
+        "- Revisa Mis expedientes administrativos",
       ].join("\n"),
       [],
     );
 
     expect(response.sections.immediateSteps).toEqual(["Revisa tu identificacion", "Comprueba el tipo de tramite"]);
     expect(response.sections.documents).toEqual(["DNI o NIE"]);
-    expect(response.sections.warnings).toEqual(["No inventes casillas del formulario"]);
+    expect(response.sections.whatChangesTheOutcome).toEqual(["No inventes casillas del formulario"]);
+    expect(response.sections.ifINSSRespondsX).toEqual(["Revisa Mis expedientes administrativos"]);
+  });
+
+  it("keeps legacy fields and adds decision metadata for clarification payloads", () => {
+    const response = buildClarificationPayload({
+      intent: {
+        family: "jubilacion",
+        operation: "requisitos",
+        benefitId: "jubilacion",
+        lifecycleStage: "orientacion",
+      },
+      state: {
+        family: "jubilacion",
+        operation: "requisitos",
+        benefitId: "jubilacion",
+        lifecycleStage: "orientacion",
+        facts: {},
+        missingFacts: ["modalidad de jubilacion"],
+        factsConfirmed: {},
+        factsPending: ["modalidad de jubilacion"],
+        caseSummary: "Caso abierto sobre Jubilacion.",
+        lastRecommendedAction: "",
+        updatedAt: new Date().toISOString(),
+      },
+      clarifyingQuestions: ["Es una jubilacion ordinaria, anticipada, parcial, demorada o SOVI?"],
+      recommendedActions: [{ id: "clarify:modalidad:0", label: "Anticipada", prompt: "Mi caso es Anticipada." }],
+    });
+
+    expect(response.text).toContain("Respuesta breve");
+    expect(response.decisionStatus).toBe("need_info");
+    expect(response.recommendedActions[0]?.label).toBe("Anticipada");
+    expect(response.text).toContain("Aviso legal");
+    expect(response.summary.length).toBeGreaterThan(0);
   });
 });

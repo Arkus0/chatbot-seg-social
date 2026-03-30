@@ -16,6 +16,7 @@
     "typecheck": "tsc --noEmit",
     "ingest": "tsx scripts/ingest.ts",
     "build:corpus": "tsx scripts/build-fallback-corpus.ts",
+    "benchmark:chat": "tsx scripts/benchmark-chat.ts",
     "ask": "tsx scripts/ask.ts",
     "smoke": "tsx scripts/smoke.ts",
     "set:webhook": "tsx scripts/set-webhook.ts",

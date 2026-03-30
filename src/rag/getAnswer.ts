@@ -17,6 +17,8 @@ export async function getAnswer(question: string, options?: GetAnswerOptions): P
   if (botMode === "echo") {
     return {
       mode: "answer",
+      decisionStatus: "follow_up",
+      confidence: "low",
       intent: {
         family: "general",
         operation: "general",
@@ -45,6 +47,7 @@ export async function getAnswer(question: string, options?: GetAnswerOptions): P
         alternatives: [],
       },
       clarifyingQuestions: [],
+      recommendedActions: [],
       suggestedReplies: [],
       state: {
         family: "general",

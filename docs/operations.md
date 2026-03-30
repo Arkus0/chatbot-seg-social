@@ -47,6 +47,8 @@
 
 El payload de `answer` mantiene campos heredados y anade estado reutilizable:
 
+- `decisionStatus`
+- `confidence`
 - `mode`
 - `intent`
 - `benefitId`
@@ -60,6 +62,7 @@ El payload de `answer` mantiene campos heredados y anade estado reutilizable:
 - `nextBestAction`
 - `sections`
 - `clarifyingQuestions`
+- `recommendedActions`
 - `suggestedReplies`
 - `sources`
 - `legalNotice`
@@ -73,6 +76,7 @@ node ./node_modules/vercel/dist/vc.js env ls preview
 node ./node_modules/vercel/dist/vc.js env ls development
 node ./node_modules/vercel/dist/vc.js deploy --prod --yes
 npm run ask -- "Como sigo un expediente del INSS"
+npm run benchmark:chat
 npm run smoke
 npm run set:webhook
 npm run webhook:info
@@ -127,6 +131,7 @@ Esperado:
 - `pending_update_count = 0`
 - sin `last_error_message`
 - `allowed_updates` incluye `message` y `callback_query`
+- Si falta `callback_query`, `npm run webhook:info` ahora debe terminar con error para que el fallo no pase desapercibido.
 
 Comandos del bot recomendados:
 
@@ -162,6 +167,13 @@ Comandos del bot recomendados:
 - Reejecuta `npm run set:webhook`.
 - Confirma que `api/webhook.ts` sigue devolviendo `200` rapido y usa `waitUntil()`.
 - Si falla navegacion por botones, confirma que el webhook mantiene `callback_query` en `allowed_updates`.
+
+### Los botones de Telegram se quedan marcados y no hacen nada
+
+- La causa operativa mas probable es que Telegram solo este enviando `message` y no `callback_query`.
+- Ejecuta `npm run webhook:info`.
+- Si el comando marca error por `allowed_updates.callback_query`, corrige el webhook con `npm run set:webhook`.
+- Repite `npm run webhook:info` hasta ver `message` y `callback_query`.
 
 ### `npm run smoke` o `npm run ingest` fallan con `429`
 

@@ -4,8 +4,9 @@ import type {
   IntentFamily,
   IntentOperation,
   LifecycleStage,
+  RecommendedAction,
 } from "../types/answers.js";
-import { normalizeSearchText } from "../utils/text.js";
+import { normalizeSearchText, tokenizeSearchText } from "../utils/text.js";
 import { detectBenefitId, getBenefitCatalogEntry } from "./inssCatalog.js";
 
 type SlotDefinition = {
@@ -26,6 +27,7 @@ export interface ConversationAnalysis {
   state: ChatState;
   shouldClarify: boolean;
   clarifyingQuestions: string[];
+  recommendedActions: RecommendedAction[];
   suggestedReplies: string[];
   retrievalQuestion: string;
 }
@@ -199,6 +201,18 @@ const SENSITIVE_OPERATIONS = new Set<IntentOperation>([
   "pago-cobro",
 ]);
 
+const BLOCKING_SLOT_KEYS_BY_FAMILY: Record<IntentFamily, string[]> = {
+  general: ["prestacion"],
+  jubilacion: ["modalidad"],
+  incapacidad: ["tipoIncapacidad"],
+  "familia-cuidados": ["supuesto"],
+  supervivencia: ["tipoSupervivencia"],
+  "asistencia-sanitaria": ["servicioSanitario"],
+  imv: ["fase"],
+  "operativa-inss": ["situacionExpediente"],
+  "prestaciones-especiales": ["coberturaEspecial"],
+};
+
 function createEmptyState(intent: ChatIntent = GENERAL_INTENT): ChatState {
   return {
     family: intent.family,
@@ -231,6 +245,26 @@ function detectFamily(question: string): IntentFamily {
 
 function detectOperation(question: string): IntentOperation {
   return detectByRules(question, OPERATION_RULES, "general");
+}
+
+function isContextualFollowUp(question: string): boolean {
+  const normalized = normalizeSearchText(question);
+  const tokens = tokenizeSearchText(question);
+
+  if (tokens.length <= 6) {
+    return true;
+  }
+
+  return [
+    "ver documentos",
+    "como presentarlo",
+    "como se presenta",
+    "seguir expediente",
+    "que cambia",
+    "si hay requerimiento",
+    "si hay notificacion",
+    "quiero ver documentos",
+  ].some((pattern) => normalized.includes(pattern));
 }
 
 function normalizeIncomingState(state?: ChatState): ChatState {
@@ -281,23 +315,57 @@ function extractMatchedValue(question: string, rules: Array<{ value: string; pat
 }
 
 function extractAge(question: string): string | undefined {
-  const match = question.match(/\b(\d{2})\s*a[nn]os\b/i);
+  const normalizedQuestion = normalizeSearchText(question);
+  const match = normalizedQuestion.match(/\b(\d{2})\s+anos\b/i);
   return match ? `${match[1]} anos` : undefined;
 }
 
 function extractContribution(question: string): string | undefined {
-  const years = question.match(/\b(\d{1,2})\s*a[nn]os(?:\s+y\s+\d{1,2}\s+meses)?\s+cotizados\b/i);
+  const normalizedQuestion = normalizeSearchText(question);
+  const years = normalizedQuestion.match(/\b(\d{1,2})\s+anos(?:\s+y\s+\d{1,2}\s+meses)?\s+cotizados\b/i);
   if (years) {
     return years[0];
   }
 
-  const months = question.match(/\b(\d{1,3})\s+meses\s+cotizados\b/i);
+  const shorthandYears = normalizedQuestion.match(/\b(\d{1,2})\s+cotizados\b/i);
+  if (shorthandYears) {
+    return `${shorthandYears[1]} anos cotizados`;
+  }
+
+  const months = normalizedQuestion.match(/\b(\d{1,3})\s+meses\s+cotizados\b/i);
   return months?.[0];
+}
+
+function extractUrgency(question: string): string | undefined {
+  const normalizedQuestion = normalizeSearchText(question);
+
+  if (/\bhoy\b|\burgente\b/.test(normalizedQuestion)) {
+    return "hoy o urgente";
+  }
+
+  if (/\bmanana\b|\bpasado manana\b/.test(normalizedQuestion)) {
+    return "desplazamiento inmediato";
+  }
+
+  if (/\besta semana\b|\bestos dias\b/.test(normalizedQuestion)) {
+    return "esta semana";
+  }
+
+  if (/\beste mes\b|\bproximos dias\b/.test(normalizedQuestion)) {
+    return "este mes";
+  }
+
+  return undefined;
 }
 
 function extractFacts(question: string, family: IntentFamily, operation: IntentOperation, benefitId?: string): Record<string, string> {
   const facts: Record<string, string> = {};
   const entry = getBenefitCatalogEntry(benefitId);
+  const urgency = extractUrgency(question);
+
+  if (urgency) {
+    facts.urgencia = urgency;
+  }
 
   const identification = extractMatchedValue(question, [
     { value: "certificado o Cl@ve", pattern: /\bcertificado digital\b/i },
@@ -627,14 +695,20 @@ function resolveBenefitId(question: string, incomingState: ChatState, operation:
     return detected;
   }
 
-  if (SENSITIVE_OPERATIONS.has(operation)) {
+  if (incomingState.benefitId && (SENSITIVE_OPERATIONS.has(operation) || isContextualFollowUp(question))) {
     return incomingState.benefitId;
   }
 
   return undefined;
 }
 
-function resolveFamily(detectedFamily: IntentFamily, benefitId: string | undefined, incomingState: ChatState, operation: IntentOperation): IntentFamily {
+function resolveFamily(
+  question: string,
+  detectedFamily: IntentFamily,
+  benefitId: string | undefined,
+  incomingState: ChatState,
+  operation: IntentOperation,
+): IntentFamily {
   const fromBenefit = getBenefitCatalogEntry(benefitId)?.family;
   if (fromBenefit) {
     return fromBenefit;
@@ -644,7 +718,7 @@ function resolveFamily(detectedFamily: IntentFamily, benefitId: string | undefin
     return detectedFamily;
   }
 
-  if (SENSITIVE_OPERATIONS.has(operation) && incomingState.family !== "general") {
+  if ((SENSITIVE_OPERATIONS.has(operation) || isContextualFollowUp(question)) && incomingState.family !== "general") {
     return incomingState.family;
   }
 
@@ -660,6 +734,15 @@ function buildMissingSlots(state: ChatState, question: string): SlotDefinition[]
   return slots.filter((slot) => slot.shouldAsk(state, question));
 }
 
+function isBlockingSlot(state: ChatState, slot: SlotDefinition): boolean {
+  const blockingKeys = BLOCKING_SLOT_KEYS_BY_FAMILY[state.family] ?? [];
+  return blockingKeys.includes(slot.key);
+}
+
+function isFirstApplicationJourney(state: ChatState): boolean {
+  return ["descubrimiento", "orientacion", "preparacion", "presentacion"].includes(state.lifecycleStage);
+}
+
 function buildCaseSummary(state: ChatState): string {
   const entry = getBenefitCatalogEntry(state.benefitId);
   const label = entry?.displayName ?? state.family.replace(/-/g, " ");
@@ -672,31 +755,112 @@ function buildCaseSummary(state: ChatState): string {
   return `Caso abierto sobre ${label}: ${facts.join(", ")}.`;
 }
 
-function buildFollowUpSuggestions(state: ChatState): string[] {
+function buildClarifyingOptionPrompt(slotKey: string, option: string): string {
+  if (slotKey === "edad") {
+    return `Tengo ${option}.`;
+  }
+
+  if (slotKey === "cotizacion") {
+    return `He cotizado ${option}.`;
+  }
+
+  if (slotKey === "identificacion") {
+    return `Quiero usar ${option}.`;
+  }
+
+  if (slotKey === "situacionExpediente") {
+    return `La situacion del expediente es ${option}.`;
+  }
+
+  return `Mi caso es ${option}.`;
+}
+
+function buildClarifyingActions(state: ChatState, slots: SlotDefinition[]): RecommendedAction[] {
+  const firstSlot = slots[0];
+
+  if (!firstSlot) {
+    return [];
+  }
+
+  return firstSlot.options.slice(0, 4).map((option, index) => ({
+    id: `clarify:${firstSlot.key}:${index}`,
+    label: option,
+    prompt: buildClarifyingOptionPrompt(firstSlot.key, option),
+  }));
+}
+
+function buildRecommendedFollowUpActions(state: ChatState): RecommendedAction[] {
+  const entry = getBenefitCatalogEntry(state.benefitId);
+  const benefitLabel = entry?.displayName ?? "este tramite";
   const stage = state.lifecycleStage;
 
-  if (stage === "orientacion") {
-    return ["Quiero ver documentos habituales", "Como se presenta", "Quiero revisar cuantia o plazos"];
-  }
-
-  if (stage === "preparacion" || stage === "presentacion") {
-    return ["Quiero seguir el expediente", "No tengo certificado y quiero via SMS", "Quiero revisar errores habituales"];
-  }
-
-  if (stage === "seguimiento") {
-    return ["Tengo un requerimiento", "Me ha llegado una notificacion", "Quiero revisar pagos o plazos"];
-  }
-
-  if (stage === "resolucion") {
-    return ["Quiero revisar compatibilidades", "Quiero saber si cabe reclamacion previa", "Necesito cambiar datos del expediente"];
+  if (stage === "seguimiento" || stage === "resolucion") {
+    return [
+      {
+        id: "track",
+        label: "Seguir expediente",
+        prompt: `Como sigo un expediente de ${benefitLabel} y que via oficial debo usar ahora`,
+      },
+      {
+        id: "requirement",
+        label: "Si hay requerimiento",
+        prompt: `Si me llega un requerimiento en ${benefitLabel}, que debo revisar primero`,
+      },
+      {
+        id: "notification",
+        label: "Si hay notificacion",
+        prompt: `Si recibo una notificacion o resolucion en ${benefitLabel}, cual es el siguiente paso prudente`,
+      },
+      {
+        id: "review",
+        label: "Revisar reclamacion",
+        prompt: `Quiero revisar si cabe reclamacion previa en ${benefitLabel}`,
+      },
+    ];
   }
 
   if (stage === "revision") {
-    return ["Quiero revisar reclamacion previa", "Quiero saber si hay silencio administrativo", "Quiero ordenar documentos del recurso"];
+    return [
+      {
+        id: "review",
+        label: "Preparar reclamacion",
+        prompt: `Quiero ordenar una reclamacion previa en ${benefitLabel}`,
+      },
+      {
+        id: "docs",
+        label: "Ordenar documentos",
+        prompt: `Que documentos conviene ordenar para revisar ${benefitLabel}`,
+      },
+      {
+        id: "status",
+        label: "Ver estado",
+        prompt: `Como reviso el estado del expediente de ${benefitLabel}`,
+      },
+    ];
   }
 
-  const entry = getBenefitCatalogEntry(state.benefitId);
-  return entry?.promptSeeds.slice(0, 3) ?? ["Quiero explicar mejor mi caso", "Quiero ver documentos habituales"];
+  return [
+    {
+      id: "documents",
+      label: "Ver documentos",
+      prompt: `Quiero ver documentos habituales para ${benefitLabel}`,
+    },
+    {
+      id: "submit",
+      label: "Como presentarlo",
+      prompt: `Como se presenta ${benefitLabel} y que via oficial me conviene`,
+    },
+    {
+      id: "changes",
+      label: "Que cambia si...",
+      prompt: `Que datos cambian la orientacion en ${benefitLabel}`,
+    },
+    {
+      id: "track",
+      label: "Seguir expediente",
+      prompt: `Como sigo un expediente de ${benefitLabel} despues de presentarlo`,
+    },
+  ];
 }
 
 function buildRetrievalQuestion(question: string, state: ChatState): string {
@@ -722,7 +886,7 @@ export function analyzeConversation(question: string, state?: ChatState): Conver
   const detectedOperation = detectOperation(question);
   const benefitId = resolveBenefitId(question, incomingState, detectedOperation);
   const detectedFamily = detectFamily(question);
-  const family = resolveFamily(detectedFamily, benefitId, incomingState, detectedOperation);
+  const family = resolveFamily(question, detectedFamily, benefitId, incomingState, detectedOperation);
   const lifecycleStage =
     detectedOperation !== "general"
       ? OPERATION_STAGE_MAP[detectedOperation]
@@ -739,7 +903,10 @@ export function analyzeConversation(question: string, state?: ChatState): Conver
 
   const nextState: ChatState = {
     family,
-    operation: detectedOperation === "general" && incomingState.operation !== "general" ? incomingState.operation : detectedOperation,
+    operation:
+      detectedOperation === "general" && incomingState.operation !== "general" && isContextualFollowUp(question)
+        ? incomingState.operation
+        : detectedOperation,
     benefitId: benefitId ?? incomingState.benefitId,
     lifecycleStage,
     facts,
@@ -752,22 +919,22 @@ export function analyzeConversation(question: string, state?: ChatState): Conver
   };
 
   const missingSlots = buildMissingSlots(nextState, question);
+  const blockingMissingSlots = missingSlots.filter((slot) => isBlockingSlot(nextState, slot));
   nextState.missingFacts = missingSlots.map((slot) => slot.label);
   nextState.factsPending = nextState.missingFacts;
   nextState.caseSummary = buildCaseSummary(nextState);
 
-  const clarifyLimit = incomingState.benefitId ? 2 : 3;
+  const clarifyLimit = 1;
   const shouldClarify =
-    missingSlots.length > 0 &&
-    (isCaseSpecific(question, nextState.operation) || nextState.lifecycleStage === "descubrimiento");
+    blockingMissingSlots.length > 0 &&
+    isCaseSpecific(question, nextState.operation) &&
+    isFirstApplicationJourney(nextState);
 
-  const clarifyingQuestions = shouldClarify ? missingSlots.slice(0, clarifyLimit).map((slot) => slot.question) : [];
-  const suggestedReplies = shouldClarify
-    ? missingSlots
-        .slice(0, clarifyLimit)
-        .flatMap((slot) => slot.options)
-        .slice(0, 4)
-    : buildFollowUpSuggestions(nextState).slice(0, 4);
+  const clarifyingQuestions = shouldClarify ? blockingMissingSlots.slice(0, clarifyLimit).map((slot) => slot.question) : [];
+  const recommendedActions = shouldClarify
+    ? buildClarifyingActions(nextState, blockingMissingSlots.slice(0, clarifyLimit))
+    : buildRecommendedFollowUpActions(nextState).slice(0, 4);
+  const suggestedReplies = recommendedActions.map((action) => action.prompt);
 
   return {
     intent: {
@@ -779,6 +946,7 @@ export function analyzeConversation(question: string, state?: ChatState): Conver
     state: nextState,
     shouldClarify,
     clarifyingQuestions,
+    recommendedActions,
     suggestedReplies,
     retrievalQuestion: buildRetrievalQuestion(question, nextState),
   };

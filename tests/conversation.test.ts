@@ -12,7 +12,8 @@ describe("conversation analysis", () => {
     expect(analysis.shouldClarify).toBe(true);
     expect(analysis.state.facts.edad).toBe("63 anos");
     expect(analysis.state.missingFacts).toContain("modalidad de jubilacion");
-    expect(analysis.clarifyingQuestions.length).toBeGreaterThan(0);
+    expect(analysis.clarifyingQuestions).toHaveLength(1);
+    expect(analysis.recommendedActions.length).toBeGreaterThan(0);
   });
 
   it("answers directly for a generic documentation request with enough intent", () => {
@@ -50,6 +51,24 @@ describe("conversation analysis", () => {
     expect(analysis.shouldClarify).toBe(false);
     expect(analysis.state.facts.fase).toBe("seguimiento del expediente");
     expect(analysis.state.facts.situacionExpediente).toBe("con requerimiento");
+  });
+
+  it("extracts shorthand cotization and only asks the blocking clarification", () => {
+    const analysis = analyzeConversation("Tengo 63 anos y 34 cotizados y quiero jubilarme cuanto antes");
+
+    expect(analysis.intent.family).toBe("jubilacion");
+    expect(analysis.intent.benefitId).toBe("jubilacion");
+    expect(analysis.state.facts.edad).toBe("63 anos");
+    expect(analysis.state.facts.cotizacion).toBe("34 anos cotizados");
+    expect(analysis.clarifyingQuestions).toEqual(["Es una jubilacion ordinaria, anticipada, parcial, demorada o SOVI?"]);
+  });
+
+  it("creates structured follow-up actions for first-solicitation guidance", () => {
+    const analysis = analyzeConversation("Quiero pedir el IMV y no se que documentos preparar");
+
+    expect(analysis.shouldClarify).toBe(false);
+    expect(analysis.recommendedActions.map((action) => action.label)).toContain("Ver documentos");
+    expect(analysis.suggestedReplies).toEqual(analysis.recommendedActions.map((action) => action.prompt));
   });
 
   it("expires telegram state after the ttl", () => {

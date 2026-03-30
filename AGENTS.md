@@ -25,6 +25,7 @@ La prioridad operativa es mantener `BOT_MODE=rag` estable en produccion, conserv
 - `APP_BASE_URL` debe existir en produccion y apuntar a la URL canonica.
 - El webhook de Telegram debe responder `200` rapido y dejar el trabajo pesado en background.
 - El webhook debe aceptar `callback_query` ademas de `message`.
+- Si los botones de Telegram se quedan marcados y no hacen nada, casi siempre falta `callback_query` en `allowed_updates`.
 - `POST /api/chat` acepta `question`, `channel` y `state`.
 - `GET /api/catalog` sirve el mismo catalogo guiado para web y Telegram.
 - El bot de Telegram expone menu guiado por botones (`/menu`) y salida de contexto (`/reset`).
@@ -36,6 +37,7 @@ La prioridad operativa es mantener `BOT_MODE=rag` estable en produccion, conserv
 - No volver a bloquear `/api/webhook` esperando a `getAnswer()`.
 - No asumir que Gemini embeddings estara disponible para consultas en vivo o ingestiones largas.
 - No perder `callback_query` en `allowed_updates` o el menu guiado dejara de funcionar.
+- Si `npm run webhook:info` falla por `allowed_updates.callback_query`, corrige primero el webhook con `npm run set:webhook` antes de depurar handlers.
 - No desincronizar web y Telegram: la fuente de verdad del catalogo guiado es `src/rag/inssCatalog.ts`, expuesta por `api/catalog.ts`.
 - Si cambias el contrato de chat, mantén compatibilidad con `text`, `summary`, `keyPoints`, `sources` y `legalNotice` mientras migran clientes.
 - Cuando cambies `data/seed/sources.json`, reconstruye `data/cache/fallback-corpus.json`.

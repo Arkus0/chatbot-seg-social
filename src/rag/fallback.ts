@@ -1,4 +1,4 @@
-import type { AnswerPayload, ChatIntent, ChatState } from "../types/answers.js";
+import type { AnswerPayload, ChatIntent, ChatState, RecommendedAction } from "../types/answers.js";
 import type { RetrievedChunk } from "../types/documents.js";
 
 import { dedupeBy, normalizeSearchText, normalizeWhitespace, tokenizeSearchText } from "../utils/text.js";
@@ -56,25 +56,25 @@ export function buildRetrievalOnlyAnswer(
   chunks: RetrievedChunk[],
   intent: ChatIntent,
   state: ChatState,
-  suggestedReplies: string[],
+  recommendedActions: RecommendedAction[],
 ): AnswerPayload {
   const lines = extractCandidateLines(chunks, question);
   const sources = getAnswerSources(chunks);
   const body = [
-    "Resumen del caso:",
-    state.caseSummary || "Caso abierto con contexto oficial parcial.",
-    "",
     "Respuesta breve:",
     "He encontrado informacion oficial relacionada, aunque ahora mismo la generacion avanzada no esta disponible.",
     "",
-    "Siguiente paso ahora:",
+    "Que preparar ahora:",
     ...lines.map((line) => `- ${line.replace(/^[-#\s]+/, "")}`),
     "",
-    "Si el INSS te responde o te pide algo:",
-    "- Usa Mis expedientes administrativos o la via oficial del tramite para confirmar el detalle exacto antes de presentar nada.",
+    "Como presentarlo:",
+    "- Abre la fuente oficial enlazada antes de presentar nada si ves un detalle que no queda cerrado aqui.",
     "",
-    "Alternativas si esta via no encaja:",
-    "- Si el detalle practico no queda claro, revisa la fuente oficial enlazada o vuelve con una duda mas concreta del expediente.",
+    "Que puede cambiar:",
+    "- Si el caso depende de un dato personal no confirmado, conviene cerrarlo antes de enviar la solicitud.",
+    "",
+    "Si luego hay requerimiento o notificacion:",
+    "- Usa Mis expedientes administrativos o la via oficial del tramite para confirmar el detalle exacto antes de presentar nada.",
   ].join("\n");
 
   return composeStandaloneAnswerPayload(
@@ -83,7 +83,7 @@ export function buildRetrievalOnlyAnswer(
     {
       intent,
       state,
-      suggestedReplies,
+      recommendedActions,
     },
   );
 }
