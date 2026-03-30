@@ -10,12 +10,14 @@ export default tseslint.config(
     files: ["*.js"],
     languageOptions: {
       globals: {
+        Blob: "readonly",
         console: "readonly",
         crypto: "readonly",
         document: "readonly",
         fetch: "readonly",
         localStorage: "readonly",
         Event: "readonly",
+        URL: "readonly",
         window: "readonly",
       },
     },
