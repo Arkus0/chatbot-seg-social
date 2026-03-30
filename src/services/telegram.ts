@@ -55,7 +55,7 @@ export async function setTelegramWebhook(): Promise<TelegramApiResponse<boolean>
   return callTelegramApi<boolean>("setWebhook", {
     url: buildWebhookUrl(env.APP_BASE_URL!),
     secret_token: env.TELEGRAM_WEBHOOK_SECRET,
-    allowed_updates: ["message"],
+    allowed_updates: ["message", "callback_query"],
     drop_pending_updates: true,
   });
 }
@@ -80,6 +80,14 @@ export async function setTelegramCommands(): Promise<TelegramApiResponse<boolean
       {
         command: "help",
         description: "Ver ayuda y ejemplos",
+      },
+      {
+        command: "menu",
+        description: "Abrir menu guiado por botones",
+      },
+      {
+        command: "reset",
+        description: "Salir del modo guiado",
       },
     ],
   });

@@ -60,6 +60,14 @@ Esperado:
 - `url = https://chatbot-seg-social.vercel.app/api/webhook`
 - `pending_update_count = 0`
 - sin `last_error_message`
+- `allowed_updates` incluye `message` y `callback_query`
+
+Comandos del bot recomendados:
+
+- `/start`
+- `/help`
+- `/menu` (navegacion guiada por botones)
+- `/reset` (salir de modo guiado)
 
 ## Incidencias tipicas
 
@@ -79,6 +87,7 @@ Esperado:
 - Revisa `npm run webhook:info`.
 - Reejecuta `npm run set:webhook`.
 - Confirma que `api/webhook.ts` sigue devolviendo `200` rapido y usa `waitUntil()`.
+- Si falla navegacion por botones, confirma que el webhook mantiene `callback_query` en `allowed_updates`.
 
 ## Ingestion RAG: estrategia de resume
 

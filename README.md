@@ -68,6 +68,13 @@ npm run set:webhook
 - `BOT_MODE=llm`: usa solo el modelo, sin Pinecone.
 - `BOT_MODE=rag`: activa recuperación desde Pinecone y respuesta con contexto.
 
+## Comandos de Telegram
+
+- `/start`: bienvenida y contexto del asistente.
+- `/help`: ejemplos de preguntas.
+- `/menu`: abre navegación guiada por botones (temas y subacciones).
+- `/reset`: sale del modo guiado y vuelve a pregunta libre.
+
 ## Webhook local con ngrok
 
 ### 1. Arrancar la app en local

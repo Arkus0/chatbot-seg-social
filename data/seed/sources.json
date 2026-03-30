@@ -3,7 +3,12 @@
     "url": "https://portal.seg-social.gob.es/wps/portal/importass/importass/Categorias/Vida%2Blaboral%2Be%2Binformes/Informes%2Bsobre%2Btu%2Bsituacion%2Blaboral/Informe%2Bde%2Btu%2Bvida%2Blaboral",
     "title": "Informe de tu vida laboral - Importass",
     "type": "html",
-    "tags": ["vida-laboral", "informes", "situacion-laboral", "importass"],
+    "tags": [
+      "vida-laboral",
+      "informes",
+      "situacion-laboral",
+      "importass"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -11,7 +16,13 @@
     "url": "https://portal.seg-social.gob.es/wps/portal/importass/importass/Categorias/Vida%2Blaboral%2Be%2Binformes/Informes%2Bsobre%2Btu%2Bsituacion%2Blaboral/Acreditacion_NUSS",
     "title": "Acreditación del Número de la Seguridad Social",
     "type": "html",
-    "tags": ["nuss", "naf", "numero-seguridad-social", "acreditacion", "importass"],
+    "tags": [
+      "nuss",
+      "naf",
+      "numero-seguridad-social",
+      "acreditacion",
+      "importass"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -19,15 +30,28 @@
     "url": "https://portal.seg-social.gob.es/wps/portal/importass/importass/Categorias/Altas%2C%2Bbajas%2By%2Bmodificaciones/Altas%2By%2Bafiliacion%2Bde%2Btrabajadores/Solicitar%2Bel%2Bnumero%2Bde%2Bla%2BSeguridad%2BSocial",
     "title": "Solicitar el Número de la Seguridad Social",
     "type": "html",
-    "tags": ["nuss", "naf", "numero-seguridad-social", "solicitud", "afiliacion", "importass"],
-    "priority": 4,
+    "tags": [
+      "nuss",
+      "naf",
+      "numero-seguridad-social",
+      "solicitud",
+      "afiliacion",
+      "importass"
+    ],
+    "priority": 5,
     "enabled": true
   },
   {
     "url": "https://portal.seg-social.gob.es/wps/portal/importass/importass/Categorias/Altas%2C%2Bbajas%2By%2Bmodificaciones/Altas%2By%2Bafiliacion%2Bde%2Btrabajadores/Alta_trabajo_autonomo",
     "title": "Alta en trabajo autónomo",
     "type": "html",
-    "tags": ["autonomo", "reta", "alta", "trabajo-autonomo", "importass"],
+    "tags": [
+      "autonomo",
+      "reta",
+      "alta",
+      "trabajo-autonomo",
+      "importass"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -35,7 +59,13 @@
     "url": "https://portal.seg-social.gob.es/wps/portal/importass/importass/Categorias/Altas%2C%2Bbajas%2By%2Bmodificaciones/Bajas%2By%2Bmodificaciones/baja_trabajo_autonomo",
     "title": "Baja en trabajo autónomo",
     "type": "html",
-    "tags": ["autonomo", "reta", "baja", "trabajo-autonomo", "importass"],
+    "tags": [
+      "autonomo",
+      "reta",
+      "baja",
+      "trabajo-autonomo",
+      "importass"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -43,23 +73,40 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/InformacionUtil/44539/43384/45374",
     "title": "Procedimiento de Pensión de Jubilación",
     "type": "html",
-    "tags": ["jubilacion", "pension", "procedimiento", "requisitos", "documentacion"],
-    "priority": 4,
+    "tags": [
+      "jubilacion",
+      "pension",
+      "procedimiento",
+      "requisitos",
+      "documentacion"
+    ],
+    "priority": 5,
     "enabled": true
   },
   {
     "url": "https://www.seg-social.es/wps/portal/wss/internet/InformacionUtil/44539/43384/45374/45375",
     "title": "Pensión de Jubilación - procedimiento detallado",
     "type": "html",
-    "tags": ["jubilacion", "pension", "solicitud", "plazos", "inss"],
-    "priority": 3,
+    "tags": [
+      "jubilacion",
+      "pension",
+      "solicitud",
+      "plazos",
+      "inss"
+    ],
+    "priority": 4,
     "enabled": true
   },
   {
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10963/28393/28396/28472/177422",
     "title": "Jubilación ordinaria - requisitos",
     "type": "html",
-    "tags": ["jubilacion", "edad-jubilacion", "cotizacion", "requisitos"],
+    "tags": [
+      "jubilacion",
+      "edad-jubilacion",
+      "cotizacion",
+      "requisitos"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -67,7 +114,13 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10963/28393/28396/28475?changeLanguage=es",
     "title": "Jubilación - cuantía",
     "type": "html",
-    "tags": ["jubilacion", "cuantia", "importe", "base-reguladora", "porcentaje"],
+    "tags": [
+      "jubilacion",
+      "cuantia",
+      "importe",
+      "base-reguladora",
+      "porcentaje"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -75,15 +128,26 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10963/28393/28396/28482",
     "title": "Jubilación - gestión y solicitudes",
     "type": "html",
-    "tags": ["jubilacion", "solicitud", "documentacion", "gestion", "tramite"],
-    "priority": 4,
+    "tags": [
+      "jubilacion",
+      "solicitud",
+      "documentacion",
+      "gestion",
+      "tramite"
+    ],
+    "priority": 5,
     "enabled": true
   },
   {
     "url": "https://www.seg-social.es/wps/portal/wss/internet/InformacionUtil/44539/43384/44673/44674",
     "title": "Procedimiento de Incapacidad Temporal",
     "type": "html",
-    "tags": ["incapacidad-temporal", "baja-medica", "procedimiento", "prestacion"],
+    "tags": [
+      "incapacidad-temporal",
+      "baja-medica",
+      "procedimiento",
+      "prestacion"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -91,7 +155,12 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/InformacionUtil/44539/44667/44680",
     "title": "Prestación de Incapacidad Temporal",
     "type": "html",
-    "tags": ["incapacidad-temporal", "baja-medica", "subsidio", "prestacion"],
+    "tags": [
+      "incapacidad-temporal",
+      "baja-medica",
+      "subsidio",
+      "prestacion"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -99,7 +168,12 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10960/28750/32128",
     "title": "Incapacidad permanente - concepto",
     "type": "html",
-    "tags": ["incapacidad-permanente", "invalidez", "grados", "concepto"],
+    "tags": [
+      "incapacidad-permanente",
+      "invalidez",
+      "grados",
+      "concepto"
+    ],
     "priority": 3,
     "enabled": true
   },
@@ -107,7 +181,14 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10960/28750/28751/6274",
     "title": "Incapacidad permanente - grados",
     "type": "html",
-    "tags": ["incapacidad-permanente", "grados", "parcial", "total", "absoluta", "gran-invalidez"],
+    "tags": [
+      "incapacidad-permanente",
+      "grados",
+      "parcial",
+      "total",
+      "absoluta",
+      "gran-invalidez"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -115,7 +196,11 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10960/28750/28680/28700/desc28700",
     "title": "Incapacidad permanente total",
     "type": "html",
-    "tags": ["incapacidad-permanente", "incapacidad-permanente-total", "prestacion"],
+    "tags": [
+      "incapacidad-permanente",
+      "incapacidad-permanente-total",
+      "prestacion"
+    ],
     "priority": 3,
     "enabled": true
   },
@@ -123,7 +208,13 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10960/28750/28680/28700/28709",
     "title": "Incapacidad permanente total - cuantía y abono",
     "type": "html",
-    "tags": ["incapacidad-permanente", "incapacidad-permanente-total", "cuantia", "abono", "base-reguladora"],
+    "tags": [
+      "incapacidad-permanente",
+      "incapacidad-permanente-total",
+      "cuantia",
+      "abono",
+      "base-reguladora"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -131,7 +222,13 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10960/28750/28680/28700/28754",
     "title": "Incapacidad permanente total - solicitudes",
     "type": "html",
-    "tags": ["incapacidad-permanente", "incapacidad-permanente-total", "solicitud", "documentacion", "tramite"],
+    "tags": [
+      "incapacidad-permanente",
+      "incapacidad-permanente-total",
+      "solicitud",
+      "documentacion",
+      "tramite"
+    ],
     "priority": 5,
     "enabled": true
   },
@@ -139,7 +236,13 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10960/28750/28680/28700/28703",
     "title": "Incapacidad permanente total - beneficiarios y efectos económicos",
     "type": "html",
-    "tags": ["incapacidad-permanente", "incapacidad-permanente-total", "beneficiarios", "requisitos", "efectos-economicos"],
+    "tags": [
+      "incapacidad-permanente",
+      "incapacidad-permanente-total",
+      "beneficiarios",
+      "requisitos",
+      "efectos-economicos"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -147,7 +250,12 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10960/28750/28680/28700/28717",
     "title": "Incapacidad permanente total - compatibilidades",
     "type": "html",
-    "tags": ["incapacidad-permanente", "incapacidad-permanente-total", "compatibilidades", "incompatibilidades"],
+    "tags": [
+      "incapacidad-permanente",
+      "incapacidad-permanente-total",
+      "compatibilidades",
+      "incompatibilidades"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -155,7 +263,14 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10960/28750/28680/28700/32454",
     "title": "Incapacidad permanente total - gestión y pago",
     "type": "html",
-    "tags": ["incapacidad-permanente", "incapacidad-permanente-total", "gestion", "pago", "mutua", "inss"],
+    "tags": [
+      "incapacidad-permanente",
+      "incapacidad-permanente-total",
+      "gestion",
+      "pago",
+      "mutua",
+      "inss"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -163,7 +278,11 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10960/28750/28680/35615",
     "title": "Incapacidad permanente parcial",
     "type": "html",
-    "tags": ["incapacidad-permanente", "incapacidad-permanente-parcial", "indemnizacion"],
+    "tags": [
+      "incapacidad-permanente",
+      "incapacidad-permanente-parcial",
+      "indemnizacion"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -171,7 +290,11 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10960/28750/28680/28729",
     "title": "Incapacidad permanente absoluta",
     "type": "html",
-    "tags": ["incapacidad-permanente", "incapacidad-permanente-absoluta", "prestacion"],
+    "tags": [
+      "incapacidad-permanente",
+      "incapacidad-permanente-absoluta",
+      "prestacion"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -179,7 +302,12 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10960/28750/28680/31908",
     "title": "Gran incapacidad",
     "type": "html",
-    "tags": ["incapacidad-permanente", "gran-incapacidad", "complemento", "tercera-persona"],
+    "tags": [
+      "incapacidad-permanente",
+      "gran-incapacidad",
+      "complemento",
+      "tercera-persona"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -187,7 +315,13 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10960/28750/28680/31908/32066",
     "title": "Gran incapacidad - cuantía y abono",
     "type": "html",
-    "tags": ["incapacidad-permanente", "gran-incapacidad", "cuantia", "importe", "complemento"],
+    "tags": [
+      "incapacidad-permanente",
+      "gran-incapacidad",
+      "cuantia",
+      "importe",
+      "complemento"
+    ],
     "priority": 5,
     "enabled": true
   },
@@ -195,7 +329,13 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/6b96a085-4dc0-47af-b2cb-97e00716791e/subsidionycm",
     "title": "Nacimiento y cuidado de menor",
     "type": "html",
-    "tags": ["nacimiento", "cuidado-menor", "maternidad", "paternidad", "prestacion"],
+    "tags": [
+      "nacimiento",
+      "cuidado-menor",
+      "maternidad",
+      "paternidad",
+      "prestacion"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -203,23 +343,40 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Pensionistas/Servicios/34887/40968/675dcd57-75d3-4a97-926a-1ba60fa72d32",
     "title": "Nacimiento y cuidado de menor - solicitudes",
     "type": "html",
-    "tags": ["nacimiento", "cuidado-menor", "solicitud", "documentacion", "tramite"],
-    "priority": 4,
+    "tags": [
+      "nacimiento",
+      "cuidado-menor",
+      "solicitud",
+      "documentacion",
+      "tramite"
+    ],
+    "priority": 5,
     "enabled": true
   },
   {
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Pensionistas/Servicios/34887/40968/41054",
     "title": "Riesgo durante el embarazo o la lactancia natural - solicitud",
     "type": "html",
-    "tags": ["riesgo-embarazo", "riesgo-lactancia", "solicitud", "documentacion", "formulario"],
-    "priority": 4,
+    "tags": [
+      "riesgo-embarazo",
+      "riesgo-lactancia",
+      "solicitud",
+      "documentacion",
+      "formulario"
+    ],
+    "priority": 5,
     "enabled": true
   },
   {
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10956/desc10956",
     "title": "Riesgo durante el embarazo",
     "type": "html",
-    "tags": ["riesgo-embarazo", "embarazo", "prestacion", "suspension-contrato"],
+    "tags": [
+      "riesgo-embarazo",
+      "embarazo",
+      "prestacion",
+      "suspension-contrato"
+    ],
     "priority": 3,
     "enabled": true
   },
@@ -227,7 +384,13 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10956/28347/45087",
     "title": "Riesgo durante el embarazo - Régimen General",
     "type": "html",
-    "tags": ["riesgo-embarazo", "embarazo", "requisitos", "cuantia", "regimen-general"],
+    "tags": [
+      "riesgo-embarazo",
+      "embarazo",
+      "requisitos",
+      "cuantia",
+      "regimen-general"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -235,7 +398,12 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/51288",
     "title": "Riesgo durante la lactancia natural",
     "type": "html",
-    "tags": ["lactancia", "riesgo-lactancia", "prestacion", "suspension-contrato"],
+    "tags": [
+      "lactancia",
+      "riesgo-lactancia",
+      "prestacion",
+      "suspension-contrato"
+    ],
     "priority": 3,
     "enabled": true
   },
@@ -243,7 +411,13 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/51288/51289/51290",
     "title": "Riesgo durante la lactancia natural - Régimen General",
     "type": "html",
-    "tags": ["lactancia", "riesgo-lactancia", "requisitos", "cuantia", "regimen-general"],
+    "tags": [
+      "lactancia",
+      "riesgo-lactancia",
+      "requisitos",
+      "cuantia",
+      "regimen-general"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -251,7 +425,12 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10964/10966/28489/28490",
     "title": "Pensión de viudedad - causantes y beneficiarios",
     "type": "html",
-    "tags": ["viudedad", "muerte-supervivencia", "beneficiarios", "requisitos"],
+    "tags": [
+      "viudedad",
+      "muerte-supervivencia",
+      "beneficiarios",
+      "requisitos"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -259,7 +438,13 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10964/10966/28489/28492",
     "title": "Pensión de viudedad - cuantía y abono",
     "type": "html",
-    "tags": ["viudedad", "cuantia", "importe", "abono", "base-reguladora"],
+    "tags": [
+      "viudedad",
+      "cuantia",
+      "importe",
+      "abono",
+      "base-reguladora"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -267,15 +452,25 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10964/10966/28489/28498",
     "title": "Pensión de viudedad - solicitudes",
     "type": "html",
-    "tags": ["viudedad", "solicitud", "documentacion", "tramite"],
-    "priority": 4,
+    "tags": [
+      "viudedad",
+      "solicitud",
+      "documentacion",
+      "tramite"
+    ],
+    "priority": 5,
     "enabled": true
   },
   {
     "url": "https://www.seg-social.es/wps/portal/wss/internet/InformacionUtil/44539/45659/45664/",
     "title": "Pensión de orfandad",
     "type": "html",
-    "tags": ["orfandad", "muerte-supervivencia", "beneficiarios", "requisitos"],
+    "tags": [
+      "orfandad",
+      "muerte-supervivencia",
+      "beneficiarios",
+      "requisitos"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -283,23 +478,40 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Pensionistas/Servicios/34887/40968/41026",
     "title": "Viudedad, orfandad y favor de familiares - solicitud",
     "type": "html",
-    "tags": ["viudedad", "orfandad", "favor-de-familiares", "solicitud", "documentacion", "formulario"],
-    "priority": 4,
+    "tags": [
+      "viudedad",
+      "orfandad",
+      "favor-de-familiares",
+      "solicitud",
+      "documentacion",
+      "formulario"
+    ],
+    "priority": 5,
     "enabled": true
   },
   {
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Pensionistas/Servicios/34887/40968/7392fa45-b5db-43ce-b5fd-14f0ef6df73a/f8d240bc-99d7-4d4f-b71b-055f7b9bf15f?changeLanguage=es",
     "title": "Ingreso Mínimo Vital - Solicitud y variaciones",
     "type": "html",
-    "tags": ["imv", "ingreso-minimo-vital", "solicitud", "prestaciones"],
-    "priority": 4,
+    "tags": [
+      "imv",
+      "ingreso-minimo-vital",
+      "solicitud",
+      "prestaciones"
+    ],
+    "priority": 5,
     "enabled": true
   },
   {
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10938/11566/1761?changeLanguage=es&furriel=50e8297e8b11c844a95736925c72805c714434a5",
     "title": "Tarjeta Sanitaria Europea (TSE)",
     "type": "html",
-    "tags": ["tse", "tarjeta-sanitaria-europea", "asistencia-sanitaria", "europa"],
+    "tags": [
+      "tse",
+      "tarjeta-sanitaria-europea",
+      "asistencia-sanitaria",
+      "europa"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -307,15 +519,26 @@
     "url": "https://sede.seg-social.gob.es/wps/portal/sede/sede/Ciudadanos/Asistencia%2BSanitaria/202046SinC",
     "title": "Solicitud Tarjeta Sanitaria Europea (TSE)",
     "type": "html",
-    "tags": ["tse", "tarjeta-sanitaria-europea", "solicitud", "asistencia-sanitaria", "sede"],
-    "priority": 4,
+    "tags": [
+      "tse",
+      "tarjeta-sanitaria-europea",
+      "solicitud",
+      "asistencia-sanitaria",
+      "sede"
+    ],
+    "priority": 5,
     "enabled": true
   },
   {
     "url": "https://sede.seg-social.gob.es/wps/portal/sede/sede/Ciudadanos/informes+y+certificados/01informes+y+certificados",
     "title": "Informes y certificados - vida laboral y situación laboral",
     "type": "html",
-    "tags": ["vida-laboral", "certificados", "situacion-laboral", "sede"],
+    "tags": [
+      "vida-laboral",
+      "certificados",
+      "situacion-laboral",
+      "sede"
+    ],
     "priority": 2,
     "enabled": true
   },
@@ -323,23 +546,42 @@
     "url": "https://revista.seg-social.es/-/5-pasos-para-darse-de-alta-como-aut%C3%B3nomo/en/",
     "title": "5 pasos para darse de alta como autonomo",
     "type": "html",
-    "tags": ["autonomo", "reta", "alta", "tramite", "guia-practica", "revista"],
-    "priority": 4,
+    "tags": [
+      "autonomo",
+      "reta",
+      "alta",
+      "tramite",
+      "guia-practica",
+      "revista"
+    ],
+    "priority": 3,
     "enabled": true
   },
   {
     "url": "https://revista.seg-social.es/-/c%C3%B3mo-solicitar-la-tarjeta-sanitaria-europea",
     "title": "Como solicitar la Tarjeta Sanitaria Europea",
     "type": "html",
-    "tags": ["tse", "tarjeta-sanitaria-europea", "solicitud", "guia-practica", "revista"],
-    "priority": 4,
+    "tags": [
+      "tse",
+      "tarjeta-sanitaria-europea",
+      "solicitud",
+      "guia-practica",
+      "revista"
+    ],
+    "priority": 3,
     "enabled": true
   },
   {
     "url": "https://revista.seg-social.es/-/como-obtener-la-tarjeta-sanitaria-europea",
     "title": "Guia rapida de la TSE",
     "type": "html",
-    "tags": ["tse", "tarjeta-sanitaria-europea", "cps", "asistencia-sanitaria", "revista"],
+    "tags": [
+      "tse",
+      "tarjeta-sanitaria-europea",
+      "cps",
+      "asistencia-sanitaria",
+      "revista"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -347,31 +589,58 @@
     "url": "https://revista.seg-social.es/-/c%C3%B3mo-realizar-tr%C3%A1mites-en-el-inss-de-manera-telem%C3%A1tica-sin-certificado-digital-ni-cl-ve/en/",
     "title": "Como realizar tramites en el INSS sin certificado digital ni clave",
     "type": "html",
-    "tags": ["inss", "tramites", "sin-certificado", "solicitud", "presentacion", "revista"],
-    "priority": 4,
+    "tags": [
+      "inss",
+      "tramites",
+      "sin-certificado",
+      "solicitud",
+      "presentacion",
+      "revista"
+    ],
+    "priority": 3,
     "enabled": true
   },
   {
     "url": "https://revista.seg-social.es/-/c%C3%B3mo-pedir-la-prestaci%C3%B3n-por-nacimiento-y-cuidado-de-menor",
     "title": "Como pedir la prestacion por nacimiento y cuidado de menor",
     "type": "html",
-    "tags": ["nacimiento", "cuidado-menor", "solicitud", "documentacion", "guia-practica", "revista"],
-    "priority": 4,
+    "tags": [
+      "nacimiento",
+      "cuidado-menor",
+      "solicitud",
+      "documentacion",
+      "guia-practica",
+      "revista"
+    ],
+    "priority": 3,
     "enabled": true
   },
   {
     "url": "https://revista.seg-social.es/-/qu%C3%A9-documentaci%C3%B3n-debo-presentar-para-solicitar-el-ingreso-m%C3%ADnimo-vital",
     "title": "Que documentacion debo presentar para solicitar el Ingreso Minimo Vital",
     "type": "html",
-    "tags": ["imv", "ingreso-minimo-vital", "documentacion", "solicitud", "guia-practica", "revista"],
-    "priority": 5,
+    "tags": [
+      "imv",
+      "ingreso-minimo-vital",
+      "documentacion",
+      "solicitud",
+      "guia-practica",
+      "revista"
+    ],
+    "priority": 4,
     "enabled": true
   },
   {
     "url": "https://revista.seg-social.es/-/la-pensi%C3%B3n-de-viudedad-preguntas-y-respuestas",
     "title": "La pension de viudedad - preguntas y respuestas",
     "type": "html",
-    "tags": ["viudedad", "preguntas-frecuentes", "beneficiarios", "compatibilidades", "revista"],
+    "tags": [
+      "viudedad",
+      "preguntas-frecuentes",
+      "beneficiarios",
+      "compatibilidades",
+      "revista"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -379,7 +648,13 @@
     "url": "https://revista.seg-social.es/detalle-noticia/-/asset_publisher/4za6PzqGypPA/content/20220321-guia-jubilacion-demorada2",
     "title": "Guia para conocer los beneficios de demorar tu jubilacion",
     "type": "html",
-    "tags": ["jubilacion", "jubilacion-demorada", "beneficios", "guia-practica", "revista"],
+    "tags": [
+      "jubilacion",
+      "jubilacion-demorada",
+      "beneficios",
+      "guia-practica",
+      "revista"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -387,7 +662,13 @@
     "url": "https://revista.seg-social.es/-/calcule-su-jubilaci%C3%B3n",
     "title": "Guia practica para simular tu futura jubilacion",
     "type": "html",
-    "tags": ["jubilacion", "simulador", "tu-seguridad-social", "guia-practica", "revista"],
+    "tags": [
+      "jubilacion",
+      "simulador",
+      "tu-seguridad-social",
+      "guia-practica",
+      "revista"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -395,15 +676,27 @@
     "url": "https://revista.seg-social.es/-/202203-acceso-a-tuss-sms/en/",
     "title": "Como simular tu futura jubilacion identificandote via SMS",
     "type": "html",
-    "tags": ["jubilacion", "simulador", "sms", "tu-seguridad-social", "revista"],
-    "priority": 3,
+    "tags": [
+      "jubilacion",
+      "simulador",
+      "sms",
+      "tu-seguridad-social",
+      "revista"
+    ],
+    "priority": 2,
     "enabled": true
   },
   {
     "url": "https://revista.seg-social.es/-/como-obtener-el-nuss-numero-de-la-seguridad-social-1",
     "title": "Como obtener el NUSS o Numero de la Seguridad Social",
     "type": "html",
-    "tags": ["nuss", "naf", "numero-seguridad-social", "guia-practica", "revista"],
+    "tags": [
+      "nuss",
+      "naf",
+      "numero-seguridad-social",
+      "guia-practica",
+      "revista"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -411,7 +704,13 @@
     "url": "https://revista.seg-social.es/-/c%C3%B3mo-obtener-el-informe-de-vida-laboral?redirect=%2F%3Fpost_id%3DnoID",
     "title": "Informe de vida laboral - como obtenerlo",
     "type": "html",
-    "tags": ["vida-laboral", "informes", "importass", "guia-practica", "revista"],
+    "tags": [
+      "vida-laboral",
+      "informes",
+      "importass",
+      "guia-practica",
+      "revista"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -419,7 +718,14 @@
     "url": "https://revista.seg-social.es/-/c%C3%B3mo-solicitar-cita-previa-para-pensiones-y-otras-prestaciones-de-la-seguridad-social/",
     "title": "Guia para solicitar cita previa con la Seguridad Social",
     "type": "html",
-    "tags": ["cita-previa", "pensiones", "prestaciones", "inss", "guia-practica", "revista"],
+    "tags": [
+      "cita-previa",
+      "pensiones",
+      "prestaciones",
+      "inss",
+      "guia-practica",
+      "revista"
+    ],
     "priority": 3,
     "enabled": true
   },
@@ -427,7 +733,12 @@
     "url": "https://www.seg-social.es/wps/wcm/connect/wss/96a0e57a-f2a9-4b68-9cad-8016c7ddd599/PUB042_Castellano%2BGuia%2Bde%2Bprestaciones.pdf?MOD=AJPERES",
     "title": "Guia de prestaciones de la Seguridad Social",
     "type": "pdf",
-    "tags": ["prestaciones", "guia-prestaciones", "guia-practica", "documentacion"],
+    "tags": [
+      "prestaciones",
+      "guia-prestaciones",
+      "guia-practica",
+      "documentacion"
+    ],
     "priority": 5,
     "enabled": true
   },
@@ -435,7 +746,12 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10964/10966/28558/116022",
     "title": "Auxilio por defuncion",
     "type": "html",
-    "tags": ["auxilio-defuncion", "muerte-supervivencia", "gastos-sepelio", "prestacion"],
+    "tags": [
+      "auxilio-defuncion",
+      "muerte-supervivencia",
+      "gastos-sepelio",
+      "prestacion"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -443,7 +759,13 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/1941",
     "title": "Cuidado de menores afectados por cancer u otra enfermedad grave",
     "type": "html",
-    "tags": ["cuidado-menor-grave", "cancer", "enfermedad-grave", "prestacion", "reduccion-jornada"],
+    "tags": [
+      "cuidado-menor-grave",
+      "cancer",
+      "enfermedad-grave",
+      "prestacion",
+      "reduccion-jornada"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -451,7 +773,13 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Pensionistas/Servicios/34887/40968/1951/143868",
     "title": "Cuidado de menores afectados por cancer u otra enfermedad grave - solicitud",
     "type": "html",
-    "tags": ["cuidado-menor-grave", "solicitud", "documentacion", "formulario", "tramite"],
+    "tags": [
+      "cuidado-menor-grave",
+      "solicitud",
+      "documentacion",
+      "formulario",
+      "tramite"
+    ],
     "priority": 5,
     "enabled": true
   },
@@ -459,7 +787,13 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/4c43ce49-6636-4a12-bacf-5e6697eb81da/",
     "title": "Complemento para la reduccion de la brecha de genero",
     "type": "html",
-    "tags": ["brecha-genero", "complemento", "pension", "hijos", "requisitos"],
+    "tags": [
+      "brecha-genero",
+      "complemento",
+      "pension",
+      "hijos",
+      "requisitos"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -467,7 +801,13 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Pensionistas/Servicios/34928/16da5d4f-1368-474a-86e4-ca96e893b898/solicitud%2Bde%2Bcomplemento%2Bpor%2Bmaternidad",
     "title": "Complemento para la reduccion de la brecha de genero - solicitud",
     "type": "html",
-    "tags": ["brecha-genero", "solicitud", "documentacion", "formulario", "tramite"],
+    "tags": [
+      "brecha-genero",
+      "solicitud",
+      "documentacion",
+      "formulario",
+      "tramite"
+    ],
     "priority": 5,
     "enabled": true
   },
@@ -475,7 +815,12 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/InformacionUtil/44539/45659/45686",
     "title": "Subsidio en favor de familiares",
     "type": "html",
-    "tags": ["favor-de-familiares", "subsidio", "muerte-supervivencia", "requisitos"],
+    "tags": [
+      "favor-de-familiares",
+      "subsidio",
+      "muerte-supervivencia",
+      "requisitos"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -483,23 +828,40 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10964/10966/28536",
     "title": "Pension en favor de familiares",
     "type": "html",
-    "tags": ["favor-de-familiares", "pension", "muerte-supervivencia", "solicitud"],
-    "priority": 4,
+    "tags": [
+      "favor-de-familiares",
+      "pension",
+      "muerte-supervivencia",
+      "solicitud"
+    ],
+    "priority": 5,
     "enabled": true
   },
   {
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10963/28393/28396/28482/6165",
     "title": "Jubilacion anticipada - gestion y solicitudes",
     "type": "html",
-    "tags": ["jubilacion", "jubilacion-anticipada", "solicitud", "documentacion", "tramite"],
-    "priority": 4,
+    "tags": [
+      "jubilacion",
+      "jubilacion-anticipada",
+      "solicitud",
+      "documentacion",
+      "tramite"
+    ],
+    "priority": 5,
     "enabled": true
   },
   {
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10963/28393/28399/28443",
     "title": "Jubilacion parcial",
     "type": "html",
-    "tags": ["jubilacion", "jubilacion-parcial", "requisitos", "contrato-relevo", "prestacion"],
+    "tags": [
+      "jubilacion",
+      "jubilacion-parcial",
+      "requisitos",
+      "contrato-relevo",
+      "prestacion"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -507,15 +869,27 @@
     "url": "https://revista.seg-social.es/-/como-dar-de-alta-a-un-beneficiario-en-la-seguridad-social",
     "title": "Como dar de alta a un beneficiario en la Seguridad Social",
     "type": "html",
-    "tags": ["beneficiario", "asistencia-sanitaria", "solicitud", "guia-practica", "revista"],
-    "priority": 4,
+    "tags": [
+      "beneficiario",
+      "asistencia-sanitaria",
+      "solicitud",
+      "guia-practica",
+      "revista"
+    ],
+    "priority": 3,
     "enabled": true
   },
   {
     "url": "https://sede.seg-social.gob.es/wps/portal/sede/sede/Ciudadanos/asistencia%2Bsanitaria/202043_tuss",
     "title": "Asistencia sanitaria. Alta de beneficiarios",
     "type": "html",
-    "tags": ["beneficiario", "asistencia-sanitaria", "solicitud", "sede", "tramite"],
+    "tags": [
+      "beneficiario",
+      "asistencia-sanitaria",
+      "solicitud",
+      "sede",
+      "tramite"
+    ],
     "priority": 5,
     "enabled": true
   },
@@ -523,15 +897,26 @@
     "url": "https://portal.seg-social.gob.es/wps/portal/importass/importass/Colectivos/Empleo%20del%20hogar",
     "title": "Empleo del hogar - guia Importass",
     "type": "html",
-    "tags": ["empleo-hogar", "importass", "guia-practica", "tramite"],
-    "priority": 4,
+    "tags": [
+      "empleo-hogar",
+      "importass",
+      "guia-practica",
+      "tramite"
+    ],
+    "priority": 5,
     "enabled": true
   },
   {
     "url": "https://portal.seg-social.gob.es/wps/portal/importass/importass/Categorias/Altas%2C%20bajas%20y%20modificaciones/Altas%20y%20afiliacion%20de%20trabajadores/Alta%20en%20empleo%20de%20hogar",
     "title": "Alta en empleo de hogar",
     "type": "html",
-    "tags": ["empleo-hogar", "alta", "solicitud", "importass", "tramite"],
+    "tags": [
+      "empleo-hogar",
+      "alta",
+      "solicitud",
+      "importass",
+      "tramite"
+    ],
     "priority": 5,
     "enabled": true
   },
@@ -539,7 +924,13 @@
     "url": "https://portal.seg-social.gob.es/wps/portal/importass/importass/Categorias/Altas%2C%20bajas%20y%20modificaciones/Bajas%20y%20modificaciones/Baja%20de%20empleo%20de%20hogar",
     "title": "Baja en empleo de hogar",
     "type": "html",
-    "tags": ["empleo-hogar", "baja", "solicitud", "importass", "tramite"],
+    "tags": [
+      "empleo-hogar",
+      "baja",
+      "solicitud",
+      "importass",
+      "tramite"
+    ],
     "priority": 5,
     "enabled": true
   },
@@ -547,23 +938,41 @@
     "url": "https://revista.seg-social.es/-/c%C3%B3mo-dar-de-alta-a-una-persona-empleada-de-hogar",
     "title": "Como dar de alta a una persona empleada de hogar",
     "type": "html",
-    "tags": ["empleo-hogar", "alta", "guia-practica", "revista", "tramite"],
-    "priority": 4,
+    "tags": [
+      "empleo-hogar",
+      "alta",
+      "guia-practica",
+      "revista",
+      "tramite"
+    ],
+    "priority": 3,
     "enabled": true
   },
   {
     "url": "https://revista.seg-social.es/-/el-convenio-especial-con-la-seguridad-social",
     "title": "El convenio especial con la Seguridad Social",
     "type": "html",
-    "tags": ["convenio-especial", "cotizacion", "guia-practica", "revista", "tramite"],
-    "priority": 4,
+    "tags": [
+      "convenio-especial",
+      "cotizacion",
+      "guia-practica",
+      "revista",
+      "tramite"
+    ],
+    "priority": 3,
     "enabled": true
   },
   {
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/Afiliacion/10547/10553/2498/coti",
     "title": "Convenio especial con la Seguridad Social",
     "type": "html",
-    "tags": ["convenio-especial", "cotizacion", "requisitos", "solicitud", "afiliacion"],
+    "tags": [
+      "convenio-especial",
+      "cotizacion",
+      "requisitos",
+      "solicitud",
+      "afiliacion"
+    ],
     "priority": 5,
     "enabled": true
   },
@@ -571,7 +980,13 @@
     "url": "https://sede.seg-social.gob.es/binarios/en/203484",
     "title": "TA-0040 Solicitud de alta, baja o variacion de datos del convenio especial",
     "type": "pdf",
-    "tags": ["convenio-especial", "formulario", "rellenar", "solicitud", "pdf"],
+    "tags": [
+      "convenio-especial",
+      "formulario",
+      "rellenar",
+      "solicitud",
+      "pdf"
+    ],
     "priority": 5,
     "enabled": true
   },
@@ -579,7 +994,13 @@
     "url": "https://revista.seg-social.es/-/guia-para-solicitar-recuperar-a%C3%B1os-de-cotizacion-por-antiguas-practicas-formativas",
     "title": "Guia para solicitar la recuperacion de tus anos de cotizacion por antiguas practicas formativas",
     "type": "html",
-    "tags": ["practicas-formativas", "convenio-especial", "cotizacion", "guia-practica", "revista"],
+    "tags": [
+      "practicas-formativas",
+      "convenio-especial",
+      "cotizacion",
+      "guia-practica",
+      "revista"
+    ],
     "priority": 5,
     "enabled": true
   },
@@ -587,7 +1008,12 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/HerramientasWeb/9083f0b1-1cf1-411e-b483-7551440fa1a7/e23e7cee-098d-4696-ac91-3a30523a8146/bca6d1e7-56e9-4611-bd0a-f7eaead11009/090924pf",
     "title": "Preguntas y respuestas sobre el convenio especial por practicas formativas",
     "type": "html",
-    "tags": ["practicas-formativas", "convenio-especial", "preguntas-frecuentes", "cotizacion"],
+    "tags": [
+      "practicas-formativas",
+      "convenio-especial",
+      "preguntas-frecuentes",
+      "cotizacion"
+    ],
     "priority": 5,
     "enabled": true
   },
@@ -595,7 +1021,13 @@
     "url": "https://revista.seg-social.es/-/gu%C3%ADa-per%C3%ADodos-m%C3%ADnimos-de-cotizaci%C3%B3n-para-acceder-a-las-prestaciones-de-la-seguridad-social",
     "title": "Guia periodos minimos de cotizacion para acceder a las prestaciones de la Seguridad Social",
     "type": "html",
-    "tags": ["periodos-minimos-cotizacion", "prestaciones", "guia-practica", "revista", "requisitos"],
+    "tags": [
+      "periodos-minimos-cotizacion",
+      "prestaciones",
+      "guia-practica",
+      "revista",
+      "requisitos"
+    ],
     "priority": 5,
     "enabled": true
   },
@@ -603,7 +1035,12 @@
     "url": "https://revista.seg-social.es/-/certificado-integral-de-prestaciones",
     "title": "Que es el certificado integral de prestaciones",
     "type": "html",
-    "tags": ["certificado-prestaciones", "pensiones", "guia-practica", "revista"],
+    "tags": [
+      "certificado-prestaciones",
+      "pensiones",
+      "guia-practica",
+      "revista"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -611,7 +1048,13 @@
     "url": "https://sede.seg-social.gob.es/wps/portal/sede/sede/Ciudadanos/Pensiones/181119_INSS",
     "title": "Certificado integral de prestaciones",
     "type": "html",
-    "tags": ["certificado-prestaciones", "pensiones", "sede", "tramite"],
+    "tags": [
+      "certificado-prestaciones",
+      "pensiones",
+      "sede",
+      "tramite",
+      "inss"
+    ],
     "priority": 5,
     "enabled": true
   },
@@ -619,31 +1062,58 @@
     "url": "https://revista.seg-social.es/detalle-noticia/-/asset_publisher/4za6PzqGypPA/content/consulte-el-estado-de-su-solicitud-de-prestaci%25C3%25B3n-identific%25C3%25A1ndose-v%25C3%25ADa-sms",
     "title": "Consulta el estado de tu solicitud de prestacion identificandote via SMS",
     "type": "html",
-    "tags": ["estado-solicitud", "sms", "sin-certificado", "guia-practica", "revista"],
-    "priority": 5,
+    "tags": [
+      "estado-solicitud",
+      "sms",
+      "sin-certificado",
+      "guia-practica",
+      "revista"
+    ],
+    "priority": 4,
     "enabled": true
   },
   {
     "url": "https://sede.seg-social.gob.es/wps/portal/sede/sede/Inicio/MisExpedientesAdministrativos",
     "title": "Mis expedientes administrativos",
     "type": "html",
-    "tags": ["estado-solicitud", "expediente", "sede", "tramite"],
-    "priority": 4,
+    "tags": [
+      "estado-solicitud",
+      "expediente",
+      "sede",
+      "tramite",
+      "subsanacion",
+      "requerimiento",
+      "notificacion",
+      "inss"
+    ],
+    "priority": 5,
     "enabled": true
   },
   {
     "url": "https://revista.seg-social.es/detalle-noticia/-/asset_publisher/4za6PzqGypPA/content/novedades-incapacidad-temporal",
     "title": "Novedades incapacidad temporal",
     "type": "html",
-    "tags": ["incapacidad-temporal", "baja-medica", "guia-practica", "revista", "tramite"],
-    "priority": 4,
+    "tags": [
+      "incapacidad-temporal",
+      "baja-medica",
+      "guia-practica",
+      "revista",
+      "tramite"
+    ],
+    "priority": 3,
     "enabled": true
   },
   {
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10963/28393/1712/1713/127266",
     "title": "Jubilacion anticipada de trabajadores con una discapacidad igual o superior al 45%",
     "type": "html",
-    "tags": ["jubilacion", "discapacidad", "jubilacion-anticipada", "requisitos", "prestacion"],
+    "tags": [
+      "jubilacion",
+      "discapacidad",
+      "jubilacion-anticipada",
+      "requisitos",
+      "prestacion"
+    ],
     "priority": 5,
     "enabled": true
   },
@@ -651,7 +1121,13 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10963/28393/1712/41704/41706",
     "title": "Jubilacion anticipada de trabajadores con discapacidad igual o superior al 65%",
     "type": "html",
-    "tags": ["jubilacion", "discapacidad", "jubilacion-anticipada", "requisitos", "prestacion"],
+    "tags": [
+      "jubilacion",
+      "discapacidad",
+      "jubilacion-anticipada",
+      "requisitos",
+      "prestacion"
+    ],
     "priority": 5,
     "enabled": true
   },
@@ -659,7 +1135,12 @@
     "url": "https://www.seg-social.es/descarga/es/Info_alumnos",
     "title": "Que significa cotizar - practicas formativas",
     "type": "pdf",
-    "tags": ["practicas-formativas", "cotizacion", "guia-practica", "pdf"],
+    "tags": [
+      "practicas-formativas",
+      "cotizacion",
+      "guia-practica",
+      "pdf"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -667,7 +1148,15 @@
     "url": "https://www.seg-social.es/wps/wcm/connect/wss/832f01df-7528-43e8-ab89-5e385d1f39e4/PUB060_Castellano.pdf?MOD=AJPERES",
     "title": "Tarjeta Sanitaria Europea y Certificado Provisional Sustitutorio",
     "type": "pdf",
-    "tags": ["tse", "tarjeta-sanitaria-europea", "cps", "asistencia-sanitaria", "sms", "sin-certificado", "pdf"],
+    "tags": [
+      "tse",
+      "tarjeta-sanitaria-europea",
+      "cps",
+      "asistencia-sanitaria",
+      "sms",
+      "sin-certificado",
+      "pdf"
+    ],
     "priority": 5,
     "enabled": true
   },
@@ -675,7 +1164,15 @@
     "url": "https://sede.seg-social.gob.es/wps/wcm/connect/sede/9b0c0c2d-6726-450c-875f-fdf5bb046350/SPS_S070_Cast_v1_0_Edit.pdf?MOD=AJPERES",
     "title": "Solicitud de Certificado Provisional Sustitutorio de la Tarjeta Sanitaria Europea",
     "type": "pdf",
-    "tags": ["tse", "tarjeta-sanitaria-europea", "cps", "solicitud", "formulario", "rellenar", "pdf"],
+    "tags": [
+      "tse",
+      "tarjeta-sanitaria-europea",
+      "cps",
+      "solicitud",
+      "formulario",
+      "rellenar",
+      "pdf"
+    ],
     "priority": 5,
     "enabled": true
   },
@@ -683,7 +1180,14 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/InformacionUtil/44539/de513c99-5885-48bd-8c66-45d2c97ad947/41021nycm",
     "title": "Prestacion por nacimiento y cuidado de menor - informacion util",
     "type": "html",
-    "tags": ["nacimiento", "cuidado-menor", "solicitud", "documentacion", "plazos", "inss"],
+    "tags": [
+      "nacimiento",
+      "cuidado-menor",
+      "solicitud",
+      "documentacion",
+      "plazos",
+      "inss"
+    ],
     "priority": 5,
     "enabled": true
   },
@@ -691,7 +1195,14 @@
     "url": "https://www.seg-social.es/wps/wcm/connect/wss/51178da2-48e0-4d22-aa5d-6a1904b4ae6b/MP-1%2BBIS_Castellano_12_Accesibilidad.pdf?MOD=AJPERES",
     "title": "Solicitud de prestacion de nacimiento y cuidado de menor por parto",
     "type": "pdf",
-    "tags": ["nacimiento", "cuidado-menor", "solicitud", "formulario", "rellenar", "pdf"],
+    "tags": [
+      "nacimiento",
+      "cuidado-menor",
+      "solicitud",
+      "formulario",
+      "rellenar",
+      "pdf"
+    ],
     "priority": 5,
     "enabled": true
   },
@@ -699,7 +1210,14 @@
     "url": "https://www.seg-social.es/wps/wcm/connect/wss/19ad9daf-5c17-40d0-83bb-b074dccade74/Gu%C3%ADa%2BC.Reducci%C3%B3n%2Bbrecha%2Bg%C3%A9nero_castellano%2BAccesibilidad.pdf?MOD=AJPERES",
     "title": "Guia del complemento para la reduccion de la brecha de genero",
     "type": "pdf",
-    "tags": ["brecha-genero", "complemento", "hijos", "formulario", "rellenar", "pdf"],
+    "tags": [
+      "brecha-genero",
+      "complemento",
+      "hijos",
+      "formulario",
+      "rellenar",
+      "pdf"
+    ],
     "priority": 5,
     "enabled": true
   },
@@ -707,7 +1225,14 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Pensionistas/Servicios/34887/40968/41025/formulario%2Bde%2Bdatos%2Bpara%2Baportar%2Ben%2Bprocedimientos%2Bde%2Bincapacidad%2Bpermanente%2Biniciados%2Bde%2Boficio?changeLanguage=es",
     "title": "Incapacidad permanente - Lesiones permanentes no incapacitantes",
     "type": "html",
-    "tags": ["incapacidad-permanente", "incapacidad-permanente-parcial", "incapacidad-permanente-absoluta", "solicitud", "formulario", "inss"],
+    "tags": [
+      "incapacidad-permanente",
+      "incapacidad-permanente-parcial",
+      "incapacidad-permanente-absoluta",
+      "solicitud",
+      "formulario",
+      "inss"
+    ],
     "priority": 5,
     "enabled": true
   },
@@ -715,7 +1240,13 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10963/6137/6143",
     "title": "Jubilacion anticipada por tener la condicion de mutualista",
     "type": "html",
-    "tags": ["mutualista", "jubilacion", "jubilacion-anticipada", "requisitos", "prestacion"],
+    "tags": [
+      "mutualista",
+      "jubilacion",
+      "jubilacion-anticipada",
+      "requisitos",
+      "prestacion"
+    ],
     "priority": 5,
     "enabled": true
   },
@@ -723,7 +1254,13 @@
     "url": "https://www.seg-social.es/wps/wcm/connect/wss/1dd2c8bf-3e33-439a-87f7-9459230aea6e/Cuadro_requisitos_forma_calculo%2B%28DF%2B12%2B2%29.pdf?MOD=AJPERES",
     "title": "Requisitos y forma de calculo de los distintos tipos de jubilacion",
     "type": "pdf",
-    "tags": ["mutualista", "jubilacion", "jubilacion-anticipada", "guia-practica", "pdf"],
+    "tags": [
+      "mutualista",
+      "jubilacion",
+      "jubilacion-anticipada",
+      "guia-practica",
+      "pdf"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -731,7 +1268,12 @@
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10938/30476/177505",
     "title": "Asistencia sanitaria para el colectivo mutualista",
     "type": "html",
-    "tags": ["mutualista", "asistencia-sanitaria", "beneficiario", "requisitos"],
+    "tags": [
+      "mutualista",
+      "asistencia-sanitaria",
+      "beneficiario",
+      "requisitos"
+    ],
     "priority": 4,
     "enabled": true
   },
@@ -739,7 +1281,14 @@
     "url": "https://www.seg-social.es/wps/wcm/connect/wss/1ab27705-2dab-4f47-b1b7-cf139869519b/Guia%2BServicios%2BSeguridad%2BSocial%2Bdel%2BISM%2Ben%2Bla%2Bsede%2Belectronica.pdf?MOD=AJPERES",
     "title": "Guia de servicios de Seguridad Social del ISM en la sede electronica",
     "type": "pdf",
-    "tags": ["mar", "ism", "regimen-especial-del-mar", "tramite", "sede", "pdf"],
+    "tags": [
+      "mar",
+      "ism",
+      "regimen-especial-del-mar",
+      "tramite",
+      "sede",
+      "pdf"
+    ],
     "priority": 5,
     "enabled": true
   },
@@ -747,8 +1296,17 @@
     "url": "https://sede.seg-social.gob.es/wps/wcm/connect/sede/86216324-f372-4685-aa0d-e7cd5ea3f213/CPS%2Bsolicitud%2BISM.pdf?MOD=AJPERES",
     "title": "Solicitud de Certificado Provisional Sustitutorio de la TSE - ISM",
     "type": "pdf",
-    "tags": ["mar", "ism", "regimen-especial-del-mar", "tse", "cps", "solicitud", "formulario", "pdf"],
-    "priority": 4,
+    "tags": [
+      "mar",
+      "ism",
+      "regimen-especial-del-mar",
+      "tse",
+      "cps",
+      "solicitud",
+      "formulario",
+      "pdf"
+    ],
+    "priority": 5,
     "enabled": true
   }
 ]
