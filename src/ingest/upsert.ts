@@ -17,11 +17,45 @@ function sleep(ms: number): Promise<void> {
   });
 }
 
+function extractRetryDelayMs(error: unknown): number {
+  const message = String(error ?? "");
+  const retryDelayMatch = message.match(/retry in ([\d.]+)s/i);
+
+  if (!retryDelayMatch) {
+    return 1500;
+  }
+
+  const seconds = Number.parseFloat(retryDelayMatch[1] ?? "");
+
+  if (!Number.isFinite(seconds) || seconds <= 0) {
+    return 1500;
+  }
+
+  return Math.ceil(seconds * 1000);
+}
+
+function isRetriableUpsertError(error: unknown): boolean {
+  const message = String(error ?? "").toLowerCase();
+  return message.includes("[429") || message.includes("quota") || message.includes("rate limit");
+}
+
+function splitIntoBatches<T>(items: T[], batchSize: number): T[][] {
+  const batches: T[][] = [];
+
+  for (let index = 0; index < items.length; index += batchSize) {
+    batches.push(items.slice(index, index + batchSize));
+  }
+
+  return batches;
+}
+
 async function addDocumentsWithRetry(
   store: Awaited<ReturnType<typeof getVectorStore>>,
   documents: Awaited<ReturnType<typeof chunkSourceDocument>>,
   ids: string[],
   namespace: string,
+  batchIndex: number,
+  batchCount: number,
 ): Promise<void> {
   let lastError: unknown;
 
@@ -33,10 +67,19 @@ async function addDocumentsWithRetry(
       lastError = error;
       logger.warn("Upsert attempt failed", {
         attempt,
+        batchIndex,
+        batchCount,
+        batchSize: documents.length,
         namespace,
         error,
       });
-      await sleep(attempt * 1500);
+
+      if (!isRetriableUpsertError(error) || attempt === 3) {
+        break;
+      }
+
+      const retryDelayMs = extractRetryDelayMs(error);
+      await sleep(retryDelayMs);
     }
   }
 
@@ -53,6 +96,55 @@ async function areAllChunkIdsPresent(ids: string[], namespace: string): Promise<
   const fetched = await index.fetch(ids);
 
   return ids.every((id) => Boolean(fetched.records[id]));
+}
+
+async function upsertDocumentsInBatches(
+  store: Awaited<ReturnType<typeof getVectorStore>>,
+  documents: Awaited<ReturnType<typeof chunkSourceDocument>>,
+  ids: string[],
+  namespace: string,
+): Promise<void> {
+  const env = getEnv();
+  const documentBatches = splitIntoBatches(documents, env.INGEST_UPSERT_BATCH_SIZE);
+  const idBatches = splitIntoBatches(ids, env.INGEST_UPSERT_BATCH_SIZE);
+  let processedChunks = 0;
+
+  for (const [batchIndex, documentBatch] of documentBatches.entries()) {
+    const idBatch = idBatches[batchIndex] ?? [];
+
+    if (idBatch.length === 0) {
+      continue;
+    }
+
+    if (!env.FORCE_REEMBED_EXISTING && (await areAllChunkIdsPresent(idBatch, namespace))) {
+      processedChunks += idBatch.length;
+      logger.info("Skipping ingestion batch already present in Pinecone namespace", {
+        namespace,
+        batchIndex: batchIndex + 1,
+        batchCount: documentBatches.length,
+        batchSize: idBatch.length,
+        processedChunks,
+        totalChunks: ids.length,
+      });
+      continue;
+    }
+
+    await addDocumentsWithRetry(store, documentBatch, idBatch, namespace, batchIndex + 1, documentBatches.length);
+    processedChunks += idBatch.length;
+
+    logger.info("Upsert batch completed", {
+      namespace,
+      batchIndex: batchIndex + 1,
+      batchCount: documentBatches.length,
+      batchSize: idBatch.length,
+      processedChunks,
+      totalChunks: ids.length,
+    });
+
+    if (env.INGEST_UPSERT_THROTTLE_MS > 0) {
+      await sleep(env.INGEST_UPSERT_THROTTLE_MS);
+    }
+  }
 }
 
 export async function ensurePineconeIndex(): Promise<void> {
@@ -125,13 +217,11 @@ export async function ingestConfiguredSources(): Promise<void> {
       continue;
     }
 
-    await addDocumentsWithRetry(store, documents, ids, env.PINECONE_NAMESPACE);
+    await upsertDocumentsInBatches(store, documents, ids, env.PINECONE_NAMESPACE);
 
     logger.info("Upsert completed", {
       url: source.url,
       chunks: documents.length,
     });
-
-    await sleep(300);
   }
 }
