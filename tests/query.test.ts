@@ -14,6 +14,9 @@ describe("query helpers", () => {
     expect(expandQuestion("Estoy valorando una jubilacion demorada")).toContain("incentivos");
     expect(expandQuestion("Como rellenar la solicitud de viudedad")).toContain("cumplimentar");
     expect(expandQuestion("Quiero saber el complemento por brecha de genero")).toContain("reduccion de la brecha de genero");
+    expect(expandQuestion("Como dar de alta a una empleada de hogar")).toContain("empleo de hogar");
+    expect(expandQuestion("Como consultar el estado de mi solicitud por SMS")).toContain("seguimiento expediente");
+    expect(expandQuestion("Quiero el certificado integral de prestaciones")).toContain("certificado integral de prestaciones");
     expect(expandQuestion("Que documentacion necesito para viudedad")).toContain("documentacion");
     expect(expandQuestion("Cuanto cobro por gran incapacidad")).toContain("complemento tercera persona");
   });
@@ -89,5 +92,70 @@ describe("query helpers", () => {
     );
 
     expect(ranked[0]?.metadata.url).toBe("https://example.com/jubilacion-demorada");
+  });
+
+  it("limits dominance of the same source in the final top results", () => {
+    const ranked = rerankRetrievedChunks(
+      "Como consultar el estado de una solicitud por sms",
+      [
+        {
+          pageContent: "Consulta por sms el estado de tu solicitud.",
+          score: 0.91,
+          metadata: {
+            url: "https://example.com/sms",
+            title: "Consulta estado solicitud por SMS",
+            sourceType: "html",
+            chunkIndex: 0,
+            tags: ["estado-solicitud", "sms"],
+            priority: 5,
+            searchText: "consultar estado de solicitud por sms seguimiento expediente",
+          },
+        },
+        {
+          pageContent: "Consulta por sms el estado de tu solicitud con identificacion previa.",
+          score: 0.9,
+          metadata: {
+            url: "https://example.com/sms",
+            title: "Consulta estado solicitud por SMS",
+            sourceType: "html",
+            chunkIndex: 1,
+            tags: ["estado-solicitud", "sms"],
+            priority: 5,
+            searchText: "consultar estado de solicitud por sms seguimiento expediente",
+          },
+        },
+        {
+          pageContent: "Otra parte del mismo articulo sobre el seguimiento por sms.",
+          score: 0.89,
+          metadata: {
+            url: "https://example.com/sms",
+            title: "Consulta estado solicitud por SMS",
+            sourceType: "html",
+            chunkIndex: 2,
+            tags: ["estado-solicitud", "sms"],
+            priority: 5,
+            searchText: "consultar estado de solicitud por sms seguimiento expediente",
+          },
+        },
+        {
+          pageContent: "Mis expedientes administrativos te permite revisar solicitudes presentadas.",
+          score: 0.9,
+          metadata: {
+            url: "https://example.com/expedientes",
+            title: "Mis expedientes administrativos",
+            sourceType: "html",
+            chunkIndex: 0,
+            tags: ["estado-solicitud"],
+            priority: 4,
+            searchText: "mis expedientes administrativos consultar estado solicitud",
+          },
+        },
+      ],
+      3,
+    );
+
+    expect(ranked).toHaveLength(3);
+    expect(ranked.filter((chunk) => chunk.metadata.url === "https://example.com/sms")).toHaveLength(2);
+    expect(ranked.some((chunk) => chunk.metadata.url === "https://example.com/expedientes")).toBe(true);
   });
 });

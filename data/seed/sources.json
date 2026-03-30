@@ -502,5 +502,165 @@
     "tags": ["jubilacion", "jubilacion-parcial", "requisitos", "contrato-relevo", "prestacion"],
     "priority": 4,
     "enabled": true
+  },
+  {
+    "url": "https://revista.seg-social.es/-/como-dar-de-alta-a-un-beneficiario-en-la-seguridad-social",
+    "title": "Como dar de alta a un beneficiario en la Seguridad Social",
+    "type": "html",
+    "tags": ["beneficiario", "asistencia-sanitaria", "solicitud", "guia-practica", "revista"],
+    "priority": 4,
+    "enabled": true
+  },
+  {
+    "url": "https://sede.seg-social.gob.es/wps/portal/sede/sede/Ciudadanos/asistencia%2Bsanitaria/202043_tuss",
+    "title": "Asistencia sanitaria. Alta de beneficiarios",
+    "type": "html",
+    "tags": ["beneficiario", "asistencia-sanitaria", "solicitud", "sede", "tramite"],
+    "priority": 5,
+    "enabled": true
+  },
+  {
+    "url": "https://portal.seg-social.gob.es/wps/portal/importass/importass/Colectivos/Empleo%20del%20hogar",
+    "title": "Empleo del hogar - guia Importass",
+    "type": "html",
+    "tags": ["empleo-hogar", "importass", "guia-practica", "tramite"],
+    "priority": 4,
+    "enabled": true
+  },
+  {
+    "url": "https://portal.seg-social.gob.es/wps/portal/importass/importass/Categorias/Altas%2C%20bajas%20y%20modificaciones/Altas%20y%20afiliacion%20de%20trabajadores/Alta%20en%20empleo%20de%20hogar",
+    "title": "Alta en empleo de hogar",
+    "type": "html",
+    "tags": ["empleo-hogar", "alta", "solicitud", "importass", "tramite"],
+    "priority": 5,
+    "enabled": true
+  },
+  {
+    "url": "https://portal.seg-social.gob.es/wps/portal/importass/importass/Categorias/Altas%2C%20bajas%20y%20modificaciones/Bajas%20y%20modificaciones/Baja%20de%20empleo%20de%20hogar",
+    "title": "Baja en empleo de hogar",
+    "type": "html",
+    "tags": ["empleo-hogar", "baja", "solicitud", "importass", "tramite"],
+    "priority": 5,
+    "enabled": true
+  },
+  {
+    "url": "https://revista.seg-social.es/-/c%C3%B3mo-dar-de-alta-a-una-persona-empleada-de-hogar",
+    "title": "Como dar de alta a una persona empleada de hogar",
+    "type": "html",
+    "tags": ["empleo-hogar", "alta", "guia-practica", "revista", "tramite"],
+    "priority": 4,
+    "enabled": true
+  },
+  {
+    "url": "https://revista.seg-social.es/-/el-convenio-especial-con-la-seguridad-social",
+    "title": "El convenio especial con la Seguridad Social",
+    "type": "html",
+    "tags": ["convenio-especial", "cotizacion", "guia-practica", "revista", "tramite"],
+    "priority": 4,
+    "enabled": true
+  },
+  {
+    "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/Afiliacion/10547/10553/2498/coti",
+    "title": "Convenio especial con la Seguridad Social",
+    "type": "html",
+    "tags": ["convenio-especial", "cotizacion", "requisitos", "solicitud", "afiliacion"],
+    "priority": 5,
+    "enabled": true
+  },
+  {
+    "url": "https://sede.seg-social.gob.es/binarios/en/203484",
+    "title": "TA-0040 Solicitud de alta, baja o variacion de datos del convenio especial",
+    "type": "pdf",
+    "tags": ["convenio-especial", "formulario", "rellenar", "solicitud", "pdf"],
+    "priority": 5,
+    "enabled": true
+  },
+  {
+    "url": "https://revista.seg-social.es/-/guia-para-solicitar-recuperar-a%C3%B1os-de-cotizacion-por-antiguas-practicas-formativas",
+    "title": "Guia para solicitar la recuperacion de tus anos de cotizacion por antiguas practicas formativas",
+    "type": "html",
+    "tags": ["practicas-formativas", "convenio-especial", "cotizacion", "guia-practica", "revista"],
+    "priority": 5,
+    "enabled": true
+  },
+  {
+    "url": "https://www.seg-social.es/wps/portal/wss/internet/HerramientasWeb/9083f0b1-1cf1-411e-b483-7551440fa1a7/e23e7cee-098d-4696-ac91-3a30523a8146/bca6d1e7-56e9-4611-bd0a-f7eaead11009/090924pf",
+    "title": "Preguntas y respuestas sobre el convenio especial por practicas formativas",
+    "type": "html",
+    "tags": ["practicas-formativas", "convenio-especial", "preguntas-frecuentes", "cotizacion"],
+    "priority": 5,
+    "enabled": true
+  },
+  {
+    "url": "https://revista.seg-social.es/-/gu%C3%ADa-per%C3%ADodos-m%C3%ADnimos-de-cotizaci%C3%B3n-para-acceder-a-las-prestaciones-de-la-seguridad-social",
+    "title": "Guia periodos minimos de cotizacion para acceder a las prestaciones de la Seguridad Social",
+    "type": "html",
+    "tags": ["periodos-minimos-cotizacion", "prestaciones", "guia-practica", "revista", "requisitos"],
+    "priority": 5,
+    "enabled": true
+  },
+  {
+    "url": "https://revista.seg-social.es/-/certificado-integral-de-prestaciones",
+    "title": "Que es el certificado integral de prestaciones",
+    "type": "html",
+    "tags": ["certificado-prestaciones", "pensiones", "guia-practica", "revista"],
+    "priority": 4,
+    "enabled": true
+  },
+  {
+    "url": "https://sede.seg-social.gob.es/wps/portal/sede/sede/Ciudadanos/Pensiones/181119_INSS",
+    "title": "Certificado integral de prestaciones",
+    "type": "html",
+    "tags": ["certificado-prestaciones", "pensiones", "sede", "tramite"],
+    "priority": 5,
+    "enabled": true
+  },
+  {
+    "url": "https://revista.seg-social.es/detalle-noticia/-/asset_publisher/4za6PzqGypPA/content/consulte-el-estado-de-su-solicitud-de-prestaci%25C3%25B3n-identific%25C3%25A1ndose-v%25C3%25ADa-sms",
+    "title": "Consulta el estado de tu solicitud de prestacion identificandote via SMS",
+    "type": "html",
+    "tags": ["estado-solicitud", "sms", "sin-certificado", "guia-practica", "revista"],
+    "priority": 5,
+    "enabled": true
+  },
+  {
+    "url": "https://sede.seg-social.gob.es/wps/portal/sede/sede/Inicio/MisExpedientesAdministrativos",
+    "title": "Mis expedientes administrativos",
+    "type": "html",
+    "tags": ["estado-solicitud", "expediente", "sede", "tramite"],
+    "priority": 4,
+    "enabled": true
+  },
+  {
+    "url": "https://revista.seg-social.es/detalle-noticia/-/asset_publisher/4za6PzqGypPA/content/novedades-incapacidad-temporal",
+    "title": "Novedades incapacidad temporal",
+    "type": "html",
+    "tags": ["incapacidad-temporal", "baja-medica", "guia-practica", "revista", "tramite"],
+    "priority": 4,
+    "enabled": true
+  },
+  {
+    "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10963/28393/1712/1713/127266",
+    "title": "Jubilacion anticipada de trabajadores con una discapacidad igual o superior al 45%",
+    "type": "html",
+    "tags": ["jubilacion", "discapacidad", "jubilacion-anticipada", "requisitos", "prestacion"],
+    "priority": 5,
+    "enabled": true
+  },
+  {
+    "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10963/28393/1712/41704/41706",
+    "title": "Jubilacion anticipada de trabajadores con discapacidad igual o superior al 65%",
+    "type": "html",
+    "tags": ["jubilacion", "discapacidad", "jubilacion-anticipada", "requisitos", "prestacion"],
+    "priority": 5,
+    "enabled": true
+  },
+  {
+    "url": "https://www.seg-social.es/descarga/es/Info_alumnos",
+    "title": "Que significa cotizar - practicas formativas",
+    "type": "pdf",
+    "tags": ["practicas-formativas", "cotizacion", "guia-practica", "pdf"],
+    "priority": 4,
+    "enabled": true
   }
 ]

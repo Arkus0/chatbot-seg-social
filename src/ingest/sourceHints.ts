@@ -20,6 +20,13 @@ const TAG_HINTS: Record<string, string[]> = {
     "trabajo por cuenta propia",
     "actividad economica",
   ],
+  "empleo-hogar": [
+    "empleada de hogar",
+    "empleado de hogar",
+    "alta en empleo de hogar",
+    "baja en empleo de hogar",
+    "cotizacion hogar",
+  ],
   jubilacion: [
     "pension de jubilacion",
     "edad de jubilacion",
@@ -68,6 +75,11 @@ const TAG_HINTS: Record<string, string[]> = {
     "cuidado de menores con cancer",
     "enfermedad grave del menor",
     "reduccion de jornada por cuidado del menor",
+  ],
+  discapacidad: [
+    "jubilacion anticipada por discapacidad",
+    "discapacidad igual o superior",
+    "acreditacion de discapacidad",
   ],
   viudedad: [
     "pension de viudedad",
@@ -119,6 +131,36 @@ const TAG_HINTS: Record<string, string[]> = {
     "sin clave",
     "sin cl@ve",
     "via sms",
+  ],
+  beneficiario: [
+    "alta de beneficiario",
+    "anadir beneficiario",
+    "beneficiario de asistencia sanitaria",
+  ],
+  "estado-solicitud": [
+    "consultar estado de solicitud",
+    "seguimiento del expediente",
+    "ver en que fase esta",
+  ],
+  "certificado-prestaciones": [
+    "certificado integral de prestaciones",
+    "certificado de ingresos y retenciones",
+    "prestaciones percibidas",
+  ],
+  "convenio-especial": [
+    "alta en convenio especial",
+    "seguir cotizando voluntariamente",
+    "convenio especial seguridad social",
+  ],
+  "practicas-formativas": [
+    "recuperar anos cotizados por practicas",
+    "practicas antiguas cotizacion",
+    "convenio especial practicas formativas",
+  ],
+  "periodos-minimos-cotizacion": [
+    "periodo minimo de cotizacion",
+    "carencia para acceder a prestaciones",
+    "dias cotizados necesarios",
   ],
   "riesgo-embarazo": [
     "riesgo durante el embarazo",

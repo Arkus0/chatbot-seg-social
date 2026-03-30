@@ -41,6 +41,10 @@ const EXPANSION_RULES = [
     expansion: "alta en trabajo autonomo baja en trabajo autonomo reta actividad economica importass",
   },
   {
+    pattern: /\bemplead[oa] de hogar\b|empleo de hogar|trabajadora del hogar/i,
+    expansion: "alta en empleo de hogar baja en empleo de hogar cotizacion hogar importass",
+  },
+  {
     pattern: /\bjubil/i,
     expansion: "pension de jubilacion procedimiento solicitud requisitos documentacion edad retiro",
   },
@@ -55,6 +59,10 @@ const EXPANSION_RULES = [
   {
     pattern: /\bparcial\b|jubilacion parcial/i,
     expansion: "jubilacion parcial contrato relevo trabajo parcial pension requisitos",
+  },
+  {
+    pattern: /\bdiscapacidad\b|jubilacion anticipada por discapacidad/i,
+    expansion: "jubilacion anticipada por discapacidad coeficientes edad discapacidad acreditacion",
   },
   {
     pattern: /\bedad de jubilacion\b|edad de jubilacion|jubilarme a los|cuando me puedo jubilar/i,
@@ -137,12 +145,36 @@ const EXPANSION_RULES = [
     expansion: "tarjeta sanitaria europea tse solicitud renovacion asistencia sanitaria estancia temporal",
   },
   {
+    pattern: /\bbeneficiario\b|anadir beneficiario|alta de beneficiario/i,
+    expansion: "beneficiario asistencia sanitaria inclusion de beneficiarios alta de beneficiario titular",
+  },
+  {
     pattern: /\bcita previa\b|pedir cita|solicitar cita/i,
     expansion: "cita previa seguridad social pensiones prestaciones inss canales de atencion",
   },
   {
     pattern: /\bsin certificado\b|sin clave|sin cl@ve|via sms/i,
     expansion: "tramites sin certificado digital ni clave presentacion telematica via sms inss seguridad social",
+  },
+  {
+    pattern: /\bestado de mi solicitud\b|estado de la solicitud|seguimiento del expediente|como va mi solicitud/i,
+    expansion: "consultar estado de solicitud seguimiento expediente via sms seguridad social imv prestacion",
+  },
+  {
+    pattern: /\bconvenio especial\b/i,
+    expansion: "convenio especial seguridad social alta baja variacion solicitud cotizacion voluntaria",
+  },
+  {
+    pattern: /\bpracticas\b|pr[aá]cticas formativas|recuperar anos cotizados/i,
+    expansion: "practicas formativas cotizacion antiguas practicas convenio especial recuperar anos cotizados",
+  },
+  {
+    pattern: /\bperiodo minimo de cotizacion\b|periodos minimos de cotizacion|carencia/i,
+    expansion: "periodos minimos de cotizacion carencia prestaciones seguridad social dias cotizados",
+  },
+  {
+    pattern: /\bcertificado integral de prestaciones\b|certificado de prestaciones/i,
+    expansion: "certificado integral de prestaciones prestaciones percibidas certificado seguridad social",
   },
   {
     pattern: /\bdocumentacion\b|papeles|documentos/i,
@@ -158,6 +190,37 @@ function tokenize(input: string): string[] {
   return tokenizeSearchText(input, {
     stopwords: SPANISH_STOPWORDS,
   });
+}
+
+function applySourceDiversity(
+  primaryChunks: RetrievedChunk[],
+  topK: number,
+  maxPerUrl = 2,
+  fallbackChunks: RetrievedChunk[] = [],
+): RetrievedChunk[] {
+  const perUrl = new Map<string, number>();
+  const selected: RetrievedChunk[] = [];
+  const seenKeys = new Set<string>();
+
+  for (const chunk of [...primaryChunks, ...fallbackChunks]) {
+    const url = chunk.metadata.url;
+    const key = `${url}:${chunk.metadata.chunkIndex}`;
+    const currentCount = perUrl.get(url) ?? 0;
+
+    if (currentCount >= maxPerUrl || seenKeys.has(key)) {
+      continue;
+    }
+
+    perUrl.set(url, currentCount + 1);
+    seenKeys.add(key);
+    selected.push(chunk);
+
+    if (selected.length >= topK) {
+      break;
+    }
+  }
+
+  return selected;
 }
 
 function computeBoost(questionTokens: string[], chunk: RetrievedChunk): number {
@@ -208,5 +271,5 @@ export function rerankRetrievedChunks(question: string, chunks: RetrievedChunk[]
   const topScore = ranked[0]?.rerankScore ?? ranked[0]?.score ?? 0;
   const filtered = ranked.filter((chunk) => (chunk.rerankScore ?? chunk.score) >= topScore - 0.07);
 
-  return filtered.slice(0, topK);
+  return applySourceDiversity(filtered, topK, 2, ranked);
 }
