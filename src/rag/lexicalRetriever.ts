@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import type { RetrievedChunk } from "../types/documents.js";
 
 import { getEnv } from "../config/env.js";
+import { stripChunkSearchContext } from "../ingest/chunk.js";
 import { countTokenMatches, tokenizeSearchText } from "../utils/text.js";
 import { expandQuestion, rerankRetrievedChunks } from "./query.js";
 
@@ -33,12 +34,21 @@ export async function retrieveLexicalFallbackChunks(question: string): Promise<R
     .map((chunk) => {
       const titleMatches = countTokenMatches(questionTokens, chunk.metadata.title);
       const tagMatches = countTokenMatches(questionTokens, chunk.metadata.tags.join(" "));
+      const searchMatches = countTokenMatches(
+        questionTokens,
+        chunk.metadata.searchText ?? `${chunk.metadata.title} ${chunk.metadata.tags.join(" ")}`,
+      );
       const contentMatches = countTokenMatches(questionTokens, chunk.pageContent.slice(0, 900));
 
-      const score = titleMatches * 0.18 + tagMatches * 0.14 + contentMatches * 0.03 + chunk.metadata.priority * 0.02;
+      const score =
+        titleMatches * 0.16 +
+        tagMatches * 0.12 +
+        searchMatches * 0.18 +
+        contentMatches * 0.03 +
+        chunk.metadata.priority * 0.02;
 
       return {
-        pageContent: chunk.pageContent,
+        pageContent: stripChunkSearchContext(chunk.pageContent),
         score,
         metadata: chunk.metadata,
       } satisfies RetrievedChunk;

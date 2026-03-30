@@ -27,4 +27,21 @@ describe("formatter", () => {
     expect(response.text).toContain("Aviso legal");
     expect(response.sources[0]?.url).toBe("https://example.com");
   });
+
+  it("ignores section headings when extracting the summary", () => {
+    const response = composeAnswerPayload(
+      [
+        "Respuesta breve:",
+        "Puedes solicitarlo por internet o de forma presencial si el contexto recuperado lo permite.",
+        "",
+        "Si lo vas a tramitar ahora:",
+        "- Revisa la documentacion",
+      ].join("\n"),
+      [],
+    );
+
+    expect(response.summary).toBe(
+      "Puedes solicitarlo por internet o de forma presencial si el contexto recuperado lo permite.",
+    );
+  });
 });

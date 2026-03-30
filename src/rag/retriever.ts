@@ -1,6 +1,7 @@
 import type { RetrievedChunk } from "../types/documents.js";
 
 import { getEnv } from "../config/env.js";
+import { stripChunkSearchContext } from "../ingest/chunk.js";
 import { logger } from "../utils/logger.js";
 import { retrieveLexicalFallbackChunks } from "./lexicalRetriever.js";
 import { expandQuestion, rerankRetrievedChunks } from "./query.js";
@@ -14,7 +15,7 @@ async function retrieveVectorChunks(question: string): Promise<RetrievedChunk[]>
 
   const chunks = results
     .map(([document, score]) => ({
-      pageContent: document.pageContent,
+      pageContent: stripChunkSearchContext(document.pageContent),
       score,
       metadata: {
         url: String(document.metadata.url ?? ""),
@@ -25,6 +26,7 @@ async function retrieveVectorChunks(question: string): Promise<RetrievedChunk[]>
           ? document.metadata.tags.map((tag) => String(tag))
           : [],
         priority: Number(document.metadata.priority ?? 1),
+        searchText: String(document.metadata.searchText ?? ""),
       },
     }))
     .filter((chunk) => chunk.score >= env.RAG_MIN_SCORE);

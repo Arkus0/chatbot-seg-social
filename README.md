@@ -46,6 +46,7 @@ data/
 ```bash
 npm install
 npm run dev
+npm run dev:vercel
 npm run typecheck
 npm run lint
 npm run test
@@ -61,11 +62,14 @@ npm run set:webhook
 
 ## Webhook local con ngrok
 
-### 1. Arrancar Vercel en local
+### 1. Arrancar la app en local
 
 ```bash
 npm run dev
 ```
+
+`npm run dev` levanta un servidor local ligero para la web y las rutas `/api/*`.
+Si necesitas emular Vercel CLI de forma explicita, usa `npm run dev:vercel`.
 
 ### 2. Exponer el puerto 3000
 

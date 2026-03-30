@@ -100,8 +100,8 @@
               <p class="message-role">Asistente</p>
               <h3 class="message-summary">Empieza con una duda concreta.</h3>
               <p class="message-body">
-                Ejemplo: que documentacion necesito para solicitar la jubilacion anticipada o como pedir una prestacion
-                por viudedad.
+                Ejemplo: que documentacion necesito para solicitar la jubilacion anticipada, como pedir una prestacion
+                por viudedad o como rellenar una solicitud.
               </p>
             </article>
           </div>
@@ -112,7 +112,7 @@
               id="chat-input"
               name="question"
               rows="4"
-              placeholder="Escribe una duda concreta para obtener una respuesta resumida y un siguiente paso util."
+              placeholder="Escribe una duda concreta. Tambien puedes preguntar como preparar o rellenar una solicitud."
             ></textarea>
             <div class="composer-actions">
               <p class="subtle-note">
@@ -124,6 +124,44 @@
         </section>
 
         <aside class="rail rail-right">
+          <section class="panel rail-section insight-panel">
+            <div class="section-head">
+              <div>
+                <p class="panel-kicker">Respuesta destacada</p>
+                <h2>Radar del caso</h2>
+              </div>
+              <span class="status-pill" id="insight-status-pill">Sin respuesta</span>
+            </div>
+
+            <div class="insight-metrics" id="insight-metrics">
+              <article class="insight-metric">
+                <span>Fuentes</span>
+                <strong id="insight-source-count">0</strong>
+              </article>
+              <article class="insight-metric">
+                <span>Puntos</span>
+                <strong id="insight-point-count">0</strong>
+              </article>
+              <article class="insight-metric">
+                <span>Checklist</span>
+                <strong id="insight-checklist-progress">0/0</strong>
+              </article>
+            </div>
+
+            <p class="insight-summary" id="insight-summary">
+              Selecciona una respuesta del chat para convertirla en un resumen operativo del expediente.
+            </p>
+            <p class="insight-body" id="insight-body"></p>
+            <div class="insight-points" id="insight-points"></div>
+            <div class="insight-sources" id="insight-sources"></div>
+            <p class="subtle-note" id="insight-empty">Todavia no hay una respuesta asistida disponible en esta conversacion.</p>
+
+            <div class="dossier-actions">
+              <button class="ghost-btn small" id="insight-notes-btn" type="button">Pasar a notas</button>
+              <button class="primary-btn small" id="insight-checklist-btn" type="button">Usar en checklist</button>
+            </div>
+          </section>
+
           <section class="panel rail-section dossier-panel">
             <div class="section-head">
               <div>
@@ -133,6 +171,21 @@
             </div>
 
             <form class="dossier-form" id="dossier-form">
+              <div class="dossier-snapshot">
+                <article class="snapshot-card">
+                  <span>Ultimo resumen</span>
+                  <strong id="dossier-last-summary">Sin resumen</strong>
+                </article>
+                <article class="snapshot-card">
+                  <span>Fuentes guardadas</span>
+                  <strong id="dossier-source-total">0</strong>
+                </article>
+                <article class="snapshot-card">
+                  <span>Actualizado</span>
+                  <strong id="dossier-updated-at">ahora</strong>
+                </article>
+              </div>
+
               <label>
                 Tramite
                 <select id="dossier-procedure" name="procedure"></select>
@@ -202,7 +255,10 @@
                 <p class="panel-kicker">Guardado local</p>
                 <h2>Expedientes</h2>
               </div>
-              <span class="status-pill" id="dossier-count">0</span>
+              <div class="header-actions">
+                <button class="ghost-btn small" id="new-dossier-btn" type="button">Nuevo</button>
+                <span class="status-pill" id="dossier-count">0</span>
+              </div>
             </div>
             <div class="dossier-list" id="dossier-list"></div>
           </section>

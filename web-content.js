@@ -1,5 +1,31 @@
 export const PROCEDURE_LIBRARY = [
   {
+    id: "vida-laboral",
+    label: "Informe de vida laboral",
+    shortLabel: "Vida laboral",
+    goal: "solicitud y presentacion",
+    summary: "Consulta del informe, vias de acceso y utilidad practica del documento.",
+    exampleQuestion: "Como puedo pedir mi informe de vida laboral y que informacion trae?",
+    promptSeeds: [
+      "Como pedir mi informe de vida laboral?",
+      "Que informacion incluye el informe de vida laboral?",
+    ],
+    defaultSituation: "Quiero descargar o revisar mi vida laboral para preparar otro tramite o comprobar cotizaciones.",
+  },
+  {
+    id: "nuss",
+    label: "Numero de la Seguridad Social",
+    shortLabel: "NUSS",
+    goal: "solicitud y presentacion",
+    summary: "Solicitud, acreditacion y diferencias entre NUSS y afiliacion.",
+    exampleQuestion: "Como solicitar mi numero de la Seguridad Social o acreditarlo?",
+    promptSeeds: [
+      "Como solicitar mi numero de la Seguridad Social?",
+      "Como acreditar mi NUSS o NAF?",
+    ],
+    defaultSituation: "Necesito solicitar o recuperar mi numero de la Seguridad Social para trabajar o hacer un tramite.",
+  },
+  {
     id: "jubilacion",
     label: "Jubilacion",
     shortLabel: "Jubilacion",
@@ -52,6 +78,19 @@ export const PROCEDURE_LIBRARY = [
     defaultSituation: "Necesito ordenar documentacion, cuantia y pasos para preparar la solicitud.",
   },
   {
+    id: "incapacidad-temporal",
+    label: "Incapacidad temporal",
+    shortLabel: "Baja medica",
+    goal: "requisitos y plazos",
+    summary: "Baja medica, subsidio, pago y control del procedimiento.",
+    exampleQuestion: "Quien paga la incapacidad temporal y que requisitos revisan?",
+    promptSeeds: [
+      "Quien paga la incapacidad temporal?",
+      "Que requisitos hay para cobrar una baja medica?",
+    ],
+    defaultSituation: "Quiero entender requisitos, pago y pasos durante una baja medica o incapacidad temporal.",
+  },
+  {
     id: "gran-incapacidad",
     label: "Gran incapacidad",
     shortLabel: "Gran incapacidad",
@@ -102,6 +141,19 @@ export const PROCEDURE_LIBRARY = [
       "Que requisitos revisan para la Tarjeta Sanitaria Europea?",
     ],
     defaultSituation: "Necesito ordenar solicitud, requisitos y posibles incidencias antes de viajar.",
+  },
+  {
+    id: "cita-previa",
+    label: "Cita previa INSS",
+    shortLabel: "Cita previa",
+    goal: "solicitud y presentacion",
+    summary: "Canales, orden practico y comprobaciones antes de la atencion presencial.",
+    exampleQuestion: "Como pedir cita previa para pensiones u otras prestaciones?",
+    promptSeeds: [
+      "Como pedir cita previa en la Seguridad Social?",
+      "Que necesito revisar antes de acudir a una cita del INSS?",
+    ],
+    defaultSituation: "Quiero preparar una cita previa y llegar con la documentacion y el canal correctos.",
   },
 ];
 

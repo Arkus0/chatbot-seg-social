@@ -20,7 +20,8 @@ describe("fallback", () => {
       },
     ]);
 
-    expect(answer.text).toContain("Resumen automatico");
+    expect(answer.text).toContain("Respuesta breve");
+    expect(answer.text).toContain("Siguiente paso claro");
     expect(answer.text).toContain("Fuentes oficiales");
     expect(answer.text).toContain("Aviso legal");
     expect(answer.sources[0]?.url).toBe("https://example.com/vida-laboral");

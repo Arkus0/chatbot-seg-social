@@ -14,6 +14,7 @@ export interface SourceDocument {
   sourceType: "html" | "pdf";
   tags: string[];
   priority: number;
+  searchText: string;
 }
 
 export interface ChunkMetadata {
@@ -23,6 +24,7 @@ export interface ChunkMetadata {
   chunkIndex: number;
   tags: string[];
   priority: number;
+  searchText?: string;
 }
 
 export interface RetrievedChunk {

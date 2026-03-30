@@ -56,9 +56,14 @@ export function buildRetrievalOnlyAnswer(question: string, chunks: RetrievedChun
   const sources = getAnswerSources(chunks);
   const legalNotice = buildLegalNotice();
   const body = [
+    "Respuesta breve:",
     "He encontrado informacion oficial relacionada, aunque ahora mismo la generacion avanzada no esta disponible.",
-    "Resumen automatico basado en el contenido recuperado:",
+    "",
+    "Si lo vas a tramitar ahora:",
     ...lines.map((line) => `- ${line.replace(/^[-#\s]+/, "")}`),
+    "",
+    "Siguiente paso claro:",
+    "Abre una de las fuentes oficiales para confirmar el detalle exacto del tramite o del formulario antes de presentarlo.",
   ].join("\n");
 
   return {

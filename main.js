@@ -14,6 +14,7 @@ const state = {
   activeDossierId: localStorage.getItem(STORAGE_KEYS.activeDossierId),
   pending: false,
   syncDossierOnNextAnswer: false,
+  selectedMessageId: null,
 };
 
 const elements = {
@@ -36,10 +37,25 @@ const elements = {
   dossierDocuments: document.querySelector("#dossier-documents"),
   dossierNotes: document.querySelector("#dossier-notes"),
   saveDossierButton: document.querySelector("#save-dossier-btn"),
+  newDossierButton: document.querySelector("#new-dossier-btn"),
   checklistList: document.querySelector("#checklist-list"),
   checklistEmpty: document.querySelector("#checklist-empty"),
   dossierList: document.querySelector("#dossier-list"),
   dossierCount: document.querySelector("#dossier-count"),
+  insightStatusPill: document.querySelector("#insight-status-pill"),
+  insightSourceCount: document.querySelector("#insight-source-count"),
+  insightPointCount: document.querySelector("#insight-point-count"),
+  insightChecklistProgress: document.querySelector("#insight-checklist-progress"),
+  insightSummary: document.querySelector("#insight-summary"),
+  insightBody: document.querySelector("#insight-body"),
+  insightPoints: document.querySelector("#insight-points"),
+  insightSources: document.querySelector("#insight-sources"),
+  insightEmpty: document.querySelector("#insight-empty"),
+  insightNotesButton: document.querySelector("#insight-notes-btn"),
+  insightChecklistButton: document.querySelector("#insight-checklist-btn"),
+  dossierLastSummary: document.querySelector("#dossier-last-summary"),
+  dossierSourceTotal: document.querySelector("#dossier-source-total"),
+  dossierUpdatedAt: document.querySelector("#dossier-updated-at"),
   procedureTemplate: document.querySelector("#procedure-template"),
   sessionItemTemplate: document.querySelector("#session-item-template"),
   promptChipTemplate: document.querySelector("#prompt-chip-template"),
@@ -77,6 +93,7 @@ function bootstrap() {
   persistDossiers();
   wireEvents();
   syncDossierForm();
+  syncSelectedMessage();
   renderAll();
   loadHealth();
 }
@@ -150,6 +167,34 @@ function wireEvents() {
   elements.saveDossierButton.addEventListener("click", () => {
     saveActiveDossier();
   });
+
+  elements.newDossierButton.addEventListener("click", () => {
+    startFreshDossier();
+  });
+
+  elements.insightChecklistButton.addEventListener("click", () => {
+    const message = getSelectedAssistantMessage();
+    if (!message) {
+      return;
+    }
+
+    syncAssistantMessageToDossier(message, {
+      replaceChecklist: true,
+      appendNotes: false,
+    });
+  });
+
+  elements.insightNotesButton.addEventListener("click", () => {
+    const message = getSelectedAssistantMessage();
+    if (!message) {
+      return;
+    }
+
+    syncAssistantMessageToDossier(message, {
+      replaceChecklist: false,
+      appendNotes: true,
+    });
+  });
 }
 
 function loadJson(key, fallback) {
@@ -197,6 +242,31 @@ function getActiveSession() {
 
 function getActiveDossier() {
   return state.dossiers.find((dossier) => dossier.id === state.activeDossierId);
+}
+
+function getAssistantMessages(session = getActiveSession()) {
+  return (session?.messages ?? []).filter((message) => message.role === "assistant");
+}
+
+function getLatestAssistantMessage(session = getActiveSession()) {
+  return getAssistantMessages(session).at(-1) ?? null;
+}
+
+function getSelectedAssistantMessage() {
+  const session = getActiveSession();
+  if (!session) {
+    return null;
+  }
+
+  const selected = session.messages.find(
+    (message) => message.id === state.selectedMessageId && message.role === "assistant",
+  );
+
+  return selected ?? getLatestAssistantMessage(session);
+}
+
+function syncSelectedMessage() {
+  state.selectedMessageId = getLatestAssistantMessage()?.id ?? null;
 }
 
 function persistSessions() {
@@ -252,7 +322,19 @@ function startFreshSession() {
   const session = createSession();
   state.sessions.unshift(session);
   state.activeSessionId = session.id;
+  state.selectedMessageId = null;
   persistSessions();
+  renderAll();
+}
+
+function startFreshDossier() {
+  const procedureId = elements.dossierProcedure.value || getActiveDossier()?.procedureId || PROCEDURE_LIBRARY[0].id;
+  const dossier = createDossier(procedureId);
+
+  state.dossiers.unshift(dossier);
+  state.activeDossierId = dossier.id;
+  persistDossiers();
+  syncDossierForm();
   renderAll();
 }
 
@@ -291,6 +373,7 @@ function saveActiveDossier() {
 
   persistDossiers();
   renderDossiers();
+  renderDossierSnapshot();
 }
 
 function syncDossierForm() {
@@ -359,6 +442,7 @@ async function submitQuestion(question) {
 
     session.messages.push(assistantMessage);
     session.updatedAt = new Date().toISOString();
+    state.selectedMessageId = assistantMessage.id;
 
     if (state.syncDossierOnNextAnswer) {
       hydrateActiveDossierFromAnswer(question, assistantMessage);
@@ -382,6 +466,7 @@ async function submitQuestion(question) {
 
     session.messages.push(fallbackMessage);
     session.updatedAt = new Date().toISOString();
+    state.selectedMessageId = fallbackMessage.id;
     state.syncDossierOnNextAnswer = false;
     persistSessions();
     renderAll();
@@ -392,23 +477,58 @@ async function submitQuestion(question) {
 }
 
 function hydrateActiveDossierFromAnswer(question, answer) {
+  syncAssistantMessageToDossier(answer, {
+    replaceChecklist: true,
+    appendNotes: false,
+  });
+
   const dossier = getActiveDossier();
   if (!dossier) {
     return;
   }
 
-  dossier.lastSummary = answer.summary;
-  dossier.sources = answer.sources;
-  dossier.updatedAt = new Date().toISOString();
   dossier.notes = [dossier.notes, `Ultima consulta: ${question}`].filter(Boolean).join("\n");
+  dossier.updatedAt = new Date().toISOString();
+}
 
-  if (Array.isArray(answer.keyPoints) && answer.keyPoints.length > 0) {
-    dossier.checklist = answer.keyPoints.map((item) => ({
+function syncAssistantMessageToDossier(message, options) {
+  const dossier = getActiveDossier();
+  if (!dossier || !message) {
+    return;
+  }
+
+  dossier.lastSummary = message.summary || shorten(extractAssistantBody(message.text), 160);
+  dossier.sources = Array.isArray(message.sources) ? message.sources : [];
+
+  if (options.replaceChecklist && Array.isArray(message.keyPoints) && message.keyPoints.length > 0) {
+    const previousState = new Map(
+      (dossier.checklist ?? []).map((item) => [item.text.trim().toLowerCase(), Boolean(item.done)]),
+    );
+
+    dossier.checklist = message.keyPoints.map((item) => ({
       id: crypto.randomUUID(),
       text: item,
-      done: false,
+      done: previousState.get(item.trim().toLowerCase()) ?? false,
     }));
   }
+
+  if (options.appendNotes) {
+    dossier.notes = [dossier.notes, buildNoteFromMessage(message)].filter(Boolean).join("\n\n");
+    elements.dossierNotes.value = dossier.notes;
+  }
+
+  dossier.updatedAt = new Date().toISOString();
+  persistDossiers();
+  renderAll();
+}
+
+function buildNoteFromMessage(message) {
+  const noteLines = [
+    `Resumen vinculado: ${message.summary || shorten(extractAssistantBody(message.text), 160)}`,
+    ...(Array.isArray(message.keyPoints) ? message.keyPoints.slice(0, 4).map((point) => `- ${point}`) : []),
+  ];
+
+  return noteLines.join("\n");
 }
 
 function renderAll() {
@@ -416,6 +536,8 @@ function renderAll() {
   renderPromptRow();
   renderSessions();
   renderMessages();
+  renderInsightPanel();
+  renderDossierSnapshot();
   renderChecklist();
   renderDossiers();
   renderActiveProcedureChip();
@@ -466,6 +588,7 @@ function renderSessions() {
 
     item.addEventListener("click", () => {
       state.activeSessionId = session.id;
+      syncSelectedMessage();
       persistSessions();
       renderAll();
     });
@@ -480,6 +603,7 @@ function renderMessages() {
 
   if (!session || !session.messages.length) {
     elements.conversationTitle.textContent = "Nueva conversacion";
+    renderEmptyMessageState();
     return;
   }
 
@@ -495,6 +619,29 @@ function renderMessages() {
     card.querySelector(".message-summary").textContent = message.summary || shorten(message.text, 120);
     card.querySelector(".message-body").textContent = message.role === "assistant" ? compactBody(message.text) : message.text;
     card.querySelector(".message-legal").textContent = message.role === "assistant" ? message.legalNotice : "";
+
+    if (message.role === "assistant") {
+      card.classList.add("selectable-message");
+
+      if (message.id === state.selectedMessageId) {
+        card.classList.add("active");
+      }
+
+      card.tabIndex = 0;
+      card.addEventListener("click", () => {
+        state.selectedMessageId = message.id;
+        renderMessages();
+        renderInsightPanel();
+      });
+      card.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          state.selectedMessageId = message.id;
+          renderMessages();
+          renderInsightPanel();
+        }
+      });
+    }
 
     if (Array.isArray(message.keyPoints) && message.keyPoints.length > 0) {
       pointsList.innerHTML = "";
@@ -532,6 +679,77 @@ function renderMessages() {
   elements.messageStream.scrollTop = elements.messageStream.scrollHeight;
 }
 
+function renderEmptyMessageState() {
+  const card = document.createElement("article");
+  card.className = "message-card assistant-card";
+  card.innerHTML = [
+    '<p class="message-role">Asistente</p>',
+    '<h3 class="message-summary">Empieza con una duda concreta.</h3>',
+    '<p class="message-body">Ejemplo: que documentacion necesito para solicitar la jubilacion anticipada, como pedir una prestacion por viudedad o como rellenar una solicitud.</p>',
+  ].join("");
+  elements.messageStream.appendChild(card);
+}
+
+function renderInsightPanel() {
+  const message = getSelectedAssistantMessage();
+  const dossier = getActiveDossier();
+  const checklist = dossier?.checklist ?? [];
+  const completedChecklist = checklist.filter((item) => item.done).length;
+
+  elements.insightChecklistProgress.textContent = `${completedChecklist}/${checklist.length}`;
+  elements.insightChecklistButton.disabled = !message;
+  elements.insightNotesButton.disabled = !message;
+
+  if (!message) {
+    elements.insightStatusPill.textContent = "Sin respuesta";
+    elements.insightSourceCount.textContent = "0";
+    elements.insightPointCount.textContent = "0";
+    elements.insightSummary.textContent =
+      "Selecciona una respuesta del chat para convertirla en un resumen operativo del expediente.";
+    elements.insightBody.textContent = "";
+    elements.insightPoints.innerHTML = "";
+    elements.insightSources.innerHTML = "";
+    elements.insightEmpty.hidden = false;
+    return;
+  }
+
+  elements.insightStatusPill.textContent = "Respuesta seleccionada";
+  elements.insightSourceCount.textContent = String(message.sources?.length ?? 0);
+  elements.insightPointCount.textContent = String(message.keyPoints?.length ?? 0);
+  elements.insightSummary.textContent = message.summary || "Respuesta disponible para trabajar el expediente.";
+  elements.insightBody.textContent = shorten(extractAssistantBody(message.text), 420);
+  elements.insightPoints.innerHTML = "";
+  elements.insightSources.innerHTML = "";
+  elements.insightEmpty.hidden = true;
+
+  for (const point of message.keyPoints ?? []) {
+    const pill = document.createElement("span");
+    pill.className = "insight-pill";
+    pill.textContent = point;
+    elements.insightPoints.appendChild(pill);
+  }
+
+  for (const source of message.sources ?? []) {
+    const link = document.createElement("a");
+    link.className = "source-link";
+    link.href = source.url;
+    link.target = "_blank";
+    link.rel = "noreferrer";
+    link.textContent = source.title;
+    elements.insightSources.appendChild(link);
+  }
+}
+
+function renderDossierSnapshot() {
+  const dossier = getActiveDossier();
+
+  elements.dossierLastSummary.textContent = dossier?.lastSummary
+    ? shorten(dossier.lastSummary, 80)
+    : "Sin resumen todavia";
+  elements.dossierSourceTotal.textContent = String(dossier?.sources?.length ?? 0);
+  elements.dossierUpdatedAt.textContent = dossier ? formatRelative(dossier.updatedAt) : "ahora";
+}
+
 function renderChecklist() {
   const dossier = getActiveDossier();
   const checklist = dossier?.checklist ?? [];
@@ -554,6 +772,8 @@ function renderChecklist() {
       }
       persistDossiers();
       renderDossiers();
+      renderInsightPanel();
+      renderDossierSnapshot();
     });
 
     elements.checklistList.appendChild(row);
@@ -596,14 +816,22 @@ function renderActiveProcedureChip() {
   elements.activeProcedureChip.textContent = procedure ? `Expediente activo: ${procedure.label}` : "Sin expediente activo";
 }
 
-function compactBody(text) {
-  const sanitized = text
-    .split("\n")
-    .filter((line) => !/^Fuentes oficiales:?$/i.test(line) && !/^Aviso legal:?/i.test(line) && !/^([-*]|\d+\.)\s+/.test(line))
-    .join(" ")
-    .trim();
+function extractAssistantBody(text) {
+  const [withoutSources] = text.split(/\n\s*\nFuentes oficiales:/i);
+  const [withoutLegal] = withoutSources.split(/\n\s*\nAviso legal:/i);
 
-  return shorten(sanitized, 280);
+  return withoutLegal.trim();
+}
+
+function compactBody(text) {
+  return shorten(
+    extractAssistantBody(text)
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .join(" "),
+    280,
+  );
 }
 
 function shorten(input, length) {

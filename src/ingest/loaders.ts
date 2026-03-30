@@ -3,6 +3,7 @@ import { PDFParse } from "pdf-parse";
 import type { SeedSource, SourceDocument } from "../types/documents.js";
 import { normalizeWhitespace } from "../utils/text.js";
 import { normalizeHtmlToText } from "./normalize.js";
+import { buildSourceSearchText } from "./sourceHints.js";
 
 export async function loadSource(source: SeedSource): Promise<SourceDocument> {
   const response = await fetch(source.url);
@@ -19,26 +20,40 @@ export async function loadSource(source: SeedSource): Promise<SourceDocument> {
     const parser = new PDFParse({ data: buffer });
     const parsed = await parser.getText();
     await parser.destroy();
+    const title = source.title ?? source.url;
+    const tags = source.tags ?? [];
 
     return {
       url: source.url,
-      title: source.title ?? source.url,
+      title,
       text: normalizeWhitespace(parsed.text),
       sourceType,
-      tags: source.tags ?? [],
+      tags,
       priority: source.priority ?? 1,
+      searchText: buildSourceSearchText({
+        title,
+        url: source.url,
+        tags,
+      }),
     };
   }
 
   const html = await response.text();
   const normalized = normalizeHtmlToText(html);
+  const title = source.title ?? normalized.title;
+  const tags = source.tags ?? [];
 
   return {
     url: source.url,
-    title: source.title ?? normalized.title,
+    title,
     text: normalized.text,
     sourceType,
-    tags: source.tags ?? [],
+    tags,
     priority: source.priority ?? 1,
+    searchText: buildSourceSearchText({
+      title,
+      url: source.url,
+      tags,
+    }),
   };
 }

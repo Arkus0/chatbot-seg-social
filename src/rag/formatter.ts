@@ -10,6 +10,18 @@ interface StructuredAnswerContent {
 }
 
 const MAX_KEY_POINTS = 5;
+const SUMMARY_HEADING_PATTERNS = [
+  /^respuesta (directa|breve):?$/i,
+  /^puntos clave:?$/i,
+  /^si lo vas a tramitar ahora:?$/i,
+  /^documentos o datos que suelen pedir:?$/i,
+  /^si quieres rellenar la solicitud:?$/i,
+  /^ojo con esto:?$/i,
+  /^si faltan datos:?$/i,
+  /^siguiente paso claro:?$/i,
+  /^fuentes oficiales:?$/i,
+  /^aviso legal:?$/i,
+];
 
 function isBulletLine(line: string): boolean {
   return /^([-*]|\d+\.)\s+/.test(line);
@@ -31,7 +43,7 @@ function extractStructuredContent(answer: string): StructuredAnswerContent {
     (line) => line.toLowerCase(),
   ).slice(0, MAX_KEY_POINTS);
   const summary =
-    lines.find((line) => !isBulletLine(line) && !/^fuentes oficiales:?$/i.test(line) && !/^aviso legal:?$/i.test(line)) ??
+    lines.find((line) => !isBulletLine(line) && !SUMMARY_HEADING_PATTERNS.some((pattern) => pattern.test(line))) ??
     "No tengo contexto oficial suficiente para responder con seguridad a esa pregunta.";
 
   return {

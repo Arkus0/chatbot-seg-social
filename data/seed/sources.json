@@ -422,5 +422,85 @@
     "tags": ["cita-previa", "pensiones", "prestaciones", "inss", "guia-practica", "revista"],
     "priority": 3,
     "enabled": true
+  },
+  {
+    "url": "https://www.seg-social.es/wps/wcm/connect/wss/96a0e57a-f2a9-4b68-9cad-8016c7ddd599/PUB042_Castellano%2BGuia%2Bde%2Bprestaciones.pdf?MOD=AJPERES",
+    "title": "Guia de prestaciones de la Seguridad Social",
+    "type": "pdf",
+    "tags": ["prestaciones", "guia-prestaciones", "guia-practica", "documentacion"],
+    "priority": 5,
+    "enabled": true
+  },
+  {
+    "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10964/10966/28558/116022",
+    "title": "Auxilio por defuncion",
+    "type": "html",
+    "tags": ["auxilio-defuncion", "muerte-supervivencia", "gastos-sepelio", "prestacion"],
+    "priority": 4,
+    "enabled": true
+  },
+  {
+    "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/1941",
+    "title": "Cuidado de menores afectados por cancer u otra enfermedad grave",
+    "type": "html",
+    "tags": ["cuidado-menor-grave", "cancer", "enfermedad-grave", "prestacion", "reduccion-jornada"],
+    "priority": 4,
+    "enabled": true
+  },
+  {
+    "url": "https://www.seg-social.es/wps/portal/wss/internet/Pensionistas/Servicios/34887/40968/1951/143868",
+    "title": "Cuidado de menores afectados por cancer u otra enfermedad grave - solicitud",
+    "type": "html",
+    "tags": ["cuidado-menor-grave", "solicitud", "documentacion", "formulario", "tramite"],
+    "priority": 5,
+    "enabled": true
+  },
+  {
+    "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/4c43ce49-6636-4a12-bacf-5e6697eb81da/",
+    "title": "Complemento para la reduccion de la brecha de genero",
+    "type": "html",
+    "tags": ["brecha-genero", "complemento", "pension", "hijos", "requisitos"],
+    "priority": 4,
+    "enabled": true
+  },
+  {
+    "url": "https://www.seg-social.es/wps/portal/wss/internet/Pensionistas/Servicios/34928/16da5d4f-1368-474a-86e4-ca96e893b898/solicitud%2Bde%2Bcomplemento%2Bpor%2Bmaternidad",
+    "title": "Complemento para la reduccion de la brecha de genero - solicitud",
+    "type": "html",
+    "tags": ["brecha-genero", "solicitud", "documentacion", "formulario", "tramite"],
+    "priority": 5,
+    "enabled": true
+  },
+  {
+    "url": "https://www.seg-social.es/wps/portal/wss/internet/InformacionUtil/44539/45659/45686",
+    "title": "Subsidio en favor de familiares",
+    "type": "html",
+    "tags": ["favor-de-familiares", "subsidio", "muerte-supervivencia", "requisitos"],
+    "priority": 4,
+    "enabled": true
+  },
+  {
+    "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10964/10966/28536",
+    "title": "Pension en favor de familiares",
+    "type": "html",
+    "tags": ["favor-de-familiares", "pension", "muerte-supervivencia", "solicitud"],
+    "priority": 4,
+    "enabled": true
+  },
+  {
+    "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10963/28393/28396/28482/6165",
+    "title": "Jubilacion anticipada - gestion y solicitudes",
+    "type": "html",
+    "tags": ["jubilacion", "jubilacion-anticipada", "solicitud", "documentacion", "tramite"],
+    "priority": 4,
+    "enabled": true
+  },
+  {
+    "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10963/28393/28399/28443",
+    "title": "Jubilacion parcial",
+    "type": "html",
+    "tags": ["jubilacion", "jubilacion-parcial", "requisitos", "contrato-relevo", "prestacion"],
+    "priority": 4,
+    "enabled": true
   }
 ]

@@ -31,11 +31,12 @@ export function registerHandlers(bot: Telegraf): void {
   bot.start(async (ctx) => {
     await ctx.reply(
       [
-        "Hola. Soy un asistente informativo sobre la Seguridad Social española.",
+        "Hola. Soy un asistente informativo sobre la Seguridad Social espanola.",
         "",
-        "Puedo ayudarte a localizar información oficial sobre trámites, prestaciones y procedimientos.",
+        "Puedo ayudarte con prestaciones, tramites, documentos y pasos usando informacion oficial.",
+        "Tambien puedes preguntar como preparar o rellenar una solicitud, si el contexto oficial lo permite.",
         "",
-        "Importante: no sustituyo la información oficial ni el asesoramiento jurídico personalizado.",
+        "Importante: no sustituyo la informacion oficial ni el asesoramiento juridico personalizado.",
       ].join("\n"),
     );
   });
@@ -43,12 +44,13 @@ export function registerHandlers(bot: Telegraf): void {
   bot.help(async (ctx) => {
     await ctx.reply(
       [
-        "Envíame una pregunta en lenguaje natural.",
+        "Enviame una pregunta en lenguaje natural.",
         "",
         "Ejemplos:",
-        "- ¿Cómo pedir el Ingreso Mínimo Vital?",
-        "- ¿Qué necesito para solicitar la jubilación?",
-        "- ¿Dónde consulto mi vida laboral?",
+        "- Como pedir el Ingreso Minimo Vital",
+        "- Que necesito para solicitar la jubilacion",
+        "- Como rellenar la solicitud de viudedad",
+        "- Donde consulto mi vida laboral",
       ].join("\n"),
     );
   });
@@ -72,7 +74,7 @@ export function registerHandlers(bot: Telegraf): void {
       });
 
       await ctx.reply(
-        "Ahora mismo no puedo responder con garantías. Inténtalo de nuevo en unos minutos o consulta la sede oficial de la Seguridad Social.",
+        "Ahora mismo no puedo responder con garantias. Intentalo de nuevo en unos minutos o consulta la sede oficial de la Seguridad Social.",
       );
     }
   });

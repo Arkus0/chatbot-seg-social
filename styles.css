@@ -210,6 +210,12 @@ select {
   font-size: 1.2rem;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .panel-chat {
   min-height: 76vh;
   display: flex;
@@ -262,6 +268,14 @@ select {
 .session-item:hover,
 .prompt-chip:hover {
   transform: translateY(-1px);
+}
+
+.primary-btn:disabled,
+.ghost-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  transform: none;
+  box-shadow: none;
 }
 
 .procedure-list,
@@ -361,6 +375,16 @@ select {
   background: linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(214, 239, 246, 0.52));
 }
 
+.selectable-message {
+  cursor: pointer;
+  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.selectable-message.active {
+  border-color: rgba(13, 96, 119, 0.4);
+  box-shadow: 0 18px 40px rgba(13, 96, 119, 0.12);
+}
+
 .user-card {
   margin-left: auto;
   max-width: 88%;
@@ -426,6 +450,80 @@ select {
 .dossier-form {
   border-top: 1px solid var(--line);
   padding-top: 16px;
+}
+
+.insight-panel {
+  background:
+    linear-gradient(160deg, rgba(255, 250, 242, 0.95), rgba(224, 241, 246, 0.84)),
+    var(--surface);
+}
+
+.insight-metrics,
+.dossier-snapshot {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.insight-metric,
+.snapshot-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.74);
+}
+
+.insight-metric span,
+.snapshot-card span {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.insight-metric strong,
+.snapshot-card strong {
+  font-size: 0.98rem;
+  line-height: 1.35;
+}
+
+.insight-summary {
+  margin: 0 0 10px;
+  font-family: var(--serif);
+  font-size: 1.22rem;
+  line-height: 1.25;
+}
+
+.insight-body {
+  margin: 0 0 14px;
+  color: var(--muted);
+  line-height: 1.7;
+  white-space: pre-line;
+}
+
+.insight-points,
+.insight-sources {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.insight-points {
+  margin-bottom: 14px;
+}
+
+.insight-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(13, 96, 119, 0.1);
+  border: 1px solid rgba(13, 96, 119, 0.18);
+  font-size: 0.83rem;
+  line-height: 1.4;
 }
 
 .dossier-form {
@@ -529,5 +627,10 @@ select:focus {
 
   .brand-block h1 {
     max-width: none;
+  }
+
+  .insight-metrics,
+  .dossier-snapshot {
+    grid-template-columns: 1fr;
   }
 }
