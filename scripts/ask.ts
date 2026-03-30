@@ -1,4 +1,4 @@
-import { getEnv } from "../src/config/env.js";
+import { getEnv, getRequiredBotMode } from "../src/config/env.js";
 import { answerQuestion } from "../src/rag/answerQuestion.js";
 import { answerWithLlm } from "../src/rag/answerWithLlm.js";
 
@@ -10,7 +10,16 @@ async function main(): Promise<void> {
   }
 
   const env = getEnv();
-  const answer = env.BOT_MODE === "rag" ? await answerQuestion(question) : await answerWithLlm(question);
+  const botMode = getRequiredBotMode(env);
+  const answer =
+    botMode === "rag"
+      ? await answerQuestion(question)
+      : botMode === "llm"
+        ? await answerWithLlm(question)
+        : {
+            text: `Eco: ${question}`,
+            sources: [],
+          };
 
   console.log(answer.text);
 

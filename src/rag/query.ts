@@ -53,11 +53,15 @@ const EXPANSION_RULES = [
     expansion: "jubilacion anticipada edad coeficientes reductores acceso pension requisitos",
   },
   {
+    pattern: /\bmutualista\b|condicion de mutualista|mutualidad laboral/i,
+    expansion: "jubilacion anticipada mutualista edad real 60 anos mutualidad laboral coeficientes reductores",
+  },
+  {
     pattern: /\bdemorada\b|retrasar la jubilacion|jubilacion demorada/i,
     expansion: "jubilacion demorada demora pension incentivos complemento demora",
   },
   {
-    pattern: /\bparcial\b|jubilacion parcial/i,
+    pattern: /\bjubilacion parcial\b|contrato de relevo|reducir jornada y cobrar pension/i,
     expansion: "jubilacion parcial contrato relevo trabajo parcial pension requisitos",
   },
   {
@@ -81,12 +85,12 @@ const EXPANSION_RULES = [
     expansion: "incapacidad permanente concepto grados invalidez pension trabajador",
   },
   {
-    pattern: /\bincapacidad permanente parcial\b|\bparcial\b/i,
-    expansion: "incapacidad permanente parcial indemnizacion prestacion lesiones permanentes",
+    pattern: /\bincapacidad permanente parcial\b|incapacidad parcial|lesiones permanentes no incapacitantes|lesiones permanentes no invalidantes/i,
+    expansion: "incapacidad permanente parcial indemnizacion prestacion lesiones permanentes no incapacitantes formulario solicitud",
   },
   {
-    pattern: /\bincapacidad permanente absoluta\b|\babsoluta\b/i,
-    expansion: "incapacidad permanente absoluta pension trabajo profesion habitual",
+    pattern: /\bincapacidad permanente absoluta\b|invalidez absoluta|incapacidad absoluta/i,
+    expansion: "incapacidad permanente absoluta pension trabajo profesion habitual formulario solicitud inss",
   },
   {
     pattern: /\bgran incapacidad\b/i,
@@ -107,6 +111,10 @@ const EXPANSION_RULES = [
   {
     pattern: /\bnacimiento\b|cuidado de menor|maternidad|paternidad/i,
     expansion: "nacimiento y cuidado de menor prestacion permiso descanso subsidio seguridad social solicitud",
+  },
+  {
+    pattern: /\bcertificado provisional sustitutorio\b|\bcps\b/i,
+    expansion: "certificado provisional sustitutorio tarjeta sanitaria europea tse urgencia viaje asistencia sanitaria europa",
   },
   {
     pattern: /\bviudedad\b/i,
@@ -142,11 +150,15 @@ const EXPANSION_RULES = [
   },
   {
     pattern: /\btse\b|tarjeta sanitaria europea/i,
-    expansion: "tarjeta sanitaria europea tse solicitud renovacion asistencia sanitaria estancia temporal",
+    expansion: "tarjeta sanitaria europea tse certificado provisional sustitutorio cps solicitud renovacion asistencia sanitaria estancia temporal",
   },
   {
-    pattern: /\bbeneficiario\b|anadir beneficiario|alta de beneficiario/i,
-    expansion: "beneficiario asistencia sanitaria inclusion de beneficiarios alta de beneficiario titular",
+    pattern: /\bbeneficiari[oa]s?\b|alta de beneficiari[oa]s?/i,
+    expansion: "beneficiario asistencia sanitaria alta de beneficiarios titular derecho tarjeta sanitaria solicitud",
+  },
+  {
+    pattern: /\btrabajador(?:es)? del mar\b|\bregimen especial del mar\b|\binstituto social de la marina\b|\bism\b/i,
+    expansion: "instituto social de la marina ism regimen especial de trabajadores del mar prestaciones solicitud sede electronica",
   },
   {
     pattern: /\bcita previa\b|pedir cita|solicitar cita/i,

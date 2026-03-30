@@ -1,13 +1,15 @@
 import type { AnswerPayload } from "../types/answers.js";
 
-import { getEnv } from "../config/env.js";
+import { assertRuntimeConfig, getEnv, getRequiredBotMode } from "../config/env.js";
 import { answerQuestion } from "./answerQuestion.js";
 import { answerWithLlm } from "./answerWithLlm.js";
 
 export async function getAnswer(question: string): Promise<AnswerPayload> {
   const env = getEnv();
+  assertRuntimeConfig(env, "chat");
+  const botMode = getRequiredBotMode(env);
 
-  if (env.BOT_MODE === "echo") {
+  if (botMode === "echo") {
     return {
       text: `Eco: ${question}`,
       sources: [],
@@ -17,7 +19,7 @@ export async function getAnswer(question: string): Promise<AnswerPayload> {
     };
   }
 
-  if (env.BOT_MODE === "llm") {
+  if (botMode === "llm") {
     return answerWithLlm(question);
   }
 

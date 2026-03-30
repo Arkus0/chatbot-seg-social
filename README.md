@@ -41,6 +41,14 @@ tests/
 data/
 ```
 
+## Documentacion operativa
+
+- `AGENTS.md`: contexto estable del repo y guardrails para futuras sesiones.
+- `docs/session-handoff.md`: estado actual, correcciones hechas y limites conocidos.
+- `docs/operations.md`: runbook de Vercel, salud, deploy y Telegram.
+- `docs/corpus-roadmap.md`: cobertura actual y siguiente foco de corpus.
+- `.agents/`: briefs cortos para trabajo de plataforma, corpus y release.
+
 ## Comandos
 
 ```bash

@@ -121,6 +121,12 @@ const TAG_HINTS: Record<string, string[]> = {
     "certificado provisional sustitutorio",
     "asistencia sanitaria en europa",
   ],
+  cps: [
+    "certificado provisional sustitutorio",
+    "cps de la tarjeta sanitaria europea",
+    "urgencia antes de viajar",
+    "documento provisional para asistencia sanitaria",
+  ],
   "cita-previa": [
     "pedir cita en la seguridad social",
     "cita inss",
@@ -136,6 +142,11 @@ const TAG_HINTS: Record<string, string[]> = {
     "alta de beneficiario",
     "anadir beneficiario",
     "beneficiario de asistencia sanitaria",
+  ],
+  "cuidado-menor": [
+    "prestacion por nacimiento y cuidado de menor",
+    "permiso por nacimiento",
+    "maternidad y paternidad",
   ],
   "estado-solicitud": [
     "consultar estado de solicitud",
@@ -169,6 +180,36 @@ const TAG_HINTS: Record<string, string[]> = {
   lactancia: [
     "riesgo durante la lactancia natural",
     "suspension por lactancia",
+  ],
+  "incapacidad-permanente-parcial": [
+    "incapacidad permanente parcial",
+    "lesiones permanentes no incapacitantes",
+    "indemnizacion por incapacidad parcial",
+  ],
+  "incapacidad-permanente-absoluta": [
+    "incapacidad permanente absoluta",
+    "invalidez absoluta",
+    "pension por incapacidad absoluta",
+  ],
+  mutualista: [
+    "jubilacion anticipada por tener la condicion de mutualista",
+    "mutualidad laboral",
+    "edad real de jubilacion mutualista",
+  ],
+  mar: [
+    "regimen especial de trabajadores del mar",
+    "instituto social de la marina",
+    "prestaciones de los trabajadores del mar",
+  ],
+  ism: [
+    "instituto social de la marina",
+    "sede electronica del ism",
+    "servicios del ism",
+  ],
+  "regimen-especial-del-mar": [
+    "regimen especial de trabajadores del mar",
+    "trabajadores del mar",
+    "instituto social de la marina",
   ],
   documentacion: [
     "papeles necesarios",
@@ -216,6 +257,14 @@ const TITLE_HINT_RULES = [
       "como rellenar la solicitud",
       "que dato poner en el formulario",
       "como cumplimentar el impreso",
+    ],
+  },
+  {
+    pattern: /\bsms\b|\bv[ií]a sms\b|\bsin certificado\b|\bsin certificado digital\b/i,
+    hints: [
+      "tramite por sms",
+      "sin certificado digital",
+      "identificacion por sms",
     ],
   },
   {

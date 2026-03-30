@@ -43,6 +43,18 @@ async function addDocumentsWithRetry(
   throw lastError;
 }
 
+async function areAllChunkIdsPresent(ids: string[], namespace: string): Promise<boolean> {
+  if (ids.length === 0) {
+    return false;
+  }
+
+  const env = getEnv();
+  const index = getPineconeClient().index(env.PINECONE_INDEX_NAME!).namespace(namespace);
+  const fetched = await index.fetch(ids);
+
+  return ids.every((id) => Boolean(fetched.records[id]));
+}
+
 export async function ensurePineconeIndex(): Promise<void> {
   const env = getEnv();
   assertRagEnv(env);
@@ -103,6 +115,15 @@ export async function ingestConfiguredSources(): Promise<void> {
     const loaded = await loadSource(source);
     const documents = await chunkSourceDocument(loaded);
     const ids = documents.map((document) => buildChunkId(document.metadata.url, document.metadata.chunkIndex));
+
+    if (!env.FORCE_REEMBED_EXISTING && (await areAllChunkIdsPresent(ids, env.PINECONE_NAMESPACE))) {
+      logger.info("Skipping source already present in Pinecone namespace", {
+        url: source.url,
+        chunks: documents.length,
+        namespace: env.PINECONE_NAMESPACE,
+      });
+      continue;
+    }
 
     await addDocumentsWithRetry(store, documents, ids, env.PINECONE_NAMESPACE);
 

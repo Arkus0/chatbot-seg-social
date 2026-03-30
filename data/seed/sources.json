@@ -662,5 +662,93 @@
     "tags": ["practicas-formativas", "cotizacion", "guia-practica", "pdf"],
     "priority": 4,
     "enabled": true
+  },
+  {
+    "url": "https://www.seg-social.es/wps/wcm/connect/wss/832f01df-7528-43e8-ab89-5e385d1f39e4/PUB060_Castellano.pdf?MOD=AJPERES",
+    "title": "Tarjeta Sanitaria Europea y Certificado Provisional Sustitutorio",
+    "type": "pdf",
+    "tags": ["tse", "tarjeta-sanitaria-europea", "cps", "asistencia-sanitaria", "sms", "sin-certificado", "pdf"],
+    "priority": 5,
+    "enabled": true
+  },
+  {
+    "url": "https://sede.seg-social.gob.es/wps/wcm/connect/sede/9b0c0c2d-6726-450c-875f-fdf5bb046350/SPS_S070_Cast_v1_0_Edit.pdf?MOD=AJPERES",
+    "title": "Solicitud de Certificado Provisional Sustitutorio de la Tarjeta Sanitaria Europea",
+    "type": "pdf",
+    "tags": ["tse", "tarjeta-sanitaria-europea", "cps", "solicitud", "formulario", "rellenar", "pdf"],
+    "priority": 5,
+    "enabled": true
+  },
+  {
+    "url": "https://www.seg-social.es/wps/portal/wss/internet/InformacionUtil/44539/de513c99-5885-48bd-8c66-45d2c97ad947/41021nycm",
+    "title": "Prestacion por nacimiento y cuidado de menor - informacion util",
+    "type": "html",
+    "tags": ["nacimiento", "cuidado-menor", "solicitud", "documentacion", "plazos", "inss"],
+    "priority": 5,
+    "enabled": true
+  },
+  {
+    "url": "https://www.seg-social.es/wps/wcm/connect/wss/51178da2-48e0-4d22-aa5d-6a1904b4ae6b/MP-1%2BBIS_Castellano_12_Accesibilidad.pdf?MOD=AJPERES",
+    "title": "Solicitud de prestacion de nacimiento y cuidado de menor por parto",
+    "type": "pdf",
+    "tags": ["nacimiento", "cuidado-menor", "solicitud", "formulario", "rellenar", "pdf"],
+    "priority": 5,
+    "enabled": true
+  },
+  {
+    "url": "https://www.seg-social.es/wps/wcm/connect/wss/19ad9daf-5c17-40d0-83bb-b074dccade74/Gu%C3%ADa%2BC.Reducci%C3%B3n%2Bbrecha%2Bg%C3%A9nero_castellano%2BAccesibilidad.pdf?MOD=AJPERES",
+    "title": "Guia del complemento para la reduccion de la brecha de genero",
+    "type": "pdf",
+    "tags": ["brecha-genero", "complemento", "hijos", "formulario", "rellenar", "pdf"],
+    "priority": 5,
+    "enabled": true
+  },
+  {
+    "url": "https://www.seg-social.es/wps/portal/wss/internet/Pensionistas/Servicios/34887/40968/41025/formulario%2Bde%2Bdatos%2Bpara%2Baportar%2Ben%2Bprocedimientos%2Bde%2Bincapacidad%2Bpermanente%2Biniciados%2Bde%2Boficio?changeLanguage=es",
+    "title": "Incapacidad permanente - Lesiones permanentes no incapacitantes",
+    "type": "html",
+    "tags": ["incapacidad-permanente", "incapacidad-permanente-parcial", "incapacidad-permanente-absoluta", "solicitud", "formulario", "inss"],
+    "priority": 5,
+    "enabled": true
+  },
+  {
+    "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10963/6137/6143",
+    "title": "Jubilacion anticipada por tener la condicion de mutualista",
+    "type": "html",
+    "tags": ["mutualista", "jubilacion", "jubilacion-anticipada", "requisitos", "prestacion"],
+    "priority": 5,
+    "enabled": true
+  },
+  {
+    "url": "https://www.seg-social.es/wps/wcm/connect/wss/1dd2c8bf-3e33-439a-87f7-9459230aea6e/Cuadro_requisitos_forma_calculo%2B%28DF%2B12%2B2%29.pdf?MOD=AJPERES",
+    "title": "Requisitos y forma de calculo de los distintos tipos de jubilacion",
+    "type": "pdf",
+    "tags": ["mutualista", "jubilacion", "jubilacion-anticipada", "guia-practica", "pdf"],
+    "priority": 4,
+    "enabled": true
+  },
+  {
+    "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10938/30476/177505",
+    "title": "Asistencia sanitaria para el colectivo mutualista",
+    "type": "html",
+    "tags": ["mutualista", "asistencia-sanitaria", "beneficiario", "requisitos"],
+    "priority": 4,
+    "enabled": true
+  },
+  {
+    "url": "https://www.seg-social.es/wps/wcm/connect/wss/1ab27705-2dab-4f47-b1b7-cf139869519b/Guia%2BServicios%2BSeguridad%2BSocial%2Bdel%2BISM%2Ben%2Bla%2Bsede%2Belectronica.pdf?MOD=AJPERES",
+    "title": "Guia de servicios de Seguridad Social del ISM en la sede electronica",
+    "type": "pdf",
+    "tags": ["mar", "ism", "regimen-especial-del-mar", "tramite", "sede", "pdf"],
+    "priority": 5,
+    "enabled": true
+  },
+  {
+    "url": "https://sede.seg-social.gob.es/wps/wcm/connect/sede/86216324-f372-4685-aa0d-e7cd5ea3f213/CPS%2Bsolicitud%2BISM.pdf?MOD=AJPERES",
+    "title": "Solicitud de Certificado Provisional Sustitutorio de la TSE - ISM",
+    "type": "pdf",
+    "tags": ["mar", "ism", "regimen-especial-del-mar", "tse", "cps", "solicitud", "formulario", "pdf"],
+    "priority": 4,
+    "enabled": true
   }
 ]

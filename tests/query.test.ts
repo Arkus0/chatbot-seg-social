@@ -14,6 +14,16 @@ describe("query helpers", () => {
     expect(expandQuestion("Estoy valorando una jubilacion demorada")).toContain("incentivos");
     expect(expandQuestion("Como rellenar la solicitud de viudedad")).toContain("cumplimentar");
     expect(expandQuestion("Quiero saber el complemento por brecha de genero")).toContain("reduccion de la brecha de genero");
+    expect(expandQuestion("Necesito el certificado provisional sustitutorio de la TSE")).toContain(
+      "certificado provisional sustitutorio",
+    );
+    expect(expandQuestion("Como dar de alta a un beneficiario de asistencia sanitaria")).toContain(
+      "alta de beneficiarios",
+    );
+    expect(expandQuestion("Soy mutualista y quiero jubilarme antes")).toContain("edad real 60 anos");
+    expect(expandQuestion("Soy trabajador del mar y quiero hacer el tramite")).toContain(
+      "instituto social de la marina",
+    );
     expect(expandQuestion("Como dar de alta a una empleada de hogar")).toContain("empleo de hogar");
     expect(expandQuestion("Como consultar el estado de mi solicitud por SMS")).toContain("seguimiento expediente");
     expect(expandQuestion("Quiero el certificado integral de prestaciones")).toContain("certificado integral de prestaciones");
@@ -157,5 +167,43 @@ describe("query helpers", () => {
     expect(ranked).toHaveLength(3);
     expect(ranked.filter((chunk) => chunk.metadata.url === "https://example.com/sms")).toHaveLength(2);
     expect(ranked.some((chunk) => chunk.metadata.url === "https://example.com/expedientes")).toBe(true);
+  });
+
+  it("prioritizes incapacity form pages for form-filling questions", () => {
+    const ranked = rerankRetrievedChunks(
+      "Como rellenar la solicitud de incapacidad permanente absoluta",
+      [
+        {
+          pageContent: "Informacion general sobre incapacidad permanente y sus grados.",
+          score: 0.89,
+          metadata: {
+            url: "https://example.com/ip-general",
+            title: "Incapacidad permanente - concepto",
+            sourceType: "html",
+            chunkIndex: 0,
+            tags: ["incapacidad-permanente"],
+            priority: 3,
+            searchText: "incapacidad permanente grados invalidez pension trabajador",
+          },
+        },
+        {
+          pageContent: "Descarga el formulario para solicitar incapacidad permanente y lesiones permanentes.",
+          score: 0.86,
+          metadata: {
+            url: "https://example.com/ip-formulario",
+            title: "Incapacidad permanente - Lesiones permanentes no incapacitantes",
+            sourceType: "html",
+            chunkIndex: 0,
+            tags: ["incapacidad-permanente", "incapacidad-permanente-absoluta", "solicitud", "formulario"],
+            priority: 5,
+            searchText:
+              "incapacidad permanente absoluta solicitud formulario rellenar documentacion inss lesiones permanentes",
+          },
+        },
+      ],
+      2,
+    );
+
+    expect(ranked[0]?.metadata.url).toBe("https://example.com/ip-formulario");
   });
 });

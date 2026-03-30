@@ -1,7 +1,8 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
+import { waitUntil } from "@vercel/functions";
 
 import { createBot } from "../src/bot/createBot.js";
-import { assertTelegramEnv, getEnv } from "../src/config/env.js";
+import { assertRuntimeConfig, getEnv, isEnvConfigurationError } from "../src/config/env.js";
 import { isTelegramSecretValid } from "../src/services/security.js";
 import { logger } from "../src/utils/logger.js";
 
@@ -12,7 +13,25 @@ export default async function webhookHandler(req: VercelRequest, res: VercelResp
   }
 
   const env = getEnv();
-  assertTelegramEnv(env);
+
+  try {
+    assertRuntimeConfig(env, "webhook");
+  } catch (error) {
+    if (isEnvConfigurationError(error)) {
+      logger.error("Telegram webhook misconfigured", {
+        missingConfig: error.missingKeys,
+      });
+
+      res.status(503).json({
+        ok: false,
+        error: "Server configuration error",
+        missingConfig: error.missingKeys,
+      });
+      return;
+    }
+
+    throw error;
+  }
 
   const secretHeader = req.headers["x-telegram-bot-api-secret-token"];
   const receivedSecret = Array.isArray(secretHeader) ? secretHeader[0] : secretHeader;
@@ -29,7 +48,11 @@ export default async function webhookHandler(req: VercelRequest, res: VercelResp
 
   try {
     const bot = createBot();
-    await bot.handleUpdate(req.body);
+    waitUntil(
+      bot.handleUpdate(req.body).catch((error) => {
+        logger.error("Webhook processing failed", error);
+      }),
+    );
     res.status(200).json({ ok: true });
   } catch (error) {
     logger.error("Webhook processing failed", error);

@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { z } from "zod";
 
+import { assertRuntimeConfig, getEnv, isEnvConfigurationError } from "../src/config/env.js";
 import { getAnswer } from "../src/rag/getAnswer.js";
 import { logger } from "../src/utils/logger.js";
 
@@ -37,12 +38,27 @@ export default async function chatHandler(req: VercelRequest, res: VercelRespons
   }
 
   try {
+    const env = getEnv();
+    assertRuntimeConfig(env, "chat");
     const answer = await getAnswer(parsedBody.data.question);
     res.status(200).json({
       ok: true,
       answer,
     });
   } catch (error) {
+    if (isEnvConfigurationError(error)) {
+      logger.error("Chat API misconfigured", {
+        missingConfig: error.missingKeys,
+      });
+
+      res.status(503).json({
+        ok: false,
+        error: "Server configuration error",
+        missingConfig: error.missingKeys,
+      });
+      return;
+    }
+
     logger.error("Chat API failed", {
       error,
       question: parsedBody.data.question,

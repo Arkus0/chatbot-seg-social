@@ -83,7 +83,7 @@ class GeminiEmbeddingsAdapter implements EmbeddingsInterface {
 
   async embedQuery(text: string): Promise<number[]> {
     try {
-      const vector = await withEmbeddingRetry("query", async () => getGeminiQueryEmbeddings().embedQuery(text));
+      const vector = await getGeminiQueryEmbeddings().embedQuery(text);
 
       if (vector.length === 0) {
         throw new Error("Gemini returned an empty embedding for the query.");
@@ -91,17 +91,18 @@ class GeminiEmbeddingsAdapter implements EmbeddingsInterface {
 
       return vector;
     } catch (error) {
-      if (!isRetriableEmbeddingError(error)) {
+      if (isRetriableEmbeddingError(error)) {
+        logger.warn("Query embedding unavailable, skipping vector retrieval", {
+          error: String(error),
+        });
         throw error;
       }
 
-      logger.warn("Query embedding unavailable, falling back to document-task embedding", {
+      logger.warn("Query-task embedding failed, falling back to document-task embedding", {
         error: String(error),
       });
 
-      const fallbackVector = await withEmbeddingRetry("query-fallback-document-task", async () =>
-        getGeminiDocumentEmbeddings().embedQuery(text),
-      );
+      const fallbackVector = await getGeminiDocumentEmbeddings().embedQuery(text);
 
       if (fallbackVector.length === 0) {
         throw new Error("Gemini returned an empty fallback embedding for the query.", {

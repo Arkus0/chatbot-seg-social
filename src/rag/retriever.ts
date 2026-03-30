@@ -7,6 +7,8 @@ import { retrieveLexicalFallbackChunks } from "./lexicalRetriever.js";
 import { expandQuestion, rerankRetrievedChunks } from "./query.js";
 import { getVectorStore } from "./vectorstore.js";
 
+const MIN_LEXICAL_FAST_PATH_RESULTS = 3;
+
 async function retrieveVectorChunks(question: string): Promise<RetrievedChunk[]> {
   const env = getEnv();
   const store = await getVectorStore();
@@ -34,16 +36,48 @@ async function retrieveVectorChunks(question: string): Promise<RetrievedChunk[]>
   return rerankRetrievedChunks(question, chunks, env.RAG_TOP_K);
 }
 
-export async function retrieveRelevantChunks(question: string): Promise<RetrievedChunk[]> {
-  try {
-    const vectorChunks = await retrieveVectorChunks(question);
+function mergeRetrievedChunks(...chunkGroups: RetrievedChunk[][]): RetrievedChunk[] {
+  const merged = new Map<string, RetrievedChunk>();
 
-    if (vectorChunks.length > 0) {
-      return vectorChunks;
+  for (const chunks of chunkGroups) {
+    for (const chunk of chunks) {
+      const key = `${chunk.metadata.url}:${chunk.metadata.chunkIndex}`;
+      const existing = merged.get(key);
+
+      if (!existing || chunk.score > existing.score) {
+        merged.set(key, chunk);
+      }
     }
+  }
+
+  return [...merged.values()];
+}
+
+function shouldUseLexicalFastPath(chunks: RetrievedChunk[], topK: number): boolean {
+  return chunks.length >= Math.min(topK, MIN_LEXICAL_FAST_PATH_RESULTS);
+}
+
+export async function retrieveRelevantChunks(question: string): Promise<RetrievedChunk[]> {
+  const env = getEnv();
+  const lexicalChunks = await retrieveLexicalFallbackChunks(question);
+
+  if (shouldUseLexicalFastPath(lexicalChunks, env.RAG_TOP_K)) {
+    return lexicalChunks;
+  }
+
+  let vectorChunks: RetrievedChunk[] = [];
+
+  try {
+    vectorChunks = await retrieveVectorChunks(question);
   } catch (error) {
     logger.warn("Vector retrieval failed, using lexical fallback corpus", { error });
   }
 
-  return retrieveLexicalFallbackChunks(question);
+  const combinedChunks = mergeRetrievedChunks(vectorChunks, lexicalChunks);
+
+  if (combinedChunks.length === 0) {
+    return [];
+  }
+
+  return rerankRetrievedChunks(question, combinedChunks, env.RAG_TOP_K);
 }

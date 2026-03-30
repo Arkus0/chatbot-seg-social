@@ -1,13 +1,17 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
-import { getEnv } from "../src/config/env.js";
+import { getEffectiveBotMode, getEnv, getMissingConfig } from "../src/config/env.js";
 
 export default function healthHandler(_req: VercelRequest, res: VercelResponse): void {
   const env = getEnv();
+  const botMode = getEffectiveBotMode(env);
+  const missingConfig = getMissingConfig(env, "health");
 
   res.status(200).json({
     ok: true,
     service: "gestor-seguridad-social-no-oficial",
+    botMode,
+    missingConfig,
     configured: {
       telegram: Boolean(env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_WEBHOOK_SECRET),
       gemini: Boolean(env.GEMINI_API_KEY),
