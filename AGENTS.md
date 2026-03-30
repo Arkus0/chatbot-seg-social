@@ -23,12 +23,15 @@ La prioridad operativa es mantener `BOT_MODE=rag` estable en produccion y evitar
 - En produccion `BOT_MODE` debe ser explicito.
 - `APP_BASE_URL` debe existir en produccion y apuntar a la URL canonica.
 - El webhook de Telegram debe responder `200` rapido y dejar el trabajo pesado en background.
+- El bot de Telegram expone menu guiado por botones (`/menu`) y salida de contexto (`/reset`).
+- El webhook debe aceptar `callback_query` ademas de `message`.
 
 ## Guardrails
 
 - No reintroducir degradacion silenciosa a `echo` en produccion.
 - No volver a bloquear `/api/webhook` esperando a `getAnswer()`.
 - No asumir que Gemini embeddings estara disponible para consultas en vivo.
+- No perder `callback_query` en `allowed_updates` o el menu guiado dejara de funcionar.
 - Cuando cambies `data/seed/sources.json`, reconstruye `data/cache/fallback-corpus.json`.
 - `APP_BASE_URL` solo es obligatorio en produccion. No copies ese valor a preview salvo que sea intencional.
 

@@ -173,6 +173,21 @@ const EXPANSION_RULES = [
     expansion: "consultar estado de solicitud seguimiento expediente via sms seguridad social imv prestacion",
   },
   {
+    pattern:
+      /\bsubsan(ar|acion)\b|aportar documentacion|adjuntar documentos|enviar documentacion adicional|requerimiento\b/i,
+    expansion:
+      "subsanacion de expediente requerimiento de documentacion aportar documentos faltantes mis expedientes administrativos inss",
+  },
+  {
+    pattern: /\bnotificacion\b|resolucion\b|denegacion\b|recurso\b/i,
+    expansion:
+      "notificaciones de seguridad social resolucion denegacion prestaciones revision administrativa estado de expediente",
+  },
+  {
+    pattern: /\bcaiss\b|centro de atencion e informacion|atencion presencial inss/i,
+    expansion: "caiss centro de atencion e informacion de la seguridad social cita previa inss",
+  },
+  {
     pattern: /\bconvenio especial\b/i,
     expansion: "convenio especial seguridad social alta baja variacion solicitud cotizacion voluntaria",
   },
@@ -191,6 +206,10 @@ const EXPANSION_RULES = [
   {
     pattern: /\bdocumentacion\b|papeles|documentos/i,
     expansion: "documentacion solicitud requisitos justificantes formulario tramite",
+  },
+  {
+    pattern: /\bmodelo\b|modelo oficial|impreso oficial|formulario oficial/i,
+    expansion: "modelo oficial impreso oficial formulario de solicitud pdf sede seguridad social",
   },
   {
     pattern: /\bcuantia\b|importe|cuanto cobro/i,

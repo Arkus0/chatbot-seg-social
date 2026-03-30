@@ -29,6 +29,10 @@ describe("query helpers", () => {
     expect(expandQuestion("Quiero el certificado integral de prestaciones")).toContain("certificado integral de prestaciones");
     expect(expandQuestion("Que documentacion necesito para viudedad")).toContain("documentacion");
     expect(expandQuestion("Cuanto cobro por gran incapacidad")).toContain("complemento tercera persona");
+    expect(expandQuestion("Tengo un requerimiento y debo subsanar el expediente")).toContain("subsanacion");
+    expect(expandQuestion("Me llego una notificacion de resolucion")).toContain("resolucion");
+    expect(expandQuestion("Necesito cita en un CAISS")).toContain("centro de atencion e informacion");
+    expect(expandQuestion("Donde encuentro el modelo oficial")).toContain("impreso oficial");
   });
 
   it("boosts chunks whose title and tags match the question intent", () => {

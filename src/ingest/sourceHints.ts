@@ -153,6 +153,28 @@ const TAG_HINTS: Record<string, string[]> = {
     "seguimiento del expediente",
     "ver en que fase esta",
   ],
+  subsanacion: [
+    "subsanar expediente",
+    "aportar documentacion adicional",
+    "responder a requerimiento del inss",
+    "adjuntar documentos pendientes",
+  ],
+  requerimiento: [
+    "requerimiento de documentacion",
+    "notificacion para aportar papeles",
+    "plazo para completar solicitud",
+  ],
+  notificacion: [
+    "notificacion de resolucion",
+    "estado de la resolucion",
+    "consulta de notificaciones de la seguridad social",
+  ],
+  caiss: [
+    "centro de atencion e informacion de la seguridad social",
+    "oficina inss",
+    "atencion presencial inss",
+    "cita en caiss",
+  ],
   "certificado-prestaciones": [
     "certificado integral de prestaciones",
     "certificado de ingresos y retenciones",
@@ -257,6 +279,16 @@ const TITLE_HINT_RULES = [
       "como rellenar la solicitud",
       "que dato poner en el formulario",
       "como cumplimentar el impreso",
+      "modelo oficial y casillas habituales",
+    ],
+  },
+  {
+    pattern: /\bsubsan(ar|acion)\b|\brequerimiento\b|\badjuntar\b|\baportar documentacion\b/i,
+    hints: [
+      "como subsanar un expediente",
+      "que hacer ante un requerimiento",
+      "donde adjuntar documentacion adicional",
+      "plazo para responder requerimientos",
     ],
   },
   {
