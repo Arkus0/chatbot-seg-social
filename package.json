@@ -1,0 +1,44 @@
+{
+  "name": "telegram-seg-social-bot",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Chatbot de Telegram para asistencia informativa sobre la Seguridad Social española con arquitectura RAG y coste cero.",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "dev": "vercel dev",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "ingest": "tsx scripts/ingest.ts",
+    "set:webhook": "tsx scripts/set-webhook.ts",
+    "delete:webhook": "tsx scripts/delete-webhook.ts"
+  },
+  "dependencies": {
+    "@langchain/core": "^1.1.36",
+    "@langchain/google-genai": "^2.1.26",
+    "@langchain/groq": "^1.1.5",
+    "@langchain/pinecone": "^1.0.1",
+    "@langchain/textsplitters": "^1.0.1",
+    "@pinecone-database/pinecone": "^5.1.2",
+    "cheerio": "^1.2.0",
+    "dotenv": "^17.3.1",
+    "pdf-parse": "^2.4.5",
+    "telegraf": "^4.16.3",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^25.5.0",
+    "@vercel/node": "^5.6.22",
+    "eslint": "^10.1.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.57.2",
+    "vercel": "^50.37.3",
+    "vitest": "^4.1.2"
+  }
+}

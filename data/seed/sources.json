@@ -1,0 +1,30 @@
+[
+  {
+    "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores",
+    "title": "Trabajadores - Seguridad Social",
+    "type": "html",
+    "tags": ["trabajadores", "informacion-general"],
+    "enabled": true
+  },
+  {
+    "url": "https://www.seg-social.es/wps/portal/wss/internet/Pensionistas",
+    "title": "Pensionistas - Seguridad Social",
+    "type": "html",
+    "tags": ["pensiones", "informacion-general"],
+    "enabled": true
+  },
+  {
+    "url": "https://www.seg-social.es/wps/portal/wss/internet/InformacionUtil/44539",
+    "title": "Ingreso Mínimo Vital - Seguridad Social",
+    "type": "html",
+    "tags": ["imv", "prestaciones"],
+    "enabled": true
+  },
+  {
+    "url": "https://sede.seg-social.gob.es/wps/portal/sede/sede/Ciudadanos/informes+y+certificados/01informes+y+certificados",
+    "title": "Informes y certificados - Sede Electrónica",
+    "type": "html",
+    "tags": ["vida-laboral", "certificados", "sede"],
+    "enabled": true
+  }
+]
