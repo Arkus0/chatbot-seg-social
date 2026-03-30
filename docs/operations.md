@@ -79,3 +79,25 @@ Esperado:
 - Revisa `npm run webhook:info`.
 - Reejecuta `npm run set:webhook`.
 - Confirma que `api/webhook.ts` sigue devolviendo `200` rapido y usa `waitUntil()`.
+
+## Ingestion RAG: estrategia de resume
+
+La ingesta hacia Pinecone es incremental y resistente a fallos aislados por cuota/rate-limit:
+
+- `ingestConfiguredSources()` solo hace reset de namespace si `RESET_VECTOR_NAMESPACE=true`.
+- Cuando `RESET_VECTOR_NAMESPACE=false`, cada fuente se procesa en lotes de chunks (`INGEST_UPSERT_BATCH_SIZE`).
+- Antes de cada lote se consulta Pinecone por IDs (`fetch`) para saltar lotes ya subidos.
+- Si aparece un `429` en un lote concreto, se reintenta ese lote con backoff; los lotes ya confirmados no se repiten.
+- Si el proceso se corta y se relanza, reanuda desde los lotes faltantes (no reinicia la fuente completa).
+
+Variables recomendadas para operar con cuota limitada:
+
+- `INGEST_UPSERT_BATCH_SIZE=16` o `32`
+- `INGEST_UPSERT_THROTTLE_MS=300` a `1000`
+- `EMBED_BATCH_SIZE=16` o `32` (batch de embeddings)
+
+Ejemplo de ejecucion segura (sin reset):
+
+```bash
+RESET_VECTOR_NAMESPACE=false INGEST_UPSERT_BATCH_SIZE=32 INGEST_UPSERT_THROTTLE_MS=500 npm run ingest
+```
