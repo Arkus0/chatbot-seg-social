@@ -49,6 +49,7 @@ const envSchema = z.object({
   EMBEDDING_MODEL: z.string().default("gemini-embedding-001"),
   EMBEDDING_DIMENSION: z.coerce.number().int().positive().default(3072),
   EMBED_BATCH_SIZE: z.coerce.number().int().positive().default(32),
+  EMBEDDING_COOLDOWN_MS: z.coerce.number().int().min(0).default(300000),
   PINECONE_API_KEY: optionalNonEmptyString,
   PINECONE_INDEX_NAME: optionalNonEmptyString,
   PINECONE_NAMESPACE: z.string().default("prod"),

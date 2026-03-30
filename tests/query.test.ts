@@ -206,4 +206,74 @@ describe("query helpers", () => {
 
     expect(ranked[0]?.metadata.url).toBe("https://example.com/ip-formulario");
   });
+
+  it("prioritizes official social security pages over revista pages", () => {
+    const ranked = rerankRetrievedChunks(
+      "Como pedir la paternidad",
+      [
+        {
+          pageContent: "Articulo divulgativo sobre el permiso por nacimiento.",
+          score: 0.9,
+          metadata: {
+            url: "https://revista.seg-social.es/guia-paternidad",
+            title: "Guia de paternidad",
+            sourceType: "html",
+            chunkIndex: 0,
+            tags: ["nacimiento"],
+            priority: 4,
+          },
+        },
+        {
+          pageContent: "Solicitud y documentacion para nacimiento y cuidado de menor.",
+          score: 0.84,
+          metadata: {
+            url: "https://sede.seg-social.gob.es/wps/portal/sede/sede/Ciudadanos/familia/201045",
+            title: "Nacimiento y cuidado de menor",
+            sourceType: "html",
+            chunkIndex: 0,
+            tags: ["nacimiento", "cuidado-menor", "solicitud"],
+            priority: 4,
+          },
+        },
+      ],
+      1,
+    );
+
+    expect(ranked[0]?.metadata.url).toContain("sede.seg-social.gob.es");
+  });
+
+  it("avoids elevating NUSS chunks when the question is specifically about paternity", () => {
+    const ranked = rerankRetrievedChunks(
+      "Quiero pedir la paternidad",
+      [
+        {
+          pageContent: "Como obtener el numero de la seguridad social.",
+          score: 0.92,
+          metadata: {
+            url: "https://importass.seg-social.es/nuss",
+            title: "Solicitar numero de la Seguridad Social",
+            sourceType: "html",
+            chunkIndex: 0,
+            tags: ["nuss", "solicitud"],
+            priority: 4,
+          },
+        },
+        {
+          pageContent: "Documentacion y pasos para pedir nacimiento y cuidado de menor.",
+          score: 0.84,
+          metadata: {
+            url: "https://sede.seg-social.gob.es/nacimiento-cuidado-menor",
+            title: "Prestacion por nacimiento y cuidado de menor",
+            sourceType: "html",
+            chunkIndex: 0,
+            tags: ["nacimiento", "cuidado-menor", "solicitud", "documentacion"],
+            priority: 4,
+          },
+        },
+      ],
+      1,
+    );
+
+    expect(ranked[0]?.metadata.tags).toContain("nacimiento");
+  });
 });

@@ -3,6 +3,7 @@ import type { EmbeddingsInterface } from "@langchain/core/embeddings";
 import { getEnv } from "../config/env.js";
 import { getGeminiDocumentEmbeddings, getGeminiQueryEmbeddings } from "../providers/gemini.js";
 import { logger } from "../utils/logger.js";
+import { markEmbeddingsUnavailable } from "./embeddingAvailability.js";
 
 const DEFAULT_RETRY_DELAY_MS = 2000;
 const MAX_RETRY_DELAY_MS = 4000;
@@ -80,6 +81,9 @@ async function withEmbeddingRetry<T>(
       }
 
       if (!isRetriableEmbeddingError(error) || attempt === MAX_EMBEDDING_ATTEMPTS) {
+        if (isRetriableEmbeddingError(error)) {
+          markEmbeddingsUnavailable(getEnv().EMBEDDING_COOLDOWN_MS);
+        }
         break;
       }
 
@@ -157,6 +161,7 @@ class GeminiEmbeddingsAdapter implements EmbeddingsInterface {
       return vector;
     } catch (error) {
       if (isRetriableEmbeddingError(error)) {
+        markEmbeddingsUnavailable(getEnv().EMBEDDING_COOLDOWN_MS);
         logger.warn("Query embedding unavailable, skipping vector retrieval", {
           error: String(error),
         });

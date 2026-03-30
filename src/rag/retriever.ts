@@ -3,6 +3,7 @@ import type { RetrievedChunk } from "../types/documents.js";
 import { getEnv } from "../config/env.js";
 import { stripChunkSearchContext } from "../ingest/chunk.js";
 import { logger } from "../utils/logger.js";
+import { areEmbeddingsTemporarilyUnavailable, getEmbeddingCooldownRemainingMs } from "./embeddingAvailability.js";
 import { retrieveLexicalFallbackChunks } from "./lexicalRetriever.js";
 import { expandQuestion, rerankRetrievedChunks } from "./query.js";
 import { getVectorStore } from "./vectorstore.js";
@@ -67,10 +68,16 @@ export async function retrieveRelevantChunks(question: string): Promise<Retrieve
 
   let vectorChunks: RetrievedChunk[] = [];
 
-  try {
-    vectorChunks = await retrieveVectorChunks(question);
-  } catch (error) {
-    logger.warn("Vector retrieval failed, using lexical fallback corpus", { error });
+  if (areEmbeddingsTemporarilyUnavailable()) {
+    logger.info("Skipping vector retrieval due to embedding cooldown", {
+      cooldownRemainingMs: getEmbeddingCooldownRemainingMs(),
+    });
+  } else {
+    try {
+      vectorChunks = await retrieveVectorChunks(question);
+    } catch (error) {
+      logger.warn("Vector retrieval failed, using lexical fallback corpus", { error });
+    }
   }
 
   const combinedChunks = mergeRetrievedChunks(vectorChunks, lexicalChunks);
