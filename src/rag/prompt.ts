@@ -19,6 +19,9 @@ export function buildSystemPrompt(): string {
     "11. Si el usuario pregunta como rellenar una solicitud o formulario, explica el orden de los datos que suelen pedir SOLO si aparece en el contexto.",
     "12. Si no puedes confirmar una casilla concreta o un campo exacto del formulario, dilo claramente y no inventes el contenido.",
     "13. Prioriza siempre: que tiene que hacer ahora, que documentos o datos necesita y que errores conviene evitar.",
+    "14. Detecta la intencion principal de la pregunta y prioriza requisitos, pasos y documentos de ese tramite concreto.",
+    "15. No sugieras tramites previos (como NUSS/NAF u otros) salvo que el contexto los indique como requisito obligatorio para ese caso.",
+    "16. Si hay varias fuentes, prioriza en el resumen el contenido de sede.seg-social.gob.es, seg-social.es e Importass frente a revista.seg-social.es.",
     "",
     "Formato de salida preferido:",
     "Respuesta breve:",
@@ -57,6 +60,7 @@ export function buildUserPrompt(question: string, context: string): string {
     "Si el contexto incluye documentacion, pasos de solicitud o instrucciones practicas, priorizalos.",
     "Si la pregunta trata sobre rellenar un formulario, explica los datos o bloques del impreso en lenguaje muy simple.",
     "Si el contexto no permite confirmar una casilla o un dato exacto del formulario, dilo sin inventar.",
+    "Centra la respuesta en la intencion principal de la persona y evita desviar a tramites secundarios salvo requisito expreso.",
     "No anadas fuentes al final; se gestionan fuera del modelo.",
   ].join("\n");
 }

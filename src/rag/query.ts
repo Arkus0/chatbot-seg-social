@@ -204,6 +204,55 @@ function tokenize(input: string): string[] {
   });
 }
 
+type IntentScoringRule = {
+  name: string;
+  anyTokens: string[];
+  allTokens?: string[];
+  boostTags?: string[];
+  penalizeTags?: string[];
+  boostAmount?: number;
+  penaltyAmount?: number;
+};
+
+const INTENT_SCORING_RULES: IntentScoringRule[] = [
+  {
+    name: "parenthood-benefit",
+    anyTokens: ["paternidad", "maternidad", "nacimiento"],
+    allTokens: ["cuidado", "menor"],
+    boostTags: ["nacimiento", "cuidado-menor"],
+    penalizeTags: ["nuss"],
+    boostAmount: 0.2,
+    penaltyAmount: 0.16,
+  },
+];
+
+function matchesIntentRule(questionTokens: string[], rule: IntentScoringRule): boolean {
+  const anyMatch = rule.anyTokens.some((token) => questionTokens.includes(token));
+  const allMatch = rule.allTokens ? rule.allTokens.every((token) => questionTokens.includes(token)) : false;
+
+  return anyMatch || allMatch;
+}
+
+function getIntentScoreAdjustments(questionTokens: string[], chunk: RetrievedChunk): number {
+  let score = 0;
+
+  for (const rule of INTENT_SCORING_RULES) {
+    if (!matchesIntentRule(questionTokens, rule)) {
+      continue;
+    }
+
+    if (rule.boostTags?.some((tag) => chunk.metadata.tags.includes(tag))) {
+      score += rule.boostAmount ?? 0;
+    }
+
+    if (rule.penalizeTags?.some((tag) => chunk.metadata.tags.includes(tag))) {
+      score -= rule.penaltyAmount ?? 0;
+    }
+  }
+
+  return score;
+}
+
 function applySourceDiversity(
   primaryChunks: RetrievedChunk[],
   topK: number,
@@ -254,6 +303,21 @@ function computeBoost(questionTokens: string[], chunk: RetrievedChunk): number {
   if (chunk.metadata.tags.includes("informacion-general")) {
     boost -= 0.12;
   }
+
+  const normalizedUrl = chunk.metadata.url.toLowerCase();
+  if (
+    normalizedUrl.includes("sede.seg-social.gob.es") ||
+    normalizedUrl.includes("seg-social.es") ||
+    normalizedUrl.includes("importass")
+  ) {
+    boost += 0.12;
+  }
+
+  if (normalizedUrl.includes("revista.seg-social.es")) {
+    boost -= 0.18;
+  }
+
+  boost += getIntentScoreAdjustments(questionTokens, chunk);
 
   return boost;
 }
