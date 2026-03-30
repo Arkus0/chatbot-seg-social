@@ -517,9 +517,76 @@ const GUIDED_BENEFIT_IDS = new Set([
   "tse-cps",
   "alta-beneficiarios",
   "imv",
-  "seguro-escolar",
-  "operativa-inss",
 ]);
+
+export interface MenuGroup {
+  groupId: string;
+  label: string;
+  benefitIds: string[];
+  subLabels: Record<string, string>;
+}
+
+const MENU_GROUPS: MenuGroup[] = [
+  {
+    groupId: "grp-jubilacion",
+    label: "Me quiero jubilar",
+    benefitIds: ["jubilacion"],
+    subLabels: {},
+  },
+  {
+    groupId: "grp-incapacidad",
+    label: "Estoy de baja o tengo una discapacidad",
+    benefitIds: ["incapacidad-temporal", "incapacidad-permanente"],
+    subLabels: {
+      "incapacidad-temporal": "Baja medica (incapacidad temporal)",
+      "incapacidad-permanente": "Incapacidad permanente o invalidez",
+    },
+  },
+  {
+    groupId: "grp-familia",
+    label: "Tengo un hijo o cuido a alguien",
+    benefitIds: ["nacimiento-cuidado-menor", "familia-cuidados"],
+    subLabels: {
+      "nacimiento-cuidado-menor": "Nacimiento, adopcion o acogida",
+      "familia-cuidados": "Cuidado de hijos o familiares",
+    },
+  },
+  {
+    groupId: "grp-fallecimiento",
+    label: "Ha fallecido un familiar",
+    benefitIds: ["viudedad", "supervivencia"],
+    subLabels: {
+      viudedad: "Pension de viudedad",
+      supervivencia: "Orfandad u otras prestaciones",
+    },
+  },
+  {
+    groupId: "grp-ayuda",
+    label: "Necesito una ayuda economica",
+    benefitIds: ["imv"],
+    subLabels: {},
+  },
+  {
+    groupId: "grp-sanitaria",
+    label: "Sanidad o tarjeta sanitaria europea",
+    benefitIds: ["asistencia-sanitaria", "tse-cps", "alta-beneficiarios"],
+    subLabels: {
+      "asistencia-sanitaria": "Asistencia sanitaria en Espana",
+      "tse-cps": "Tarjeta sanitaria europea o CPS",
+      "alta-beneficiarios": "Dar de alta a un beneficiario",
+    },
+  },
+];
+
+const MENU_GROUP_BY_ID = new Map(MENU_GROUPS.map((group) => [group.groupId, group]));
+
+export function getMenuGroups(): MenuGroup[] {
+  return MENU_GROUPS;
+}
+
+export function getMenuGroupById(groupId: string): MenuGroup | undefined {
+  return MENU_GROUP_BY_ID.get(groupId);
+}
 
 const CATALOG_BY_ID = new Map(INSS_BENEFIT_CATALOG.map((entry) => [entry.benefitId, entry]));
 
@@ -686,7 +753,7 @@ export function buildGuidedPrompt(
   }
 
   if (action === "requisitos") {
-    return `Quiero revisar si encajo en ${entry.displayName}. Resume el caso, di que hechos cambian la respuesta y cual es el siguiente paso seguro.`;
+    return `Quiero revisar si encajo en ${entry.displayName}. Resume requisitos, que documentos suelen pedir, errores habituales y cual es el siguiente paso.`;
   }
 
   if (action === "documentacion") {
@@ -694,7 +761,7 @@ export function buildGuidedPrompt(
   }
 
   if (action === "seguimiento") {
-    return `Estoy siguiendo un expediente de ${entry.displayName}. Explica como revisar estado, requerimientos y notificaciones sin perder el contexto del caso.`;
+    return `Estoy siguiendo un expediente de ${entry.displayName}. Explica como revisar estado, requerimientos, notificaciones, y si hay resolucion, como reclamar o revisar.`;
   }
 
   if (action === "resolucion") {
