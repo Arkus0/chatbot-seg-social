@@ -55,7 +55,7 @@ select {
 .app-shell {
   position: relative;
   z-index: 1;
-  max-width: 1700px;
+  max-width: 880px;
   margin: 0 auto;
   padding: 28px;
 }
@@ -88,7 +88,7 @@ select {
 
 .brand-block h1 {
   margin: 0 0 14px;
-  max-width: 10ch;
+  max-width: 14ch;
   font-family: var(--serif);
   font-size: clamp(2.4rem, 4vw, 4.4rem);
   line-height: 0.96;
@@ -109,8 +109,7 @@ select {
   justify-content: flex-end;
 }
 
-.status-pill,
-.conversation-chip {
+.status-pill {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -123,9 +122,6 @@ select {
 }
 
 .hero-strip {
-  display: grid;
-  grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.85fr);
-  gap: 18px;
   margin-bottom: 22px;
 }
 
@@ -154,15 +150,13 @@ select {
   font-size: clamp(1.8rem, 3vw, 2.7rem);
 }
 
-.hero-primary p,
-.hero-secondary li {
+.hero-primary p {
   color: var(--muted);
   line-height: 1.7;
 }
 
 .hero-actions,
-.composer-actions,
-.dossier-actions {
+.composer-actions {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -171,28 +165,18 @@ select {
   margin-top: 18px;
 }
 
-.hero-list {
-  margin: 0;
-  padding-left: 18px;
-  line-height: 1.8;
-}
-
 .workspace {
-  display: grid;
-  grid-template-columns: minmax(250px, 0.9fr) minmax(0, 1.65fr) minmax(320px, 1fr);
-  gap: 18px;
-  align-items: start;
-}
-
-.rail {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 18px;
 }
 
-.rail-section,
-.panel-chat {
-  border-radius: var(--radius-xl);
-  padding: 20px;
+.procedure-strip {
+  padding: 0;
+}
+
+.procedure-strip .section-head {
+  margin-bottom: 12px;
 }
 
 .section-head,
@@ -210,14 +194,10 @@ select {
   font-size: 1.2rem;
 }
 
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
 .panel-chat {
-  min-height: 76vh;
+  border-radius: var(--radius-xl);
+  padding: 20px;
+  min-height: 70vh;
   display: flex;
   flex-direction: column;
 }
@@ -232,7 +212,6 @@ select {
 .primary-btn,
 .ghost-btn,
 .procedure-card,
-.session-item,
 .prompt-chip {
   border: 0;
   cursor: pointer;
@@ -265,7 +244,6 @@ select {
 .primary-btn:hover,
 .ghost-btn:hover,
 .procedure-card:hover,
-.session-item:hover,
 .prompt-chip:hover {
   transform: translateY(-1px);
 }
@@ -278,33 +256,25 @@ select {
   box-shadow: none;
 }
 
-.procedure-list,
-.session-list,
-.dossier-list,
-.checklist-list {
+.procedure-list {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.procedure-card,
-.session-item,
-.dossier-item,
-.checklist-item,
-.prompt-chip {
-  border-radius: var(--radius-md);
-  border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.7);
+  flex-direction: row;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scroll-snap-type: x mandatory;
 }
 
 .procedure-card {
+  min-width: 220px;
+  max-width: 280px;
+  flex-shrink: 0;
+  scroll-snap-align: start;
   padding: 14px;
   text-align: left;
-}
-
-.procedure-card.active {
-  border-color: rgba(13, 96, 119, 0.36);
-  background: linear-gradient(145deg, rgba(13, 96, 119, 0.12), rgba(255, 255, 255, 0.82));
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.7);
 }
 
 .procedure-tag {
@@ -317,46 +287,33 @@ select {
   color: var(--brand);
 }
 
-.procedure-title,
-.session-title,
-.dossier-title {
+.procedure-title {
   display: block;
   margin-bottom: 6px;
   font-weight: 700;
 }
 
 .procedure-copy,
-.session-time,
-.dossier-summary,
 .subtle-note {
   color: var(--muted);
   font-size: 0.86rem;
   line-height: 1.55;
 }
 
-.session-item {
-  width: 100%;
-  padding: 14px;
-  text-align: left;
-}
-
-.session-item.active {
-  border-color: rgba(199, 104, 63, 0.34);
-  background: linear-gradient(145deg, rgba(199, 104, 63, 0.12), rgba(255, 255, 255, 0.82));
-}
-
 .prompt-chip {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.86), rgba(13, 96, 119, 0.08));
   padding: 10px 14px;
   font-size: 0.87rem;
   text-align: left;
-  background: linear-gradient(150deg, rgba(255, 255, 255, 0.86), rgba(13, 96, 119, 0.08));
 }
 
 .message-stream {
   flex: 1;
-  min-height: 460px;
-  max-height: 65vh;
-  overflow: auto;
+  min-height: 300px;
+  max-height: 60vh;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -373,16 +330,6 @@ select {
 
 .assistant-card {
   background: linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(214, 239, 246, 0.52));
-}
-
-.selectable-message {
-  cursor: pointer;
-  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
-}
-
-.selectable-message.active {
-  border-color: rgba(13, 96, 119, 0.4);
-  box-shadow: 0 18px 40px rgba(13, 96, 119, 0.12);
 }
 
 .user-card {
@@ -422,6 +369,46 @@ select {
   padding-left: 18px;
 }
 
+.message-checklist {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.message-checklist-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+
+.message-checklist-item:hover {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.message-checklist-item input[type="checkbox"] {
+  margin-top: 3px;
+  accent-color: var(--success);
+  cursor: pointer;
+}
+
+.message-checklist-item span {
+  line-height: 1.55;
+  font-size: 0.92rem;
+}
+
+.message-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+}
+
 .message-sources {
   display: flex;
   flex-wrap: wrap;
@@ -450,102 +437,12 @@ select {
   line-height: 1.5;
 }
 
-.composer,
-.dossier-form {
+.composer {
   border-top: 1px solid var(--line);
   padding-top: 16px;
 }
 
-.insight-panel {
-  background:
-    linear-gradient(160deg, rgba(255, 250, 242, 0.95), rgba(224, 241, 246, 0.84)),
-    var(--surface);
-}
-
-.insight-metrics,
-.dossier-snapshot {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.insight-metric,
-.snapshot-card {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 12px 14px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.74);
-}
-
-.insight-metric span,
-.snapshot-card span {
-  color: var(--muted);
-  font-size: 0.78rem;
-}
-
-.insight-metric strong,
-.snapshot-card strong {
-  font-size: 0.98rem;
-  line-height: 1.35;
-}
-
-.insight-summary {
-  margin: 0 0 10px;
-  font-family: var(--serif);
-  font-size: 1.22rem;
-  line-height: 1.25;
-}
-
-.insight-body {
-  margin: 0 0 14px;
-  color: var(--muted);
-  line-height: 1.7;
-  white-space: pre-line;
-}
-
-.insight-points,
-.insight-sources {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.insight-points {
-  margin-bottom: 14px;
-}
-
-.insight-pill {
-  display: inline-flex;
-  align-items: center;
-  min-height: 36px;
-  padding: 8px 12px;
-  border-radius: 999px;
-  background: rgba(13, 96, 119, 0.1);
-  border: 1px solid rgba(13, 96, 119, 0.18);
-  font-size: 0.83rem;
-  line-height: 1.4;
-}
-
-.dossier-form {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.dossier-form label {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-
-textarea,
-select {
+textarea {
   width: 100%;
   border-radius: 16px;
   border: 1px solid var(--line-strong);
@@ -554,39 +451,9 @@ select {
   padding: 14px 16px;
 }
 
-textarea:focus,
-select:focus {
+textarea:focus {
   outline: 2px solid rgba(13, 96, 119, 0.16);
   border-color: rgba(13, 96, 119, 0.4);
-}
-
-.checklist-item {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-  padding: 14px;
-}
-
-.checklist-checkbox {
-  margin-top: 4px;
-  accent-color: var(--success);
-}
-
-.checklist-text {
-  line-height: 1.55;
-}
-
-.dossier-item {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  align-items: flex-start;
-  padding: 14px;
-}
-
-.dossier-item.active {
-  border-color: rgba(13, 96, 119, 0.3);
-  background: linear-gradient(145deg, rgba(13, 96, 119, 0.1), rgba(255, 255, 255, 0.8));
 }
 
 .sr-only {
@@ -601,31 +468,19 @@ select:focus {
   border: 0;
 }
 
-@media (max-width: 1260px) {
-  .workspace {
-    grid-template-columns: 1fr;
-  }
-
-  .message-stream {
-    max-height: none;
-  }
-}
-
 @media (max-width: 920px) {
   .app-shell {
     padding: 16px;
   }
 
-  .site-header,
-  .hero-strip {
-    grid-template-columns: 1fr;
+  .site-header {
     display: grid;
+    grid-template-columns: 1fr;
   }
 
   .header-status,
   .hero-actions,
-  .composer-actions,
-  .dossier-actions {
+  .composer-actions {
     justify-content: flex-start;
   }
 
@@ -633,8 +488,11 @@ select:focus {
     max-width: none;
   }
 
-  .insight-metrics,
-  .dossier-snapshot {
-    grid-template-columns: 1fr;
+  .procedure-list {
+    gap: 10px;
+  }
+
+  .procedure-card {
+    min-width: 180px;
   }
 }
