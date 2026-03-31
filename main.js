@@ -16,11 +16,11 @@ const FALLBACK_PROCEDURE = {
 };
 
 const FAQ_QUESTIONS = [
-  "Cuando me puedo jubilar?",
-  "Necesito la baja medica, que hago?",
-  "Como pido el Ingreso Minimo Vital?",
-  "Quiero la Tarjeta Sanitaria Europea",
-  "Como veo el estado de mi expediente?",
+  "Que documentos necesito para pedir la jubilacion?",
+  "Como presento la solicitud de baja medica?",
+  "Autofirma no me funciona, que hago?",
+  "Me ha llegado un requerimiento del INSS",
+  "Como me identifico en la sede sin certificado digital?",
 ];
 
 const MAX_CHARS = 1400;

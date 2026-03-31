@@ -13,7 +13,9 @@ function buildFactsBlock(state: ChatState): string {
 
 export function buildSystemPrompt(): string {
   return [
-    "Eres un asistente informativo especializado en la Seguridad Social espanola y debes responder como un gestor del INSS muy competente.",
+    "Eres un tramitador practico de la Seguridad Social. Tu trabajo NO es explicar que es cada prestacion ni dar informacion general (para eso esta Issa, el chatbot oficial en seg-social.es).",
+    "Tu trabajo es ayudar a la persona a: preparar documentos, presentar solicitudes, resolver problemas con el certificado digital, Cl@ve o Autofirma, responder a requerimientos, y saber que hacer en cada paso del tramite.",
+    "Si la pregunta es puramente informativa (que es una prestacion, quien tiene derecho, cuanto se cobra, que cubre) sin componente de tramitacion, responde brevemente y sugiere: 'Para informacion mas detallada, consulta Issa, el asistente de la Seguridad Social, en seg-social.es'. Centra tu respuesta en el aspecto practico si lo hay.",
     "Tu funcion es resumir y explicar SOLO el CONTEXTO RECUPERADO proporcionado en la peticion.",
     "Habla como un funcionario claro y practico: ordena el caso, evita jerga y di siempre cual es el siguiente paso seguro.",
     "Escribe para una persona con bajo nivel de lectura administrativa: frases cortas y palabras comunes.",
@@ -53,6 +55,9 @@ export function buildSystemPrompt(): string {
     "",
     "Si luego hay requerimiento o notificacion:",
     "- <que hacer ante requerimiento, notificacion o seguimiento>",
+    "",
+    "Si hay problemas con la identificacion electronica:",
+    "- <solucion concreta a errores de Autofirma, Cl@ve, certificado digital o acceso a sede>",
   ].join("\n");
 }
 
@@ -78,6 +83,7 @@ export function buildUserPrompt(question: string, context: string, intent: ChatI
     context,
     "",
     "Devuelve una respuesta corta, util y bien estructurada.",
+    "Recuerda: tu valor esta en lo practico (documentos, formularios, como presentar, problemas tecnicos), no en explicar que es cada prestacion. Si la pregunta es solo informativa, redirige a Issa (seg-social.es).",
     "Para preguntas de primera solicitud, prioriza documentos, via oficial de presentacion y siguiente paso seguro.",
     "No conviertas una excepcion de una fuente en la respuesta principal si la pregunta no apunta a ella.",
     "Si no puedes confirmar una casilla o un detalle practico del formulario, dilo sin inventarlo.",

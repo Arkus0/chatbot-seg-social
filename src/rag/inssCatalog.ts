@@ -86,6 +86,7 @@ const ALL_OPERATIONS: IntentOperation[] = [
   "silencio-administrativo",
   "variacion-datos",
   "suspension-extincion",
+  "identificacion-electronica",
 ];
 
 function benefit(
@@ -550,6 +551,44 @@ export const INSS_BENEFIT_CATALOG: BenefitCatalogEntry[] = [
     ],
     requiresAuth: true,
   }),
+  benefit({
+    benefitId: "identificacion-electronica",
+    displayName: "Certificado digital, Cl@ve y Autofirma",
+    shortLabel: "Identificacion",
+    family: "operativa-inss",
+    audience: "ciudadanos",
+    summary:
+      "Como identificarte para tramites: certificado digital FNMT, Cl@ve PIN/Permanente, Autofirma, DNIe. Problemas frecuentes y soluciones.",
+    exampleQuestion: "Autofirma no me funciona y necesito presentar una solicitud, que hago?",
+    defaultSituation: "Necesito identificarme electronicamente y tengo problemas o no se como.",
+    promptSeeds: [
+      "No me funciona Autofirma para firmar",
+      "Como me registro en Cl@ve",
+      "Mi certificado digital ha caducado",
+      "Que alternativas tengo si no tengo certificado digital",
+    ],
+    aliases: [
+      "certificado digital",
+      "autofirma",
+      "clave",
+      "cl@ve",
+      "dnie",
+      "firma electronica",
+      "fnmt",
+      "identificacion electronica",
+    ],
+    sourceTags: [
+      "certificado-digital",
+      "autofirma",
+      "clave",
+      "dnie",
+      "sin-certificado",
+      "identificacion",
+    ],
+    lifecycleOps: ["solicitud", "identificacion-electronica", "sin-certificado-sms"],
+    primaryUrls: ["https://sede.seg-social.gob.es"],
+    serviceUrls: ["https://firmaelectronica.gob.es", "https://clave.gob.es"],
+  }),
 ];
 
 const GUIDED_BENEFIT_IDS = new Set([
@@ -564,6 +603,7 @@ const GUIDED_BENEFIT_IDS = new Set([
   "tse-cps",
   "alta-beneficiarios",
   "imv",
+  "identificacion-electronica",
 ]);
 
 export interface MenuGroup {

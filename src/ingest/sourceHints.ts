@@ -339,6 +339,41 @@ const TAG_HINTS: Record<string, string[]> = {
     "prestaciones por amianto",
     "cobertura especial inss",
   ],
+  "certificado-digital": [
+    "certificado electronico",
+    "fnmt",
+    "instalacion certificado",
+    "renovacion certificado",
+    "exportar certificado",
+    "sede electronica",
+  ],
+  autofirma: [
+    "autofirma",
+    "firma electronica",
+    "error de firma",
+    "java firma",
+    "instalar autofirma",
+  ],
+  clave: [
+    "clave pin",
+    "clave permanente",
+    "cl@ve",
+    "registro clave",
+    "identificacion electronica",
+    "acceso sede",
+  ],
+  dnie: [
+    "dnie electronico",
+    "lector dnie",
+    "tarjeta electronica",
+    "dni electronico",
+  ],
+  identificacion: [
+    "identificacion electronica",
+    "acceso a sede",
+    "sistema de identificacion",
+    "certificado digital o clave",
+  ],
 };
 
 const TITLE_HINT_RULES = [

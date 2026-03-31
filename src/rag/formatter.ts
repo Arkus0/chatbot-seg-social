@@ -53,6 +53,9 @@ const SECTION_KEY_BY_HEADING: Record<string, keyof AnswerSections | "summary"> =
   "si faltan datos": "missingInfo",
   "fuentes oficiales": "summary",
   "aviso legal": "summary",
+  "si hay problemas con la identificacion electronica": "warnings",
+  "problemas con la identificacion": "warnings",
+  "alternativa sin certificado": "alternatives",
 };
 
 function isBulletLine(line: string): boolean {
