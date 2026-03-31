@@ -415,4 +415,222 @@ describe("query helpers", () => {
 
     expect(ranked[0]?.metadata.url).toBe("https://example.com/tse-general");
   });
+
+  it("prioritizes the official shared presentation route for a concrete benefit", () => {
+    const ranked = rerankRetrievedChunks(
+      "Donde presento la jubilacion si no tengo certificado",
+      [
+        {
+          pageContent: "Informacion general sobre jubilacion.",
+          score: 0.91,
+          metadata: {
+            url: "https://example.com/jubilacion-general",
+            title: "Jubilacion - informacion general",
+            sourceType: "html",
+            chunkIndex: 0,
+            tags: ["jubilacion"],
+            priority: 4,
+            benefitId: "jubilacion",
+            family: "jubilacion",
+            lifecycle: "orientacion",
+            sourceKind: "benefit-page",
+            requiresAuth: false,
+            supportsSms: true,
+          },
+        },
+        {
+          pageContent: "Presenta solicitudes del INSS por la sede, con opciones sin certificado y por SMS cuando proceda.",
+          score: 0.86,
+          metadata: {
+            url: "https://sede.seg-social.gob.es/wps/portal/sede/sede/Ciudadanos/informes%2By%2Bcertificados/inss_tramites",
+            title: "Solicitud y tramites de prestaciones de la Seguridad Social",
+            sourceType: "html",
+            chunkIndex: 0,
+            tags: ["operativa-inss", "portal-prestaciones", "sin-certificado-sms", "solicitud", "documentacion"],
+            priority: 5,
+            benefitId: "operativa-inss",
+            family: "operativa-inss",
+            lifecycle: "presentacion",
+            sourceKind: "service",
+            requiresAuth: false,
+            supportsSms: true,
+          },
+        },
+      ],
+      1,
+      {
+        benefitId: "jubilacion",
+        family: "jubilacion",
+        operation: "solicitud",
+        lifecycle: "presentacion",
+      },
+    );
+
+    expect(ranked[0]?.metadata.url).toBe(
+      "https://sede.seg-social.gob.es/wps/portal/sede/sede/Ciudadanos/informes%2By%2Bcertificados/inss_tramites",
+    );
+  });
+
+  it("keeps official documentation forms ahead of divulgative content for preparation questions", () => {
+    const ranked = rerankRetrievedChunks(
+      "Que documentacion necesito para nacimiento y cuidado de menor",
+      [
+        {
+          pageContent: "Guia divulgativa para pedir la prestacion por nacimiento.",
+          score: 0.91,
+          metadata: {
+            url: "https://revista.seg-social.es/guia-nacimiento",
+            title: "Como pedir la prestacion por nacimiento y cuidado de menor",
+            sourceType: "html",
+            chunkIndex: 0,
+            tags: ["nacimiento", "cuidado-menor", "documentacion"],
+            priority: 4,
+            benefitId: "nacimiento-cuidado-menor",
+            family: "familia-cuidados",
+            lifecycle: "orientacion",
+            sourceKind: "benefit-page",
+            requiresAuth: false,
+            supportsSms: true,
+          },
+        },
+        {
+          pageContent: "Formulario oficial MP-1 BIS para preparar la solicitud por parto.",
+          score: 0.86,
+          metadata: {
+            url: "https://www.seg-social.es/wps/wcm/connect/wss/51178da2-48e0-4d22-aa5d-6a1904b4ae6b/MP-1%2BBIS_Castellano_12_Accesibilidad.pdf?MOD=AJPERES",
+            title: "Solicitud de prestacion de nacimiento y cuidado de menor por parto",
+            sourceType: "pdf",
+            chunkIndex: 0,
+            tags: ["nacimiento", "cuidado-menor", "solicitud", "formulario", "rellenar", "pdf"],
+            priority: 5,
+            benefitId: "nacimiento-cuidado-menor",
+            family: "familia-cuidados",
+            lifecycle: "preparacion",
+            sourceKind: "form",
+            requiresAuth: false,
+            supportsSms: true,
+          },
+        },
+      ],
+      1,
+      {
+        benefitId: "nacimiento-cuidado-menor",
+        family: "familia-cuidados",
+        operation: "documentacion",
+        lifecycle: "preparacion",
+      },
+    );
+
+    expect(ranked[0]?.metadata.sourceKind).toBe("form");
+    expect(ranked[0]?.metadata.url).toContain("MP-1%2BBIS");
+  });
+
+  it("elevates Mis expedientes as tracking for requerimiento follow-ups", () => {
+    const ranked = rerankRetrievedChunks(
+      "Tengo un requerimiento del IMV y quiero seguir el expediente",
+      [
+        {
+          pageContent: "Pagina general para presentar solicitudes del INSS.",
+          score: 0.9,
+          metadata: {
+            url: "https://sede.seg-social.gob.es/wps/portal/sede/sede/Ciudadanos/informes%2By%2Bcertificados/inss_tramites",
+            title: "Solicitud y tramites de prestaciones de la Seguridad Social",
+            sourceType: "html",
+            chunkIndex: 0,
+            tags: ["operativa-inss", "portal-prestaciones", "sin-certificado-sms", "solicitud"],
+            priority: 5,
+            benefitId: "operativa-inss",
+            family: "operativa-inss",
+            lifecycle: "presentacion",
+            sourceKind: "service",
+            requiresAuth: false,
+            supportsSms: true,
+          },
+        },
+        {
+          pageContent: "Mis expedientes administrativos permite seguir el expediente y responder requerimientos.",
+          score: 0.86,
+          metadata: {
+            url: "https://sede.seg-social.gob.es/wps/portal/sede/sede/Inicio/MisExpedientesAdministrativos",
+            title: "Mis expedientes administrativos",
+            sourceType: "html",
+            chunkIndex: 0,
+            tags: ["operativa-inss", "estado-expediente", "subsanacion-requerimiento", "requerimiento"],
+            priority: 5,
+            benefitId: "operativa-inss",
+            family: "operativa-inss",
+            lifecycle: "seguimiento",
+            sourceKind: "tracking",
+            requiresAuth: true,
+            supportsSms: true,
+          },
+        },
+      ],
+      1,
+      {
+        benefitId: "imv",
+        family: "imv",
+        operation: "subsanacion-requerimiento",
+        lifecycle: "seguimiento",
+      },
+    );
+
+    expect(ranked[0]?.metadata.url).toBe("https://sede.seg-social.gob.es/wps/portal/sede/sede/Inicio/MisExpedientesAdministrativos");
+    expect(ranked[0]?.metadata.sourceKind).toBe("tracking");
+  });
+
+  it("allows cataloged operativa-inss URLs to outrank unrelated benefit pages", () => {
+    const ranked = rerankRetrievedChunks(
+      "Donde presento el IMV y como sigo luego el expediente",
+      [
+        {
+          pageContent: "Pagina de otra prestacion con informacion general.",
+          score: 0.92,
+          metadata: {
+            url: "https://example.com/nacimiento-general",
+            title: "Nacimiento y cuidado de menor",
+            sourceType: "html",
+            chunkIndex: 0,
+            tags: ["nacimiento", "cuidado-menor", "solicitud"],
+            priority: 4,
+            benefitId: "nacimiento-cuidado-menor",
+            family: "familia-cuidados",
+            lifecycle: "presentacion",
+            sourceKind: "benefit-page",
+            requiresAuth: false,
+            supportsSms: true,
+          },
+        },
+        {
+          pageContent: "Solicitud y tramites del INSS para presentar prestaciones por la via oficial.",
+          score: 0.84,
+          metadata: {
+            url: "https://sede.seg-social.gob.es/wps/portal/sede/sede/Ciudadanos/informes%2By%2Bcertificados/inss_tramites",
+            title: "Solicitud y tramites de prestaciones de la Seguridad Social",
+            sourceType: "html",
+            chunkIndex: 0,
+            tags: ["operativa-inss", "portal-prestaciones", "sin-certificado-sms", "solicitud", "documentacion"],
+            priority: 5,
+            benefitId: "operativa-inss",
+            family: "operativa-inss",
+            lifecycle: "presentacion",
+            sourceKind: "service",
+            requiresAuth: false,
+            supportsSms: true,
+          },
+        },
+      ],
+      1,
+      {
+        benefitId: "imv",
+        family: "imv",
+        operation: "solicitud",
+        lifecycle: "presentacion",
+      },
+    );
+
+    expect(ranked[0]?.metadata.url).toBe(
+      "https://sede.seg-social.gob.es/wps/portal/sede/sede/Ciudadanos/informes%2By%2Bcertificados/inss_tramites",
+    );
+  });
 });

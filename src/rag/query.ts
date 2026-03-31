@@ -1,5 +1,6 @@
 import type { RetrievedChunk } from "../types/documents.js";
 import { countTokenMatches, tokenizeSearchText } from "../utils/text.js";
+import { benefitCatalogUrlMatches, type BenefitUrlField } from "./inssCatalog.js";
 
 export interface RetrievalIntentContext {
   benefitId?: string;
@@ -180,6 +181,11 @@ const EXPANSION_RULES = [
     expansion: "cita previa seguridad social pensiones prestaciones inss canales de atencion",
   },
   {
+    pattern: /\bdonde presento\b|\bdonde se presenta\b|\bcomo presentarl[oa]\b|\bpor internet\b|\bpresencial\b/i,
+    expansion:
+      "presentacion sede electronica portal de prestaciones solicitudes y tramites cita previa caiss por internet presencial",
+  },
+  {
     pattern: /\bsin certificado\b|sin clave|sin cl@ve|via sms/i,
     expansion: "tramites sin certificado digital ni clave presentacion telematica via sms inss seguridad social",
   },
@@ -229,6 +235,10 @@ const EXPANSION_RULES = [
   {
     pattern: /\bdocumentacion\b|papeles|documentos/i,
     expansion: "documentacion solicitud requisitos justificantes formulario tramite",
+  },
+  {
+    pattern: /\bque aportar\b|\bque adjuntar\b|\bque me van a pedir\b/i,
+    expansion: "documentacion aportar adjuntar justificantes formularios datos necesarios solicitud",
   },
   {
     pattern: /\bmodelo\b|modelo oficial|impreso oficial|formulario oficial/i,
@@ -444,10 +454,13 @@ function getExpectedSourceKinds(operation?: string): string[] {
   }
 }
 
-function isFormFocusedQuestion(questionTokens: string[], context?: RetrievalIntentContext): boolean {
+function isPreparationFocusedQuestion(questionTokens: string[], context?: RetrievalIntentContext): boolean {
   return (
-    questionTokens.some((token) => ["rellenar", "cumplimentar", "casilla", "formulario", "modelo", "impreso"].includes(token)) ||
-    context?.operation === "rellenado-formulario"
+    questionTokens.some((token) =>
+      ["rellenar", "cumplimentar", "casilla", "formulario", "modelo", "impreso", "documentacion", "documentos", "papeles", "justificantes", "adjuntar", "aportar"].includes(token),
+    ) ||
+    context?.operation === "rellenado-formulario" ||
+    context?.operation === "documentacion"
   );
 }
 
@@ -470,7 +483,7 @@ function filterPeripheralChunks(
   context?: RetrievalIntentContext,
 ): RetrievedChunk[] {
   const allowStudySpecific = isStudyFocusedQuestion(questionTokens);
-  const formFocused = isFormFocusedQuestion(questionTokens, context);
+  const preparationFocused = isPreparationFocusedQuestion(questionTokens, context);
 
   return ranked.filter((chunk) => {
     if (!allowStudySpecific && isTseStudyEdgeCaseChunk(chunk)) {
@@ -478,7 +491,7 @@ function filterPeripheralChunks(
     }
 
     if (
-      !formFocused &&
+      !preparationFocused &&
       chunk.metadata.sourceKind === "form" &&
       !(chunk.metadata.benefitId === "tse-cps" && isTseComparisonQuestion(questionTokens)) &&
       ranked.some(
@@ -496,15 +509,49 @@ function filterPeripheralChunks(
   });
 }
 
+function getPreferredCatalogUrlKinds(operation?: string): BenefitUrlField[] {
+  switch (operation) {
+    case "rellenado-formulario":
+    case "documentacion":
+      return ["formUrls", "pdfUrls", "primaryUrls"];
+    case "solicitud":
+    case "sin-certificado-sms":
+    case "cita-caiss":
+    case "variacion-datos":
+      return ["serviceUrls", "primaryUrls"];
+    case "estado-expediente":
+    case "subsanacion-requerimiento":
+    case "notificacion":
+      return ["trackingUrls", "notificationUrls", "serviceUrls"];
+    case "revision":
+    case "reclamacion-previa":
+    case "silencio-administrativo":
+      return ["reviewUrls", "notificationUrls", "trackingUrls"];
+    default:
+      return ["primaryUrls", "serviceUrls"];
+  }
+}
+
+function isAllowedOperationalChunk(context: RetrievalIntentContext | undefined, chunk: RetrievedChunk): boolean {
+  return Boolean(
+    context?.benefitId &&
+      chunk.metadata.benefitId === "operativa-inss" &&
+      benefitCatalogUrlMatches(context.benefitId, chunk.metadata.url),
+  );
+}
+
 function computeContextBoost(context: RetrievalIntentContext | undefined, chunk: RetrievedChunk): number {
   if (!context) {
     return 0;
   }
 
   let boost = 0;
+  const allowOperationalChunk = isAllowedOperationalChunk(context, chunk);
 
   if (context.benefitId && chunk.metadata.benefitId === context.benefitId) {
     boost += 0.22;
+  } else if (allowOperationalChunk) {
+    boost += 0.14;
   } else if (context.benefitId && chunk.metadata.benefitId && chunk.metadata.benefitId !== context.benefitId) {
     boost -= 0.08;
   } else if (context.family && chunk.metadata.family === context.family) {
@@ -521,6 +568,13 @@ function computeContextBoost(context: RetrievalIntentContext | undefined, chunk:
     const expectedKinds = getExpectedSourceKinds(context.operation);
     if (chunk.metadata.sourceKind && expectedKinds.includes(chunk.metadata.sourceKind)) {
       boost += 0.11;
+    }
+
+    if (
+      context.benefitId &&
+      benefitCatalogUrlMatches(context.benefitId, chunk.metadata.url, getPreferredCatalogUrlKinds(context.operation))
+    ) {
+      boost += 0.18;
     }
 
     if (context.operation === "sin-certificado-sms") {
@@ -540,6 +594,7 @@ function computeBoost(questionTokens: string[], chunk: RetrievedChunk, context?:
     chunk.metadata.searchText ?? `${chunk.metadata.title} ${chunk.metadata.tags.join(" ")}`,
   );
   const contentMatches = countTokenMatches(questionTokens, chunk.pageContent.slice(0, 500));
+  const preparationFocused = isPreparationFocusedQuestion(questionTokens, context);
 
   let boost = 0;
   boost += Math.min(titleMatches * 0.05, 0.2);
@@ -565,7 +620,7 @@ function computeBoost(questionTokens: string[], chunk: RetrievedChunk, context?:
     boost -= 0.18;
   }
 
-  if (!isFormFocusedQuestion(questionTokens, context) && chunk.metadata.sourceKind === "form") {
+  if (!preparationFocused && chunk.metadata.sourceKind === "form") {
     boost += chunk.metadata.benefitId === "tse-cps" && isTseComparisonQuestion(questionTokens) ? 0.04 : -0.12;
   }
 

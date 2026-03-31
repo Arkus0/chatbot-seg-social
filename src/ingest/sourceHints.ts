@@ -290,11 +290,18 @@ const TAG_HINTS: Record<string, string[]> = {
     "papeles necesarios",
     "documentos a presentar",
     "justificantes habituales",
+    "que aportar",
+    "que adjuntar",
+    "que me van a pedir",
   ],
   solicitud: [
     "como se solicita",
     "donde se presenta",
     "tramitar la solicitud",
+    "donde presento",
+    "como presentarlo",
+    "por internet",
+    "presencial",
   ],
   cuantia: [
     "cuanto se cobra",
@@ -342,6 +349,8 @@ const TITLE_HINT_RULES = [
       "donde se presenta",
       "pasos del tramite",
       "documentacion habitual",
+      "donde presento",
+      "como presentarlo",
     ],
   },
   {
@@ -350,6 +359,17 @@ const TITLE_HINT_RULES = [
       "que documentos necesito",
       "papeles para presentar",
       "formularios y justificantes",
+      "que aportar",
+      "que adjuntar",
+    ],
+  },
+  {
+    pattern: /\bpresentar\b|\bpresentacion\b|\bpresentaci[oÃ³]n\b|\binternet\b|\bpresencial\b/i,
+    hints: [
+      "donde presento",
+      "como presentarlo",
+      "tramite por internet",
+      "tramite presencial",
     ],
   },
   {
@@ -367,6 +387,7 @@ const TITLE_HINT_RULES = [
       "como subsanar un expediente",
       "que hacer ante un requerimiento",
       "donde adjuntar documentacion adicional",
+      "que aportar",
       "plazo para responder requerimientos",
     ],
   },

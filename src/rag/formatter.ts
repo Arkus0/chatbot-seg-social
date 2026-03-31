@@ -11,6 +11,7 @@ import type {
 import type { RetrievedChunk } from "../types/documents.js";
 
 import { dedupeBy, normalizeWhitespace, truncateText } from "../utils/text.js";
+import { benefitCatalogUrlMatches } from "./inssCatalog.js";
 import { buildClarificationSummary } from "./conversation.js";
 
 interface StructuredAnswerContent {
@@ -206,8 +207,40 @@ export function buildLegalNotice(): string {
   return "Aviso legal: esta respuesta es informativa y no sustituye la informacion oficial publicada por la Seguridad Social ni el asesoramiento juridico profesional.";
 }
 
-export function getAnswerSources(chunks: RetrievedChunk[]): AnswerSource[] {
-  return dedupeBy(chunks, (chunk) => chunk.metadata.url)
+function getSourceSelectionScore(chunk: RetrievedChunk, intent?: ChatIntent): number {
+  let score = chunk.rerankScore ?? chunk.score;
+
+  if (!intent?.benefitId) {
+    return score;
+  }
+
+  if (
+    chunk.metadata.benefitId === intent.benefitId ||
+    benefitCatalogUrlMatches(intent.benefitId, chunk.metadata.url)
+  ) {
+    score += 1;
+  } else if (chunk.metadata.benefitId && chunk.metadata.benefitId !== intent.benefitId) {
+    score -= 0.6;
+  }
+
+  return score;
+}
+
+export function getAnswerSources(chunks: RetrievedChunk[], intent?: ChatIntent): AnswerSource[] {
+  const uniqueChunks = dedupeBy(chunks, (chunk) => chunk.metadata.url).sort(
+    (left, right) => getSourceSelectionScore(right, intent) - getSourceSelectionScore(left, intent),
+  );
+
+  const preferredChunks = intent?.benefitId
+    ? uniqueChunks.filter(
+        (chunk) =>
+          chunk.metadata.benefitId === intent.benefitId || benefitCatalogUrlMatches(intent.benefitId, chunk.metadata.url),
+      )
+    : uniqueChunks;
+
+  const sourcePool = preferredChunks.length >= 2 ? preferredChunks : uniqueChunks;
+
+  return sourcePool
     .slice(0, 3)
     .map((chunk) => ({
       title: chunk.metadata.title,
@@ -360,9 +393,9 @@ export function buildClarificationPayload(meta: PayloadMeta & { state: ChatState
 
 export function composeAnswerPayload(answer: string, chunks: RetrievedChunk[], meta?: PayloadMeta): AnswerPayload {
   const structured = extractStructuredContent(answer);
-  const sources = getAnswerSources(chunks);
   const legalNotice = buildLegalNotice();
   const resolvedMeta = resolvePayloadMeta(meta);
+  const sources = getAnswerSources(chunks, resolvedMeta.intent);
   const caseSummary =
     structured.sections.caseSummary[0] ??
     resolvedMeta.state.caseSummary ??

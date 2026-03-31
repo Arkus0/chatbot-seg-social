@@ -137,6 +137,12 @@
       "tramite"
     ],
     "priority": 5,
+    "benefitId": "jubilacion",
+    "family": "jubilacion",
+    "lifecycle": "presentacion",
+    "sourceKind": "benefit-page",
+    "requiresAuth": false,
+    "supportsSms": true,
     "enabled": true
   },
   {
@@ -163,6 +169,12 @@
       "prestacion"
     ],
     "priority": 4,
+    "benefitId": "incapacidad-temporal",
+    "family": "incapacidad",
+    "lifecycle": "preparacion",
+    "sourceKind": "benefit-page",
+    "requiresAuth": false,
+    "supportsSms": true,
     "enabled": true
   },
   {
@@ -232,6 +244,12 @@
       "tramite"
     ],
     "priority": 5,
+    "benefitId": "incapacidad-permanente",
+    "family": "incapacidad",
+    "lifecycle": "presentacion",
+    "sourceKind": "form",
+    "requiresAuth": false,
+    "supportsSms": true,
     "enabled": true
   },
   {
@@ -354,6 +372,12 @@
       "tramite"
     ],
     "priority": 5,
+    "benefitId": "nacimiento-cuidado-menor",
+    "family": "familia-cuidados",
+    "lifecycle": "presentacion",
+    "sourceKind": "form",
+    "requiresAuth": false,
+    "supportsSms": true,
     "enabled": true
   },
   {
@@ -368,6 +392,12 @@
       "formulario"
     ],
     "priority": 5,
+    "benefitId": "familia-cuidados",
+    "family": "familia-cuidados",
+    "lifecycle": "presentacion",
+    "sourceKind": "form",
+    "requiresAuth": false,
+    "supportsSms": true,
     "enabled": true
   },
   {
@@ -408,6 +438,12 @@
       "suspension-contrato"
     ],
     "priority": 3,
+    "benefitId": "familia-cuidados",
+    "family": "familia-cuidados",
+    "lifecycle": "orientacion",
+    "sourceKind": "benefit-page",
+    "requiresAuth": false,
+    "supportsSms": true,
     "enabled": true
   },
   {
@@ -435,6 +471,12 @@
       "requisitos"
     ],
     "priority": 4,
+    "benefitId": "viudedad",
+    "family": "supervivencia",
+    "lifecycle": "orientacion",
+    "sourceKind": "benefit-page",
+    "requiresAuth": false,
+    "supportsSms": true,
     "enabled": true
   },
   {
@@ -463,6 +505,12 @@
       "tramite"
     ],
     "priority": 5,
+    "benefitId": "viudedad",
+    "family": "supervivencia",
+    "lifecycle": "presentacion",
+    "sourceKind": "form",
+    "requiresAuth": false,
+    "supportsSms": true,
     "enabled": true
   },
   {
@@ -476,6 +524,12 @@
       "requisitos"
     ],
     "priority": 4,
+    "benefitId": "supervivencia",
+    "family": "supervivencia",
+    "lifecycle": "orientacion",
+    "sourceKind": "benefit-page",
+    "requiresAuth": false,
+    "supportsSms": true,
     "enabled": true
   },
   {
@@ -492,6 +546,12 @@
       "formulario"
     ],
     "priority": 5,
+    "benefitId": "supervivencia",
+    "family": "supervivencia",
+    "lifecycle": "presentacion",
+    "sourceKind": "form",
+    "requiresAuth": false,
+    "supportsSms": true,
     "enabled": true
   },
   {
@@ -506,6 +566,12 @@
       "prestaciones"
     ],
     "priority": 5,
+    "benefitId": "imv",
+    "family": "imv",
+    "lifecycle": "presentacion",
+    "sourceKind": "benefit-page",
+    "requiresAuth": false,
+    "supportsSms": true,
     "enabled": true
   },
   {
@@ -520,6 +586,12 @@
       "europa"
     ],
     "priority": 4,
+    "benefitId": "tse-cps",
+    "family": "asistencia-sanitaria",
+    "lifecycle": "orientacion",
+    "sourceKind": "benefit-page",
+    "requiresAuth": false,
+    "supportsSms": true,
     "enabled": true
   },
   {
@@ -534,6 +606,12 @@
       "sede"
     ],
     "priority": 5,
+    "benefitId": "tse-cps",
+    "family": "asistencia-sanitaria",
+    "lifecycle": "presentacion",
+    "sourceKind": "service",
+    "requiresAuth": false,
+    "supportsSms": true,
     "enabled": true
   },
   {
@@ -764,6 +842,12 @@
       "prestacion"
     ],
     "priority": 4,
+    "benefitId": "supervivencia",
+    "family": "supervivencia",
+    "lifecycle": "orientacion",
+    "sourceKind": "benefit-page",
+    "requiresAuth": false,
+    "supportsSms": true,
     "enabled": true
   },
   {
@@ -778,6 +862,12 @@
       "reduccion-jornada"
     ],
     "priority": 4,
+    "benefitId": "familia-cuidados",
+    "family": "familia-cuidados",
+    "lifecycle": "orientacion",
+    "sourceKind": "benefit-page",
+    "requiresAuth": false,
+    "supportsSms": true,
     "enabled": true
   },
   {
@@ -792,6 +882,12 @@
       "tramite"
     ],
     "priority": 5,
+    "benefitId": "familia-cuidados",
+    "family": "familia-cuidados",
+    "lifecycle": "presentacion",
+    "sourceKind": "form",
+    "requiresAuth": false,
+    "supportsSms": true,
     "enabled": true
   },
   {
@@ -806,6 +902,12 @@
       "requisitos"
     ],
     "priority": 4,
+    "benefitId": "familia-cuidados",
+    "family": "familia-cuidados",
+    "lifecycle": "orientacion",
+    "sourceKind": "benefit-page",
+    "requiresAuth": false,
+    "supportsSms": true,
     "enabled": true
   },
   {
@@ -820,6 +922,12 @@
       "tramite"
     ],
     "priority": 5,
+    "benefitId": "familia-cuidados",
+    "family": "familia-cuidados",
+    "lifecycle": "presentacion",
+    "sourceKind": "form",
+    "requiresAuth": false,
+    "supportsSms": true,
     "enabled": true
   },
   {
@@ -903,6 +1011,12 @@
       "tramite"
     ],
     "priority": 5,
+    "benefitId": "alta-beneficiarios",
+    "family": "asistencia-sanitaria",
+    "lifecycle": "presentacion",
+    "sourceKind": "service",
+    "requiresAuth": false,
+    "supportsSms": true,
     "enabled": true
   },
   {
@@ -1070,6 +1184,12 @@
       "inss"
     ],
     "priority": 5,
+    "benefitId": "operativa-inss",
+    "family": "operativa-inss",
+    "lifecycle": "presentacion",
+    "sourceKind": "service",
+    "requiresAuth": true,
+    "supportsSms": false,
     "enabled": true
   },
   {
@@ -1084,6 +1204,12 @@
       "tramite"
     ],
     "priority": 5,
+    "benefitId": "operativa-inss",
+    "family": "operativa-inss",
+    "lifecycle": "presentacion",
+    "sourceKind": "service",
+    "requiresAuth": true,
+    "supportsSms": false,
     "enabled": true
   },
   {
@@ -1099,6 +1225,12 @@
       "documentacion"
     ],
     "priority": 5,
+    "benefitId": "operativa-inss",
+    "family": "operativa-inss",
+    "lifecycle": "presentacion",
+    "sourceKind": "service",
+    "requiresAuth": false,
+    "supportsSms": true,
     "enabled": true
   },
   {
@@ -1113,6 +1245,12 @@
       "tramite"
     ],
     "priority": 5,
+    "benefitId": "operativa-inss",
+    "family": "operativa-inss",
+    "lifecycle": "presentacion",
+    "sourceKind": "service",
+    "requiresAuth": false,
+    "supportsSms": false,
     "enabled": true
   },
   {
@@ -1127,6 +1265,12 @@
       "inss"
     ],
     "priority": 4,
+    "benefitId": "operativa-inss",
+    "family": "operativa-inss",
+    "lifecycle": "presentacion",
+    "sourceKind": "service",
+    "requiresAuth": false,
+    "supportsSms": true,
     "enabled": true
   },
   {
@@ -1162,6 +1306,12 @@
       "inss"
     ],
     "priority": 5,
+    "benefitId": "operativa-inss",
+    "family": "operativa-inss",
+    "lifecycle": "seguimiento",
+    "sourceKind": "tracking",
+    "requiresAuth": true,
+    "supportsSms": true,
     "enabled": true
   },
   {
@@ -1233,6 +1383,12 @@
       "pdf"
     ],
     "priority": 5,
+    "benefitId": "tse-cps",
+    "family": "asistencia-sanitaria",
+    "lifecycle": "preparacion",
+    "sourceKind": "form",
+    "requiresAuth": false,
+    "supportsSms": true,
     "enabled": true
   },
   {
@@ -1250,6 +1406,15 @@
       "pdf"
     ],
     "priority": 5,
+    "benefitId": "tse-cps",
+    "family": "asistencia-sanitaria",
+    "lifecycle": "preparacion",
+    "sourceKind": "form",
+    "requiresAuth": false,
+    "supportsSms": true,
+    "formCodes": [
+      "SPS-S070"
+    ],
     "enabled": true
   },
   {
@@ -1265,6 +1430,12 @@
       "inss"
     ],
     "priority": 5,
+    "benefitId": "nacimiento-cuidado-menor",
+    "family": "familia-cuidados",
+    "lifecycle": "preparacion",
+    "sourceKind": "benefit-page",
+    "requiresAuth": false,
+    "supportsSms": true,
     "enabled": true
   },
   {
@@ -1281,6 +1452,15 @@
       "pdf"
     ],
     "priority": 5,
+    "benefitId": "nacimiento-cuidado-menor",
+    "family": "familia-cuidados",
+    "lifecycle": "preparacion",
+    "sourceKind": "form",
+    "requiresAuth": false,
+    "supportsSms": true,
+    "formCodes": [
+      "MP-1 BIS"
+    ],
     "enabled": true
   },
   {
@@ -1312,6 +1492,12 @@
       "inss"
     ],
     "priority": 5,
+    "benefitId": "incapacidad-permanente",
+    "family": "incapacidad",
+    "lifecycle": "preparacion",
+    "sourceKind": "form",
+    "requiresAuth": false,
+    "supportsSms": true,
     "enabled": true
   },
   {
@@ -1385,6 +1571,12 @@
       "pdf"
     ],
     "priority": 5,
+    "benefitId": "jubilacion",
+    "family": "jubilacion",
+    "lifecycle": "presentacion",
+    "sourceKind": "benefit-page",
+    "requiresAuth": false,
+    "supportsSms": true,
     "enabled": true
   },
   {
@@ -1400,6 +1592,7 @@
     ],
     "priority": 4,
     "benefitId": "familia-cuidados",
+    "family": "familia-cuidados",
     "lifecycle": "orientacion",
     "sourceKind": "benefit-page",
     "requiresAuth": false,
@@ -1419,6 +1612,7 @@
     ],
     "priority": 4,
     "benefitId": "familia-cuidados",
+    "family": "familia-cuidados",
     "lifecycle": "orientacion",
     "sourceKind": "benefit-page",
     "requiresAuth": false,
@@ -1536,6 +1730,146 @@
     "sourceKind": "benefit-page",
     "requiresAuth": false,
     "supportsSms": false,
+    "enabled": true
+  },
+  {
+    "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10963",
+    "title": "Pension de jubilacion",
+    "type": "html",
+    "tags": [
+      "jubilacion",
+      "pension",
+      "requisitos",
+      "documentacion",
+      "solicitud"
+    ],
+    "priority": 5,
+    "benefitId": "jubilacion",
+    "family": "jubilacion",
+    "lifecycle": "orientacion",
+    "sourceKind": "benefit-page",
+    "requiresAuth": false,
+    "supportsSms": true,
+    "enabled": true
+  },
+  {
+    "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10952",
+    "title": "Incapacidad temporal",
+    "type": "html",
+    "tags": [
+      "incapacidad-temporal",
+      "baja-medica",
+      "subsidio",
+      "requisitos",
+      "solicitud"
+    ],
+    "priority": 5,
+    "benefitId": "incapacidad-temporal",
+    "family": "incapacidad",
+    "lifecycle": "orientacion",
+    "sourceKind": "benefit-page",
+    "requiresAuth": false,
+    "supportsSms": true,
+    "enabled": true
+  },
+  {
+    "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10960",
+    "title": "Incapacidad permanente",
+    "type": "html",
+    "tags": [
+      "incapacidad-permanente",
+      "invalidez",
+      "grados",
+      "requisitos",
+      "solicitud"
+    ],
+    "priority": 5,
+    "benefitId": "incapacidad-permanente",
+    "family": "incapacidad",
+    "lifecycle": "orientacion",
+    "sourceKind": "benefit-page",
+    "requiresAuth": false,
+    "supportsSms": true,
+    "enabled": true
+  },
+  {
+    "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/6b96a085-4dc0-47af-b2cb-97e00716791e",
+    "title": "Nacimiento y cuidado de menor",
+    "type": "html",
+    "tags": [
+      "nacimiento",
+      "cuidado-menor",
+      "maternidad",
+      "paternidad",
+      "solicitud"
+    ],
+    "priority": 5,
+    "benefitId": "nacimiento-cuidado-menor",
+    "family": "familia-cuidados",
+    "lifecycle": "orientacion",
+    "sourceKind": "benefit-page",
+    "requiresAuth": false,
+    "supportsSms": true,
+    "enabled": true
+  },
+  {
+    "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10956",
+    "title": "Riesgo durante el embarazo",
+    "type": "html",
+    "tags": [
+      "riesgo-embarazo",
+      "embarazo",
+      "prestacion",
+      "requisitos",
+      "solicitud"
+    ],
+    "priority": 4,
+    "benefitId": "familia-cuidados",
+    "family": "familia-cuidados",
+    "lifecycle": "orientacion",
+    "sourceKind": "benefit-page",
+    "requiresAuth": false,
+    "supportsSms": true,
+    "enabled": true
+  },
+  {
+    "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10938",
+    "title": "Asistencia sanitaria",
+    "type": "html",
+    "tags": [
+      "asistencia-sanitaria",
+      "beneficiario",
+      "tse",
+      "cps",
+      "solicitud"
+    ],
+    "priority": 5,
+    "benefitId": "asistencia-sanitaria",
+    "family": "asistencia-sanitaria",
+    "lifecycle": "orientacion",
+    "sourceKind": "benefit-page",
+    "requiresAuth": false,
+    "supportsSms": true,
+    "enabled": true
+  },
+  {
+    "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/65850d68-8d06-4645-bde7-05374ee42ac7",
+    "title": "Ingreso Minimo Vital",
+    "type": "html",
+    "tags": [
+      "imv",
+      "ingreso-minimo-vital",
+      "requisitos",
+      "documentacion",
+      "solicitud"
+    ],
+    "priority": 5,
+    "benefitId": "imv",
+    "family": "imv",
+    "lifecycle": "orientacion",
+    "sourceKind": "benefit-page",
+    "requiresAuth": false,
+    "supportsSms": true,
     "enabled": true
   }
 ]

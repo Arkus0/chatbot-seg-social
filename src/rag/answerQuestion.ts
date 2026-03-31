@@ -9,6 +9,7 @@ import { logger } from "../utils/logger.js";
 import { buildRetrievalOnlyAnswer, isRetriableGenerationError } from "./fallback.js";
 import { analyzeConversation } from "./conversation.js";
 import { buildClarificationPayload, buildNoContextAnswerPayload, composeAnswerPayload, formatRetrievedChunks } from "./formatter.js";
+import { benefitCatalogUrlMatches } from "./inssCatalog.js";
 import { invokePromptWithLlmFallback } from "./invokeWithFallback.js";
 import { buildSystemPrompt, buildUserPrompt } from "./prompt.js";
 import { retrieveRelevantChunks } from "./retriever.js";
@@ -20,6 +21,10 @@ function isStudyFocusedQuestion(question: string): boolean {
 function sanitizeRetrievedChunks(question: string, chunks: RetrievedChunk[]): RetrievedChunk[] {
   const allowStudySpecific = isStudyFocusedQuestion(question);
   const keepTseComparisonContext = /\btse\b|\bcps\b|\burgente\b|\bviaj/i.test(question);
+  const keepPreparationForms =
+    /\brellen|cumpliment|casilla|formulario|modelo|impreso|documentacion|documentos?|papeles|justificantes?|adjuntar|aportar\b/i.test(
+      question,
+    );
   let filtered = chunks;
 
   if (!allowStudySpecific) {
@@ -32,7 +37,7 @@ function sanitizeRetrievedChunks(question: string, chunks: RetrievedChunk[]): Re
   }
 
   const hasNonFormAlternative = filtered.some((chunk) => chunk.metadata.sourceKind && chunk.metadata.sourceKind !== "form");
-  if (hasNonFormAlternative && !/\brellen|cumpliment|casilla|formulario|modelo|impreso\b/i.test(question)) {
+  if (hasNonFormAlternative && !keepPreparationForms) {
     filtered = filtered.filter(
       (chunk) => chunk.metadata.sourceKind !== "form" || (keepTseComparisonContext && chunk.metadata.benefitId === "tse-cps"),
     );
@@ -42,7 +47,18 @@ function sanitizeRetrievedChunks(question: string, chunks: RetrievedChunk[]): Re
 }
 
 function hasUnsafeMixedContext(intentBenefitId: string | undefined, chunks: RetrievedChunk[]): boolean {
-  const candidateBenefitIds = [...new Set(chunks.slice(0, 3).map((chunk) => chunk.metadata.benefitId).filter(Boolean))];
+  const candidateBenefitIds = [
+    ...new Set(
+      chunks
+        .slice(0, 3)
+        .filter(
+          (chunk) =>
+            !(chunk.metadata.benefitId === "operativa-inss" && benefitCatalogUrlMatches(intentBenefitId, chunk.metadata.url)),
+        )
+        .map((chunk) => chunk.metadata.benefitId)
+        .filter(Boolean),
+    ),
+  ];
 
   if (intentBenefitId && candidateBenefitIds.some((benefitId) => benefitId !== intentBenefitId)) {
     return true;

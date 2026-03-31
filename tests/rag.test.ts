@@ -77,6 +77,71 @@ describe("formatter", () => {
     expect(response.sections.ifINSSRespondsX).toEqual(["Revisa Mis expedientes administrativos"]);
   });
 
+  it("prioritizes same-benefit sources over unrelated ones in the final answer", () => {
+    const response = composeAnswerPayload(
+      "Texto base",
+      [
+        {
+          pageContent: "Alta de beneficiarios en asistencia sanitaria.",
+          score: 0.8,
+          rerankScore: 0.8,
+          metadata: {
+            url: "https://sede.seg-social.gob.es/asistencia/alta-beneficiarios",
+            title: "Asistencia sanitaria. Alta de beneficiarios",
+            sourceType: "html",
+            chunkIndex: 0,
+            tags: ["alta-beneficiarios", "documentacion"],
+            priority: 5,
+            benefitId: "alta-beneficiarios",
+          },
+        },
+        {
+          pageContent: "Informacion general de asistencia sanitaria.",
+          score: 0.75,
+          rerankScore: 0.75,
+          metadata: {
+            url: "https://www.seg-social.es/asistencia",
+            title: "Asistencia sanitaria",
+            sourceType: "html",
+            chunkIndex: 0,
+            tags: ["asistencia-sanitaria"],
+            priority: 4,
+            benefitId: "alta-beneficiarios",
+          },
+        },
+        {
+          pageContent: "Formulario del certificado provisional sustitutorio.",
+          score: 0.79,
+          rerankScore: 0.79,
+          metadata: {
+            url: "https://sede.seg-social.gob.es/tse/cps.pdf",
+            title: "Solicitud de Certificado Provisional Sustitutorio",
+            sourceType: "pdf",
+            chunkIndex: 0,
+            tags: ["tse-cps", "formulario"],
+            priority: 4,
+            benefitId: "tse-cps",
+          },
+        },
+      ],
+      {
+        intent: {
+          family: "asistencia-sanitaria",
+          operation: "documentacion",
+          benefitId: "alta-beneficiarios",
+          lifecycleStage: "presentacion",
+        },
+      },
+    );
+
+    expect(response.sources.map((source) => source.title)).toEqual([
+      "Asistencia sanitaria. Alta de beneficiarios",
+      "Asistencia sanitaria",
+    ]);
+    expect(response.sources[0]?.url).toContain("alta-beneficiarios");
+    expect(response.sources[1]?.url).toContain("seg-social.es/asistencia");
+  });
+
   it("keeps legacy fields and adds decision metadata for clarification payloads", () => {
     const response = buildClarificationPayload({
       intent: {

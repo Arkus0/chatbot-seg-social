@@ -26,6 +26,18 @@ export interface BenefitCatalogEntry {
   guided: boolean;
 }
 
+const BENEFIT_URL_FIELDS = [
+  "primaryUrls",
+  "serviceUrls",
+  "formUrls",
+  "pdfUrls",
+  "trackingUrls",
+  "notificationUrls",
+  "reviewUrls",
+] as const;
+
+export type BenefitUrlField = (typeof BENEFIT_URL_FIELDS)[number];
+
 export interface GuidedProcedure {
   id: string;
   label: string;
@@ -137,6 +149,7 @@ export const INSS_BENEFIT_CATALOG: BenefitCatalogEntry[] = [
     sourceTags: ["jubilacion", "pension", "edad-jubilacion", "cotizacion", "jubilacion-anticipada", "mutualista"],
     lifecycleOps: ALL_OPERATIONS,
     primaryUrls: ["https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10963"],
+    formUrls: ["https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10963/28393/28396/28482"],
   }),
   benefit({
     benefitId: "incapacidad-temporal",
@@ -156,6 +169,7 @@ export const INSS_BENEFIT_CATALOG: BenefitCatalogEntry[] = [
     sourceTags: ["incapacidad-temporal", "baja-medica", "subsidio"],
     lifecycleOps: ALL_OPERATIONS,
     primaryUrls: ["https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10952"],
+    formUrls: ["https://www.seg-social.es/wps/portal/wss/internet/InformacionUtil/44539/44667/44680"],
   }),
   benefit({
     benefitId: "incapacidad-permanente",
@@ -190,6 +204,10 @@ export const INSS_BENEFIT_CATALOG: BenefitCatalogEntry[] = [
     ],
     lifecycleOps: ALL_OPERATIONS,
     primaryUrls: ["https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10960"],
+    formUrls: [
+      "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10960/28750/28680/28700/28754",
+      "https://www.seg-social.es/wps/portal/wss/internet/Pensionistas/Servicios/34887/40968/41025/formulario%2Bde%2Bdatos%2Bpara%2Baportar%2Ben%2Bprocedimientos%2Bde%2Bincapacidad%2Bpermanente%2Biniciados%2Bde%2Boficio?changeLanguage=es",
+    ],
   }),
   benefit({
     benefitId: "nacimiento-cuidado-menor",
@@ -210,6 +228,10 @@ export const INSS_BENEFIT_CATALOG: BenefitCatalogEntry[] = [
     sourceTags: ["nacimiento", "cuidado-menor", "maternidad", "paternidad"],
     lifecycleOps: ALL_OPERATIONS,
     primaryUrls: ["https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/6b96a085-4dc0-47af-b2cb-97e00716791e"],
+    formUrls: [
+      "https://www.seg-social.es/wps/portal/wss/internet/Pensionistas/Servicios/34887/40968/675dcd57-75d3-4a97-926a-1ba60fa72d32",
+      "https://www.seg-social.es/wps/portal/wss/internet/InformacionUtil/44539/de513c99-5885-48bd-8c66-45d2c97ad947/41021nycm",
+    ],
     pdfUrls: ["https://www.seg-social.es/wps/wcm/connect/wss/51178da2-48e0-4d22-aa5d-6a1904b4ae6b/MP-1%2BBIS_Castellano_12_Accesibilidad.pdf?MOD=AJPERES"],
   }),
   benefit({
@@ -251,8 +273,13 @@ export const INSS_BENEFIT_CATALOG: BenefitCatalogEntry[] = [
       "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10956",
       "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/51288",
       "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/61f8b540-c867-43cf-926d-77476b975f36",
-      "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/4c43ce49-6636-4a12-bacf-5e6697eb81da",
+      "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/4c43ce49-6636-4a12-bacf-5e6697eb81da/",
       "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10967",
+    ],
+    formUrls: [
+      "https://www.seg-social.es/wps/portal/wss/internet/Pensionistas/Servicios/34887/40968/1951/143868",
+      "https://www.seg-social.es/wps/portal/wss/internet/Pensionistas/Servicios/34887/40968/41054",
+      "https://www.seg-social.es/wps/portal/wss/internet/Pensionistas/Servicios/34928/16da5d4f-1368-474a-86e4-ca96e893b898/solicitud%2Bde%2Bcomplemento%2Bpor%2Bmaternidad",
     ],
   }),
   benefit({
@@ -273,8 +300,11 @@ export const INSS_BENEFIT_CATALOG: BenefitCatalogEntry[] = [
     aliases: ["viudedad", "pension de viudedad", "fallecimiento del conyuge", "viudo", "viuda"],
     sourceTags: ["viudedad", "muerte-supervivencia"],
     lifecycleOps: ALL_OPERATIONS,
-    primaryUrls: ["https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10964"],
-    formUrls: ["https://www.seg-social.es/wps/portal/wss/internet/Pensionistas/Servicios/34887/40968/41026"],
+    primaryUrls: ["https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10964/10966/28489/28490"],
+    formUrls: [
+      "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10964/10966/28489/28498",
+      "https://www.seg-social.es/wps/portal/wss/internet/Pensionistas/Servicios/34887/40968/41026",
+    ],
   }),
   benefit({
     benefitId: "supervivencia",
@@ -300,7 +330,10 @@ export const INSS_BENEFIT_CATALOG: BenefitCatalogEntry[] = [
     ],
     sourceTags: ["supervivencia", "orfandad", "favor-de-familiares", "auxilio-defuncion", "muerte-supervivencia"],
     lifecycleOps: ALL_OPERATIONS,
-    primaryUrls: ["https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10964"],
+    primaryUrls: [
+      "https://www.seg-social.es/wps/portal/wss/internet/InformacionUtil/44539/45659/45664/",
+      "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10964/10966/28558/116022",
+    ],
     formUrls: ["https://www.seg-social.es/wps/portal/wss/internet/Pensionistas/Servicios/34887/40968/41026"],
   }),
   benefit({
@@ -342,9 +375,14 @@ export const INSS_BENEFIT_CATALOG: BenefitCatalogEntry[] = [
     sourceTags: ["tse", "tarjeta-sanitaria-europea", "cps", "asistencia-sanitaria"],
     lifecycleOps: ALL_OPERATIONS,
     primaryUrls: [
-      "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10938/11566/1761",
+      "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10938/11566/1761?changeLanguage=es&furriel=50e8297e8b11c844a95736925c72805c714434a5",
     ],
     serviceUrls: ["https://sede.seg-social.gob.es/wps/portal/sede/sede/Ciudadanos/Asistencia%2BSanitaria/202046SinC"],
+    formUrls: ["https://sede.seg-social.gob.es/wps/wcm/connect/sede/9b0c0c2d-6726-450c-875f-fdf5bb046350/SPS_S070_Cast_v1_0_Edit.pdf?MOD=AJPERES"],
+    pdfUrls: [
+      "https://www.seg-social.es/wps/wcm/connect/wss/832f01df-7528-43e8-ab89-5e385d1f39e4/PUB060_Castellano.pdf?MOD=AJPERES",
+      "https://sede.seg-social.gob.es/wps/wcm/connect/sede/9b0c0c2d-6726-450c-875f-fdf5bb046350/SPS_S070_Cast_v1_0_Edit.pdf?MOD=AJPERES",
+    ],
   }),
   benefit({
     benefitId: "alta-beneficiarios",
@@ -364,8 +402,14 @@ export const INSS_BENEFIT_CATALOG: BenefitCatalogEntry[] = [
     aliases: ["alta de beneficiarios", "beneficiario", "anadir beneficiario", "beneficiarios de asistencia sanitaria"],
     sourceTags: ["beneficiario", "asistencia-sanitaria", "solicitud"],
     lifecycleOps: ALL_OPERATIONS,
-    primaryUrls: ["https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10938"],
-    serviceUrls: ["https://sede.seg-social.gob.es/wps/portal/sede/sede/Ciudadanos/Asistencia%2BSanitaria/202043"],
+    primaryUrls: [
+      "https://sede.seg-social.gob.es/wps/portal/sede/sede/Ciudadanos/asistencia%2Bsanitaria/202043_tuss",
+      "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10938",
+    ],
+    serviceUrls: [
+      "https://sede.seg-social.gob.es/wps/portal/sede/sede/Ciudadanos/asistencia%2Bsanitaria/202043_tuss",
+      COMMON_INSS_SERVICE_URLS.solicitudesPrestaciones,
+    ],
   }),
   benefit({
     benefitId: "imv",
@@ -386,6 +430,9 @@ export const INSS_BENEFIT_CATALOG: BenefitCatalogEntry[] = [
     sourceTags: ["imv", "ingreso-minimo-vital", "ayuda-infancia"],
     lifecycleOps: ALL_OPERATIONS,
     primaryUrls: ["https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/65850d68-8d06-4645-bde7-05374ee42ac7"],
+    formUrls: [
+      "https://www.seg-social.es/wps/portal/wss/internet/Pensionistas/Servicios/34887/40968/7392fa45-b5db-43ce-b5fd-14f0ef6df73a/f8d240bc-99d7-4d4f-b71b-055f7b9bf15f?changeLanguage=es",
+    ],
   }),
   benefit({
     benefitId: "sovi",
@@ -590,15 +637,56 @@ export function getMenuGroupById(groupId: string): MenuGroup | undefined {
 
 const CATALOG_BY_ID = new Map(INSS_BENEFIT_CATALOG.map((entry) => [entry.benefitId, entry]));
 
+export function normalizeCatalogUrl(url: string): string {
+  return url.trim().toLowerCase().split("?")[0].replace(/\/+$/, "");
+}
+
+export function getBenefitCatalogUrls(
+  benefitId?: string | null,
+  kinds: BenefitUrlField[] = [...BENEFIT_URL_FIELDS],
+): string[] {
+  const entry = getBenefitCatalogEntry(benefitId);
+
+  if (!entry) {
+    return [];
+  }
+
+  return [...new Set(kinds.flatMap((kind) => entry[kind]).map((url) => normalizeCatalogUrl(url)))];
+}
+
+export function benefitCatalogUrlMatches(
+  benefitId: string | undefined | null,
+  url: string,
+  kinds: BenefitUrlField[] = [...BENEFIT_URL_FIELDS],
+): boolean {
+  return getBenefitCatalogUrls(benefitId, kinds).includes(normalizeCatalogUrl(url));
+}
+
+function matchesCatalogPhrase(rawTokens: string[], normalizedInput: string, phrase: string): boolean {
+  const normalizedPhrase = normalizeSearchText(phrase);
+  const phraseTokens = normalizedPhrase.split(/[^a-z0-9]+/g).filter(Boolean);
+
+  if (phraseTokens.length === 0) {
+    return false;
+  }
+
+  if (phraseTokens.length === 1) {
+    return phraseTokens[0].length <= 3 ? rawTokens.includes(phraseTokens[0]) : normalizedInput.includes(phraseTokens[0]);
+  }
+
+  return phraseTokens.every((token) => rawTokens.includes(token));
+}
+
 function buildBenefitMatchScore(input: string, entry: BenefitCatalogEntry): number {
   const normalizedInput = normalizeSearchText(input);
   const tokens = tokenizeSearchText(input);
+  const rawTokens = normalizedInput.split(/[^a-z0-9]+/g).filter(Boolean);
   let score = 0;
 
   for (const phrase of [entry.displayName, ...entry.aliases]) {
     const normalizedPhrase = normalizeSearchText(phrase);
-    if (normalizedPhrase && normalizedInput.includes(normalizedPhrase)) {
-      score += Math.max(3, normalizedPhrase.split(" ").length * 1.15);
+    if (normalizedPhrase && matchesCatalogPhrase(rawTokens, normalizedInput, phrase)) {
+      score += Math.max(3, normalizedPhrase.split(/[^a-z0-9]+/g).filter(Boolean).length * 1.15);
     }
   }
 
@@ -668,12 +756,12 @@ export function inferLifecycleFromSourceTags(tags: string[]): LifecycleStage | u
     return "revision";
   }
 
-  if (tags.some((tag) => ["notificacion", "pago-cobro", "suspension-extincion"].includes(tag))) {
-    return "resolucion";
-  }
-
   if (tags.some((tag) => ["estado-expediente", "subsanacion-requerimiento", "subsanacion", "requerimiento"].includes(tag))) {
     return "seguimiento";
+  }
+
+  if (tags.some((tag) => ["notificacion", "pago-cobro", "suspension-extincion"].includes(tag))) {
+    return "resolucion";
   }
 
   if (tags.some((tag) => ["solicitud", "sin-certificado-sms", "cita-caiss", "variacion-datos"].includes(tag))) {
@@ -692,12 +780,12 @@ export function inferLifecycleFromSourceTags(tags: string[]): LifecycleStage | u
 }
 
 export function inferSourceKindFromTags(tags: string[]): string | undefined {
-  if (tags.some((tag) => ["subsanacion", "subsanacion-requerimiento", "requerimiento", "notificacion"].includes(tag))) {
-    return "notification";
-  }
-
   if (tags.some((tag) => ["estado-expediente", "estado-solicitud", "expediente"].includes(tag))) {
     return "tracking";
+  }
+
+  if (tags.some((tag) => ["subsanacion", "subsanacion-requerimiento", "requerimiento", "notificacion"].includes(tag))) {
+    return "notification";
   }
 
   if (tags.some((tag) => ["reclamacion-previa", "revision", "silencio-administrativo"].includes(tag))) {
@@ -725,17 +813,28 @@ export function inferBenefitMetadata(input: { title?: string; url?: string; tags
 } {
   const tags = input.tags ?? [];
   const haystack = [input.title ?? "", input.url ?? "", ...tags].join(" ");
-  const benefitId = detectBenefitId(haystack) ?? detectBenefitId(haystack, false);
+  const isSharedOperationalPage =
+    tags.includes("operativa-inss") &&
+    tags.some((tag) =>
+      ["portal-prestaciones", "cita-caiss", "estado-expediente", "estado-solicitud", "sin-certificado-sms", "certificado-prestaciones"].includes(tag),
+    );
+  const benefitId = isSharedOperationalPage ? "operativa-inss" : detectBenefitId(haystack) ?? detectBenefitId(haystack, false);
   const entry = getBenefitCatalogEntry(benefitId);
+  const lifecycle = inferLifecycleFromSourceTags(tags);
+  const sourceKind = inferSourceKindFromTags(tags);
+  const requiresAuth = isSharedOperationalPage
+    ? tags.some((tag) => ["estado-expediente", "estado-solicitud", "certificado-prestaciones"].includes(tag))
+    : entry?.requiresAuth ??
+      (/misexpedientesadministrativos|acceder|login/i.test(input.url ?? "") ||
+        tags.some((tag) => ["estado-expediente", "estado-solicitud", "certificado-prestaciones"].includes(tag)) ||
+        /certificado digital|cl@ve|clave/i.test(`${input.title ?? ""} ${input.url ?? ""}`));
 
   return {
     benefitId,
     family: entry?.family,
-    lifecycle: inferLifecycleFromSourceTags(tags),
-    sourceKind: inferSourceKindFromTags(tags),
-    requiresAuth:
-      entry?.requiresAuth ??
-      (/misexpedientesadministrativos|clave|certificado|acceder/i.test(input.url ?? "") || tags.includes("sede")),
+    lifecycle,
+    sourceKind,
+    requiresAuth,
     supportsSms:
       entry?.supportsSms ??
       (tags.includes("sms") || tags.includes("sin-certificado-sms") || /sms/i.test(input.title ?? "")),

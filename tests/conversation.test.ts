@@ -71,6 +71,25 @@ describe("conversation analysis", () => {
     expect(analysis.suggestedReplies).toEqual(analysis.recommendedActions.map((action) => action.prompt));
   });
 
+  it("detects presentation journeys from 'donde presento' phrasing", () => {
+    const analysis = analyzeConversation("Donde presento la jubilacion si no tengo certificado");
+
+    expect(analysis.intent.family).toBe("jubilacion");
+    expect(analysis.intent.operation).toBe("solicitud");
+    expect(analysis.intent.benefitId).toBe("jubilacion");
+    expect(analysis.intent.lifecycleStage).toBe("presentacion");
+    expect(analysis.state.facts.identificacion).toBe("sin identificacion electronica");
+  });
+
+  it("treats aportar/adjuntar language as documentation intent", () => {
+    const analysis = analyzeConversation("Que tengo que aportar para alta de beneficiario");
+
+    expect(analysis.intent.family).toBe("asistencia-sanitaria");
+    expect(analysis.intent.operation).toBe("documentacion");
+    expect(analysis.intent.benefitId).toBe("alta-beneficiarios");
+    expect(analysis.intent.lifecycleStage).toBe("preparacion");
+  });
+
   it("expires telegram state after the ttl", () => {
     expect(
       isTelegramStateExpired({

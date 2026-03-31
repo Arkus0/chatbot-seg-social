@@ -59,7 +59,7 @@ export function buildRetrievalOnlyAnswer(
   recommendedActions: RecommendedAction[],
 ): AnswerPayload {
   const lines = extractCandidateLines(chunks, question);
-  const sources = getAnswerSources(chunks);
+  const sources = getAnswerSources(chunks, intent);
   const body = [
     "Respuesta breve:",
     "He encontrado informacion oficial relacionada, aunque ahora mismo la generacion avanzada no esta disponible.",

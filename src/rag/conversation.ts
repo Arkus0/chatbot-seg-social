@@ -156,7 +156,17 @@ const OPERATION_RULES: AnalysisRule<IntentOperation>[] = [
   },
   {
     value: "documentacion",
-    patterns: [/\bdocumentacion\b/i, /\bdocumentos?\b/i, /\bpapeles\b/i, /\bjustificantes?\b/i],
+    patterns: [
+      /\bdocumentacion\b/i,
+      /\bdocumentos?\b/i,
+      /\bpapeles\b/i,
+      /\bjustificantes?\b/i,
+      /\bque aportar\b/i,
+      /\bque adjuntar\b/i,
+      /\bme van a pedir\b/i,
+      /\badjuntar\b/i,
+      /\baportar\b/i,
+    ],
   },
   {
     value: "requisitos",
@@ -164,7 +174,16 @@ const OPERATION_RULES: AnalysisRule<IntentOperation>[] = [
   },
   {
     value: "solicitud",
-    patterns: [/\bsolicitar\b/i, /\bsolicitud\b/i, /\btramitar\b/i, /\bpresentar\b/i, /\bcomo se pide\b/i],
+    patterns: [
+      /\bsolicitar\b/i,
+      /\bsolicitud\b/i,
+      /\btramitar\b/i,
+      /\bpresentar\b/i,
+      /\bpresento\b/i,
+      /\bdonde presento\b/i,
+      /\bcomo presentarl[oa]\b/i,
+      /\bcomo se pide\b/i,
+    ],
   },
 ];
 
@@ -373,6 +392,7 @@ function extractFacts(question: string, family: IntentFamily, operation: IntentO
     { value: "certificado o Cl@ve", pattern: /\bclave\b/i },
     { value: "via SMS", pattern: /\bsms\b/i },
     { value: "sin identificacion electronica", pattern: /\bsin certificado\b/i },
+    { value: "sin identificacion electronica", pattern: /\bno tengo certificado\b/i },
   ]);
 
   if (identification) {
