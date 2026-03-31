@@ -69,25 +69,21 @@
 
           <div class="prompt-row" id="prompt-row"></div>
 
-          <div class="message-stream" id="message-stream">
-            <article class="message-card assistant-card">
-              <p class="message-role">Asistente</p>
-              <h3 class="message-summary">Empieza con una duda concreta.</h3>
-              <p class="message-body">
-                Ejemplo: que documentacion necesito para solicitar la jubilacion anticipada, como pedir una prestacion
-                por viudedad o como rellenar una solicitud.
-              </p>
-            </article>
+          <div class="message-stream" id="message-stream" role="log" aria-live="polite">
           </div>
 
           <form class="composer" id="chat-form">
             <label class="sr-only" for="chat-input">Escribe tu consulta</label>
-            <textarea
-              id="chat-input"
-              name="question"
-              rows="4"
-              placeholder="Escribe una duda concreta. Tambien puedes preguntar como preparar o rellenar una solicitud."
-            ></textarea>
+            <div class="textarea-wrapper">
+              <textarea
+                id="chat-input"
+                name="question"
+                rows="4"
+                maxlength="1400"
+                placeholder="Escribe una duda concreta. Tambien puedes preguntar como preparar o rellenar una solicitud."
+              ></textarea>
+              <span class="char-counter" id="char-counter"></span>
+            </div>
             <div class="composer-actions">
               <p class="subtle-note">
                 No es asesoramiento juridico ni sustituye la sede electronica o la atencion oficial.
@@ -113,14 +109,17 @@
 
     <template id="message-template">
       <article class="message-card">
-        <p class="message-role"></p>
+        <div class="message-header">
+          <p class="message-role"></p>
+          <span class="confidence-pill"></span>
+        </div>
         <h3 class="message-summary"></h3>
-        <p class="message-body"></p>
+        <div class="message-body"></div>
         <ul class="message-points"></ul>
         <div class="message-checklist"></div>
         <div class="message-sources"></div>
-        <p class="message-legal"></p>
         <div class="message-actions"></div>
+        <div class="message-feedback"></div>
       </article>
     </template>
 

@@ -428,13 +428,40 @@ select {
   font-size: 0.84rem;
 }
 
-.message-legal {
-  margin: 14px 0 0;
-  padding-top: 12px;
-  border-top: 1px solid var(--line);
-  color: var(--muted);
-  font-size: 0.8rem;
-  line-height: 1.5;
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.message-header .message-role {
+  margin: 0;
+}
+
+.confidence-pill {
+  display: inline-flex;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-family: var(--mono);
+  letter-spacing: 0.06em;
+}
+
+.confidence-high {
+  background: rgba(31, 122, 86, 0.12);
+  color: var(--success);
+}
+
+.confidence-medium {
+  background: rgba(180, 140, 40, 0.12);
+  color: #8a6d1b;
+}
+
+.confidence-low {
+  background: rgba(180, 60, 40, 0.12);
+  color: #a03020;
 }
 
 .composer {
@@ -494,5 +521,199 @@ textarea:focus {
 
   .procedure-card {
     min-width: 180px;
+  }
+}
+
+/* Loading indicator */
+.typing-dots {
+  display: flex;
+  gap: 6px;
+  padding: 4px 0 8px;
+}
+
+.typing-dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--brand);
+  opacity: 0.4;
+  animation: typing-bounce 1.4s infinite ease-in-out both;
+}
+
+.typing-dots span:nth-child(2) {
+  animation-delay: 0.16s;
+}
+
+.typing-dots span:nth-child(3) {
+  animation-delay: 0.32s;
+}
+
+@keyframes typing-bounce {
+  0%, 80%, 100% {
+    transform: scale(0.7);
+    opacity: 0.4;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.loading-text {
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+/* Character counter */
+.textarea-wrapper {
+  position: relative;
+}
+
+.char-counter {
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  font-size: 0.74rem;
+  font-family: var(--mono);
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.char-counter.over-limit {
+  color: #a03020;
+  font-weight: 600;
+}
+
+/* FAQ welcome buttons */
+.faq-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.faq-btn {
+  border: 1px solid var(--line);
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.86), rgba(13, 96, 119, 0.08));
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  font: inherit;
+  font-size: 0.87rem;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.faq-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(13, 96, 119, 0.1);
+}
+
+/* Feedback buttons */
+.message-feedback {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+.feedback-label {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.feedback-btn {
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 999px;
+  padding: 4px 14px;
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+
+.feedback-btn:hover {
+  background: var(--brand-soft);
+}
+
+.feedback-thanks {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* Rich response formatting */
+.response-heading {
+  margin: 14px 0 6px;
+  font-size: 0.94rem;
+  font-weight: 700;
+  color: var(--text);
+  font-family: var(--sans);
+}
+
+.response-heading:first-child {
+  margin-top: 0;
+}
+
+.message-body p {
+  margin: 4px 0;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.message-body .response-list {
+  margin: 6px 0;
+  padding-left: 18px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.message-body .response-list li {
+  margin-bottom: 4px;
+}
+
+/* Mobile small breakpoint */
+@media (max-width: 480px) {
+  .app-shell {
+    padding: 12px;
+  }
+
+  .hero-card {
+    padding: 18px;
+  }
+
+  .hero-primary h2 {
+    font-size: 1.5rem;
+  }
+
+  .procedure-list {
+    flex-direction: column;
+  }
+
+  .procedure-card {
+    min-width: unset;
+    max-width: unset;
+  }
+
+  textarea {
+    padding: 10px 12px;
+  }
+
+  .primary-btn,
+  .ghost-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .faq-btn {
+    width: 100%;
+  }
+
+  .message-stream {
+    max-height: 50vh;
   }
 }
