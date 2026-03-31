@@ -3,7 +3,8 @@ import { Markup } from "telegraf";
 
 import { getAnswer } from "../rag/getAnswer.js";
 import { isTelegramStateExpired } from "../rag/conversation.js";
-import { buildGuidedPrompt, getGuidedProcedureLibrary } from "../rag/inssCatalog.js";
+import { buildGuidedPrompt, getGuidedProcedureLibrary, getMenuGroups, getMenuGroupById } from "../rag/inssCatalog.js";
+import type { MenuGroup } from "../rag/inssCatalog.js";
 import type { AnswerPayload, AnswerSource, ChatState, RecommendedAction } from "../types/answers.js";
 import { logger } from "../utils/logger.js";
 import { splitTelegramMessage } from "../utils/text.js";
@@ -47,20 +48,28 @@ function buildSourceKeyboard(sources: AnswerSource[]) {
 }
 
 function buildMainMenuKeyboard() {
-  const topicRows = MENU_TOPICS.map((topic) => [Markup.button.callback(topic.label, `menu:topic:${topic.id}`)]);
-  const utilityRows = [[Markup.button.callback("Salir del menu", "menu:exit")]];
-  return Markup.inlineKeyboard([...topicRows, ...utilityRows]);
+  const groupRows = getMenuGroups().map((group) => [Markup.button.callback(group.label, `menu:group:${group.groupId}`)]);
+  const utilityRows = [
+    [Markup.button.callback("Tengo otra duda", "menu:freetext")],
+    [Markup.button.callback("Salir", "menu:exit")],
+  ];
+  return Markup.inlineKeyboard([...groupRows, ...utilityRows]);
+}
+
+function buildGroupSubMenuKeyboard(group: MenuGroup) {
+  const topicRows = group.benefitIds.map((id) => [
+    Markup.button.callback(group.subLabels[id] ?? id, `menu:topic:${id}`),
+  ]);
+  const navRows = [[Markup.button.callback("Volver al menu", "menu:home")]];
+  return Markup.inlineKeyboard([...topicRows, ...navRows]);
 }
 
 function buildTopicKeyboard(topicId: string) {
   return Markup.inlineKeyboard([
-    [Markup.button.callback("Ver requisitos", `menu:topic:${topicId}:requisitos`)],
-    [Markup.button.callback("Ver documentacion", `menu:topic:${topicId}:documentacion`)],
-    [Markup.button.callback("Como solicitar", `menu:topic:${topicId}:solicitud`)],
-    [Markup.button.callback("Seguir expediente", `menu:topic:${topicId}:seguimiento`)],
-    [Markup.button.callback("Resolucion o reclamacion", `menu:topic:${topicId}:resolucion`)],
+    [Markup.button.callback("Que necesito", `menu:topic:${topicId}:requisitos`)],
+    [Markup.button.callback("Como lo pido", `menu:topic:${topicId}:solicitud`)],
+    [Markup.button.callback("Seguir mi caso", `menu:topic:${topicId}:seguimiento`)],
     [Markup.button.callback("Volver al menu", "menu:home")],
-    [Markup.button.callback("Salir", "menu:exit")],
   ]);
 }
 
@@ -181,19 +190,16 @@ export function registerHandlers(bot: Telegraf): void {
     resetChatState(ctx.chat.id);
     await ctx.reply(
       [
-        "Hola. Soy un asistente informativo sobre la Seguridad Social espanola centrado en tramites INSS.",
+        "Hola. Soy un asistente sobre la Seguridad Social espanola.",
         "",
-        "Puedo ayudarte con requisitos, documentos, solicitudes, formularios, seguimiento de expediente y requerimientos usando informacion oficial.",
-        "Si faltan datos del caso, te hare preguntas cortas para afinar la orientacion.",
+        "Puedo ayudarte con pensiones, bajas, prestaciones, documentos y tramites del INSS.",
+        "Puedes escribirme tu duda directamente o usar los botones de abajo.",
         "",
-        "Importante: no sustituyo la informacion oficial ni el asesoramiento juridico personalizado.",
+        "Importante: no sustituyo la informacion oficial ni el asesoramiento juridico.",
       ].join("\n"),
     );
 
-    await ctx.reply(
-      "Si quieres, puedes usar el menu guiado para entrar por la familia INSS que mas se parece a tu caso.",
-      buildMainMenuKeyboard(),
-    );
+    await ctx.reply("Elige tu situacion o escribeme directamente tu pregunta:", buildMainMenuKeyboard());
   });
 
   bot.help(async (ctx) => {
@@ -214,7 +220,7 @@ export function registerHandlers(bot: Telegraf): void {
 
   bot.command("menu", async (ctx) => {
     setGuidedState(ctx.chat.id);
-    await ctx.reply("Elige la familia INSS que mejor encaja con tu consulta:", buildMainMenuKeyboard());
+    await ctx.reply("Elige tu situacion o escribeme directamente tu pregunta:", buildMainMenuKeyboard());
   });
 
   bot.command("reset", async (ctx) => {
@@ -246,6 +252,65 @@ export function registerHandlers(bot: Telegraf): void {
     await ctx.reply("He salido del modo guiado y he limpiado el contexto. Cuando quieras, seguimos.");
   });
 
+  bot.action("menu:freetext", async (ctx) => {
+    const chatId = resolveChatId(ctx);
+    if (!chatId) {
+      await ctx.answerCbQuery("Chat no disponible");
+      return;
+    }
+
+    await ctx.answerCbQuery();
+    resetChatState(chatId);
+    await ctx.reply(
+      "Escribeme tu pregunta con tus palabras. Por ejemplo:\n\n" +
+        "- Estoy de baja y el INSS me ha mandado un papel, que hago?\n" +
+        "- Quiero saber si me puedo jubilar ya\n" +
+        "- Como pido el ingreso minimo vital?\n\n" +
+        "No hace falta que uses palabras tecnicas.",
+    );
+  });
+
+  bot.action(/^menu:group:(.+)$/i, async (ctx) => {
+    const chatId = resolveChatId(ctx);
+    if (!chatId) {
+      await ctx.answerCbQuery("Chat no disponible");
+      return;
+    }
+
+    const groupId = ctx.match[1];
+    const group = getMenuGroupById(groupId);
+
+    if (!group) {
+      await ctx.answerCbQuery("Grupo no disponible");
+      return;
+    }
+
+    await ctx.answerCbQuery();
+    setGuidedState(chatId);
+
+    if (group.benefitIds.length === 1) {
+      const topicId = group.benefitIds[0]!;
+      const topic = MENU_TOPIC_BY_ID.get(topicId);
+
+      if (!topic) {
+        await ctx.reply("No pude cargar este tema. Prueba a escribirme tu pregunta directamente.");
+        return;
+      }
+
+      setGuidedState(chatId, topic.id);
+
+      try {
+        await processUserQuestion(ctx, chatId, topic.prompt);
+        await ctx.reply("Puedes seguir explorando:", buildTopicKeyboard(topic.id));
+      } catch (error) {
+        logger.error("Failed to answer single-topic group", { error, topicId, chatId });
+        await ctx.reply("No pude cargar este tema ahora mismo. Prueba a escribirme tu pregunta directamente.");
+      }
+    } else {
+      await ctx.reply("Elige la opcion que mejor encaja:", buildGroupSubMenuKeyboard(group));
+    }
+  });
+
   bot.action(/^menu:topic:([^:]+):(requisitos|documentacion|solicitud|seguimiento|resolucion)$/i, async (ctx) => {
     const chatId = resolveChatId(ctx);
     if (!chatId) {
@@ -267,7 +332,7 @@ export function registerHandlers(bot: Telegraf): void {
 
     try {
       await processUserQuestion(ctx, chatId, buildGuidedPrompt(topic.id, action));
-      await ctx.reply("Puedes seguir navegando por esta familia:", buildTopicKeyboard(topic.id));
+      await ctx.reply("Puedes seguir explorando:", buildTopicKeyboard(topic.id));
     } catch (error) {
       logger.error("Failed to answer guided topic action", {
         error,
@@ -299,7 +364,7 @@ export function registerHandlers(bot: Telegraf): void {
 
     try {
       await processUserQuestion(ctx, chatId, topic.prompt);
-      await ctx.reply("Puedes profundizar con estos botones:", buildTopicKeyboard(topic.id));
+      await ctx.reply("Puedes seguir explorando:", buildTopicKeyboard(topic.id));
     } catch (error) {
       logger.error("Failed to answer guided topic", {
         error,
@@ -352,7 +417,7 @@ export function registerHandlers(bot: Telegraf): void {
       await processUserQuestion(ctx, ctx.chat.id, question);
 
       if (getChatSession(ctx.chat.id).mode === "guided") {
-        await ctx.reply("Si quieres cambiar de familia INSS o volver al inicio, usa estos botones:", buildMainMenuKeyboard());
+        await ctx.reply("Si quieres cambiar de tema o volver al inicio:", buildMainMenuKeyboard());
       }
     } catch (error) {
       logger.error("Failed to answer user question", {
