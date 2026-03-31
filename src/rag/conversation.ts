@@ -563,21 +563,21 @@ const SLOT_SCHEMAS: Record<IntentFamily, SlotDefinition[]> = {
     {
       key: "modalidad",
       label: "modalidad de jubilacion",
-      question: "Es una jubilacion ordinaria, anticipada, parcial, demorada o SOVI?",
+      question: "Para orientarte bien, necesito saber una cosa: seria una jubilacion ordinaria (por edad), anticipada (antes de tiempo), parcial o alguna otra modalidad?",
       options: ["Ordinaria", "Anticipada", "Parcial", "SOVI"],
       shouldAsk: (state, question) => !state.facts.modalidad && /mi|me|tengo|quiero/i.test(question),
     },
     {
       key: "edad",
       label: "edad aproximada",
-      question: "Que edad aproximada tienes ahora o a que edad quieres jubilarte?",
+      question: "Que edad tienes ahora, mas o menos? Asi puedo calcular mejor tu situacion.",
       options: ["Menos de 63", "63 o 64", "65 o mas"],
       shouldAsk: (state, question) => !state.facts.edad && /mi|me|tengo|quiero/i.test(question),
     },
     {
       key: "cotizacion",
       label: "cotizacion aproximada",
-      question: "Cuantos anos cotizados llevas aproximadamente?",
+      question: "Y cuantos anos llevas cotizados, aunque sea de forma aproximada?",
       options: ["Menos de 15", "Entre 15 y 37", "37 o mas"],
       shouldAsk: (state, question) => !state.facts.cotizacion && /mi|me|tengo|quiero/i.test(question),
     },
@@ -586,14 +586,14 @@ const SLOT_SCHEMAS: Record<IntentFamily, SlotDefinition[]> = {
     {
       key: "tipoIncapacidad",
       label: "tipo de incapacidad",
-      question: "Tu caso es de incapacidad temporal, permanente o lesiones permanentes no incapacitantes?",
+      question: "Para ayudarte mejor, es una baja temporal (estas de baja medica) o una incapacidad permanente?",
       options: ["Temporal", "Permanente", "Lesiones permanentes"],
       shouldAsk: (state, question) => !state.facts.tipoIncapacidad && /mi|me|tengo|quiero/i.test(question),
     },
     {
       key: "origen",
       label: "origen de la contingencia",
-      question: "El origen es comun, accidente de trabajo o enfermedad profesional?",
+      question: "Y el motivo es una enfermedad comun, un accidente de trabajo o una enfermedad profesional?",
       options: ["Comun", "Accidente de trabajo", "Enfermedad profesional"],
       shouldAsk: (state, question) => !state.facts.origen && /mi|me|tengo|quiero/i.test(question),
     },
@@ -602,7 +602,7 @@ const SLOT_SCHEMAS: Record<IntentFamily, SlotDefinition[]> = {
     {
       key: "supuesto",
       label: "supuesto familiar",
-      question: "Tu caso es de nacimiento, adopcion, acogimiento, menor grave, embarazo, lactancia o brecha de genero?",
+      question: "Cuentame un poco mas: es por nacimiento de un hijo, embarazo o lactancia, cuidado de un menor enfermo grave, u otro supuesto?",
       options: ["Nacimiento", "Menor grave", "Embarazo o lactancia", "Brecha de genero"],
       shouldAsk: (state, question) => !state.facts.supuesto && /mi|me|tengo|quiero/i.test(question),
     },
@@ -618,7 +618,7 @@ const SLOT_SCHEMAS: Record<IntentFamily, SlotDefinition[]> = {
     {
       key: "tipoSupervivencia",
       label: "prestacion de supervivencia",
-      question: "Estas mirando viudedad, orfandad, favor de familiares o auxilio por defuncion?",
+      question: "Entiendo que es un momento dificil. Para orientarte bien, necesito saber si se trata de una pension de viudedad, orfandad, prestacion en favor de familiares o auxilio por defuncion.",
       options: ["Viudedad", "Orfandad", "Favor de familiares", "Auxilio por defuncion"],
       shouldAsk: (state, question) => !state.facts.tipoSupervivencia && /mi|me|tengo|quiero/i.test(question),
     },
@@ -971,8 +971,8 @@ export function buildClarificationSummary(state: ChatState): string {
   const label = entry?.displayName ?? state.family.replace(/-/g, " ");
 
   if (state.missingFacts.length === 0) {
-    return `Puedo seguir orientando el caso sobre ${label} con lo que ya has contado.`;
+    return `Con lo que me has contado ya puedo seguir orientandote sobre ${label}.`;
   }
 
-  return `Para orientar bien el caso sobre ${label}, me faltan ${state.missingFacts.join(", ")}.`;
+  return `Necesito un dato mas para poder orientarte bien sobre ${label}: ${state.missingFacts.join(", ")}.`;
 }

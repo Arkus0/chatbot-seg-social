@@ -60,7 +60,7 @@ describe("conversation analysis", () => {
     expect(analysis.intent.benefitId).toBe("jubilacion");
     expect(analysis.state.facts.edad).toBe("63 anos");
     expect(analysis.state.facts.cotizacion).toBe("34 anos cotizados");
-    expect(analysis.clarifyingQuestions).toEqual(["Es una jubilacion ordinaria, anticipada, parcial, demorada o SOVI?"]);
+    expect(analysis.clarifyingQuestions).toEqual(["Para orientarte bien, necesito saber una cosa: seria una jubilacion ordinaria (por edad), anticipada (antes de tiempo), parcial o alguna otra modalidad?"]);
   });
 
   it("creates structured follow-up actions for first-solicitation guidance", () => {

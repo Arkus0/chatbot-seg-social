@@ -16,6 +16,7 @@ export default tseslint.config(
         document: "readonly",
         fetch: "readonly",
         localStorage: "readonly",
+        sessionStorage: "readonly",
         Event: "readonly",
         URL: "readonly",
         window: "readonly",

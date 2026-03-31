@@ -262,6 +262,42 @@ const EXPANSION_RULES = [
     pattern: /\bamianto\b|asbestos/i,
     expansion: "prestaciones por amianto seguridad social inss",
   },
+  {
+    pattern: /\bembarazada\b|estoy embarazada|me he quedado embarazada/i,
+    expansion: "nacimiento cuidado de menor riesgo durante el embarazo prestacion maternidad subsidio",
+  },
+  {
+    pattern: /\bha fallecido\b|\bse (?:me )?ha muerto\b|\bmuerte\b|\bfallecimiento\b/i,
+    expansion: "pension viudedad orfandad supervivencia auxilio defuncion fallecimiento",
+  },
+  {
+    pattern: /\bno puedo trabajar\b|\bme duele\b|\bestoy enferm/i,
+    expansion: "incapacidad temporal baja medica enfermedad subsidio prestacion",
+  },
+  {
+    pattern: /\bcuanto (?:voy a )?cobr/i,
+    expansion: "cuantia base reguladora importe pension prestacion porcentaje abono",
+  },
+  {
+    pattern: /\bextranjer[oa]?\b|\bno tengo papeles\b|\binmigrante\b/i,
+    expansion: "asistencia sanitaria convenio bilateral extranjero residencia autorizacion seguridad social",
+  },
+  {
+    pattern: /\bdivorcio\b|\bex\s?(?:marido|mujer|conyuge|pareja)\b/i,
+    expansion: "pension compensatoria viudedad exconyuge divorciado separacion",
+  },
+  {
+    pattern: /\bno llego a fin de mes\b|\bayuda economica\b|\bno tengo (?:dinero|ingresos)\b/i,
+    expansion: "ingreso minimo vital imv solicitud prestacion no contributiva ayuda economica",
+  },
+  {
+    pattern: /\bcobrar la pension\b|\bcuando cobro\b|\bfecha de pago\b|\bno me han pagado\b/i,
+    expansion: "pago cobro abono pension prestacion fecha nomina transferencia",
+  },
+  {
+    pattern: /\baccidente\s+(de\s+)?trabajo\b|\baccidente laboral\b/i,
+    expansion: "accidente de trabajo contingencia profesional incapacidad prestacion mutua colaboradora",
+  },
 ];
 
 function tokenize(input: string): string[] {
