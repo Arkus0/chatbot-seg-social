@@ -37,7 +37,8 @@ export type IntentOperation =
   | "reclamacion-previa"
   | "silencio-administrativo"
   | "variacion-datos"
-  | "suspension-extincion";
+  | "suspension-extincion"
+  | "identificacion-electronica";
 
 export type LifecycleStage =
   | "descubrimiento"

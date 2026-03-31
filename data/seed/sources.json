@@ -109,7 +109,7 @@
       "requisitos"
     ],
     "priority": 4,
-    "enabled": true
+    "enabled": false
   },
   {
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10963/28393/28396/28475?changeLanguage=es",
@@ -123,7 +123,7 @@
       "porcentaje"
     ],
     "priority": 4,
-    "enabled": true
+    "enabled": false
   },
   {
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10963/28393/28396/28482",
@@ -188,7 +188,7 @@
       "concepto"
     ],
     "priority": 3,
-    "enabled": true
+    "enabled": false
   },
   {
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10960/28750/28751/6274",
@@ -203,7 +203,7 @@
       "gran-invalidez"
     ],
     "priority": 4,
-    "enabled": true
+    "enabled": false
   },
   {
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10960/28750/28680/28700/desc28700",
@@ -215,7 +215,7 @@
       "prestacion"
     ],
     "priority": 3,
-    "enabled": true
+    "enabled": false
   },
   {
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10960/28750/28680/28700/28709",
@@ -229,7 +229,7 @@
       "base-reguladora"
     ],
     "priority": 4,
-    "enabled": true
+    "enabled": false
   },
   {
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10960/28750/28680/28700/28754",
@@ -264,7 +264,7 @@
       "efectos-economicos"
     ],
     "priority": 4,
-    "enabled": true
+    "enabled": false
   },
   {
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10960/28750/28680/28700/28717",
@@ -277,7 +277,7 @@
       "incompatibilidades"
     ],
     "priority": 4,
-    "enabled": true
+    "enabled": false
   },
   {
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10960/28750/28680/28700/32454",
@@ -292,7 +292,7 @@
       "inss"
     ],
     "priority": 4,
-    "enabled": true
+    "enabled": false
   },
   {
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10960/28750/28680/35615",
@@ -304,7 +304,7 @@
       "indemnizacion"
     ],
     "priority": 4,
-    "enabled": true
+    "enabled": false
   },
   {
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10960/28750/28680/28729",
@@ -316,7 +316,7 @@
       "prestacion"
     ],
     "priority": 4,
-    "enabled": true
+    "enabled": false
   },
   {
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10960/28750/28680/31908",
@@ -329,7 +329,7 @@
       "tercera-persona"
     ],
     "priority": 4,
-    "enabled": true
+    "enabled": false
   },
   {
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10960/28750/28680/31908/32066",
@@ -343,7 +343,7 @@
       "complemento"
     ],
     "priority": 5,
-    "enabled": true
+    "enabled": false
   },
   {
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/6b96a085-4dc0-47af-b2cb-97e00716791e/subsidionycm",
@@ -411,7 +411,7 @@
       "suspension-contrato"
     ],
     "priority": 3,
-    "enabled": true
+    "enabled": false
   },
   {
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10956/28347/45087",
@@ -425,7 +425,7 @@
       "regimen-general"
     ],
     "priority": 4,
-    "enabled": true
+    "enabled": false
   },
   {
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/51288",
@@ -444,7 +444,7 @@
     "sourceKind": "benefit-page",
     "requiresAuth": false,
     "supportsSms": true,
-    "enabled": true
+    "enabled": false
   },
   {
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/51288/51289/51290",
@@ -458,7 +458,7 @@
       "regimen-general"
     ],
     "priority": 4,
-    "enabled": true
+    "enabled": false
   },
   {
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10964/10966/28489/28490",
@@ -491,7 +491,7 @@
       "base-reguladora"
     ],
     "priority": 4,
-    "enabled": true
+    "enabled": false
   },
   {
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10964/10966/28489/28498",
@@ -625,7 +625,7 @@
       "sede"
     ],
     "priority": 2,
-    "enabled": true
+    "enabled": false
   },
   {
     "url": "https://revista.seg-social.es/-/5-pasos-para-darse-de-alta-como-aut%C3%B3nomo/en/",
@@ -729,7 +729,7 @@
       "revista"
     ],
     "priority": 4,
-    "enabled": true
+    "enabled": false
   },
   {
     "url": "https://revista.seg-social.es/detalle-noticia/-/asset_publisher/4za6PzqGypPA/content/20220321-guia-jubilacion-demorada2",
@@ -743,7 +743,7 @@
       "revista"
     ],
     "priority": 4,
-    "enabled": true
+    "enabled": false
   },
   {
     "url": "https://revista.seg-social.es/-/calcule-su-jubilaci%C3%B3n",
@@ -757,7 +757,7 @@
       "revista"
     ],
     "priority": 4,
-    "enabled": true
+    "enabled": false
   },
   {
     "url": "https://revista.seg-social.es/-/202203-acceso-a-tuss-sms/en/",
@@ -771,7 +771,7 @@
       "revista"
     ],
     "priority": 2,
-    "enabled": true
+    "enabled": false
   },
   {
     "url": "https://revista.seg-social.es/-/como-obtener-el-nuss-numero-de-la-seguridad-social-1",
@@ -941,7 +941,7 @@
       "requisitos"
     ],
     "priority": 4,
-    "enabled": true
+    "enabled": false
   },
   {
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10964/10966/28536",
@@ -1155,7 +1155,7 @@
       "requisitos"
     ],
     "priority": 5,
-    "enabled": true
+    "enabled": false
   },
   {
     "url": "https://revista.seg-social.es/-/certificado-integral-de-prestaciones",
@@ -1168,7 +1168,7 @@
       "revista"
     ],
     "priority": 4,
-    "enabled": true
+    "enabled": false
   },
   {
     "url": "https://sede.seg-social.gob.es/wps/portal/sede/sede/Ciudadanos/Pensiones/181119_INSS",
@@ -1326,7 +1326,7 @@
       "tramite"
     ],
     "priority": 3,
-    "enabled": true
+    "enabled": false
   },
   {
     "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/PrestacionesPensionesTrabajadores/10963/28393/1712/1713/127266",
@@ -1367,7 +1367,7 @@
       "pdf"
     ],
     "priority": 4,
-    "enabled": true
+    "enabled": false
   },
   {
     "url": "https://www.seg-social.es/wps/wcm/connect/wss/832f01df-7528-43e8-ab89-5e385d1f39e4/PUB060_Castellano.pdf?MOD=AJPERES",
@@ -1539,7 +1539,7 @@
       "requisitos"
     ],
     "priority": 4,
-    "enabled": true
+    "enabled": false
   },
   {
     "url": "https://www.seg-social.es/wps/wcm/connect/wss/1ab27705-2dab-4f47-b1b7-cf139869519b/Guia%2BServicios%2BSeguridad%2BSocial%2Bdel%2BISM%2Ben%2Bla%2Bsede%2Belectronica.pdf?MOD=AJPERES",
@@ -1870,6 +1870,54 @@
     "sourceKind": "benefit-page",
     "requiresAuth": false,
     "supportsSms": true,
+    "enabled": true
+  },
+  {
+    "url": "https://firmaelectronica.gob.es/Home/Descargas.html",
+    "title": "Descarga e instalacion de Autofirma",
+    "type": "html",
+    "tags": ["autofirma", "firma-electronica", "instalacion", "certificado-digital", "operativa-inss"],
+    "priority": 5,
+    "benefitId": "identificacion-electronica",
+    "family": "operativa-inss",
+    "lifecycle": "preparacion",
+    "sourceKind": "service",
+    "enabled": true
+  },
+  {
+    "url": "https://www.sede.fnmt.gob.es/certificados/persona-fisica",
+    "title": "Certificado digital de persona fisica - FNMT",
+    "type": "html",
+    "tags": ["certificado-digital", "fnmt", "solicitud", "instalacion", "operativa-inss"],
+    "priority": 5,
+    "benefitId": "identificacion-electronica",
+    "family": "operativa-inss",
+    "lifecycle": "preparacion",
+    "sourceKind": "service",
+    "enabled": true
+  },
+  {
+    "url": "https://clave.gob.es/clave_Home/registro.html",
+    "title": "Registro en Cl@ve - como darte de alta",
+    "type": "html",
+    "tags": ["clave", "clave-pin", "clave-permanente", "registro", "identificacion", "operativa-inss"],
+    "priority": 5,
+    "benefitId": "identificacion-electronica",
+    "family": "operativa-inss",
+    "lifecycle": "preparacion",
+    "sourceKind": "service",
+    "enabled": true
+  },
+  {
+    "url": "https://clave.gob.es/clave_Home/dnelectronico.html",
+    "title": "Acceso con DNI electronico",
+    "type": "html",
+    "tags": ["dnie", "dni-electronico", "identificacion", "operativa-inss"],
+    "priority": 4,
+    "benefitId": "identificacion-electronica",
+    "family": "operativa-inss",
+    "lifecycle": "preparacion",
+    "sourceKind": "service",
     "enabled": true
   }
 ]

@@ -213,7 +213,27 @@ const EXPANSION_RULES = [
     expansion: "solicitudes y comunicaciones de prestaciones de la seguridad social inss portal de prestaciones",
   },
   {
-    pattern: /\bcertificado\b|\bcl@ve\b|\bclave\b|\bsin identificacion\b/i,
+    pattern: /\bcertificado digital\b/i,
+    expansion: "certificado digital electronico fnmt instalacion renovacion exportar error navegador sede seguridad social",
+  },
+  {
+    pattern: /\bautofirma\b/i,
+    expansion: "autofirma firma electronica error java instalacion configuracion navegador sede seguridad social",
+  },
+  {
+    pattern: /\bcl@ve\b|\bclave pin\b|\bclave permanente\b/i,
+    expansion: "clave pin permanente registro identificacion electronica acceso sede seguridad social",
+  },
+  {
+    pattern: /\bdnie?\b/i,
+    expansion: "dnie electronico lector tarjeta certificado identificacion sede seguridad social",
+  },
+  {
+    pattern: /\bno me deja\b.*(?:firmar|entrar|acceder)|\bno funciona\b.*(?:firma|sede|certificado)/i,
+    expansion: "error acceso sede electronica certificado autofirma firma navegador clave identificacion",
+  },
+  {
+    pattern: /\bcertificado\b|\bsin identificacion\b/i,
     expansion: "identificacion certificado digital clave sms sin certificado seguridad social inss",
   },
   {
